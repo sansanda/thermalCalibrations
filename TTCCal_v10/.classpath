@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/KeithleyInstruments"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/hobersal"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ElectronicDevices"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ModBus"/>
+	<classpathentry kind="lib" path="libs/jdom.jar"/>
+	<classpathentry kind="lib" path="C:/My Dropbox/software_libraries/windows/chart_tools/JOpenChart/charting-0.94.jar"/>
+	<classpathentry kind="lib" path="C:/My Dropbox/software_libraries/windows/log/apache-log4j-1.2.15/log4j-1.2.15.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

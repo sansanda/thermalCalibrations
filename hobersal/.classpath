@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="C:/Users/David Sanchez/Google Drive/software_libraries/windows/javacomm20-win32/commapi/comm.jar"/>
+	<classpathentry kind="lib" path="C:/Users/David Sanchez/Google Drive/software_libraries/windows/modBus/modbus4j/modbus4J.jar" sourcepath="C:/My Dropbox/software_libraries/windows/modBus/modbus4j/modbus4J-src.zip">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/My Dropbox/software_libraries/windows/modBus/modbus4j/modbus4J-doc.zip!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/David Sanchez/Google Drive/software_libraries/windows/modBus/modbus4j/RXTXcomm.jar"/>
+	<classpathentry kind="lib" path="C:/Users/David Sanchez/Google Drive/software_libraries/windows/modBus/modbus4j/seroUtils.jar"/>
+	<classpathentry kind="lib" path="C:/Users/David Sanchez/Google Drive/software_libraries/windows/modBus/jamod-1.2-SNAPSHOT.jar" sourcepath="C:/My Dropbox/software_libraries/windows/modBus/jamod-1.2-SNAPSHOT-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/David Sanchez/Google Drive/software_libraries/windows/frameworks/quantity_v_0_9.jar" sourcepath="C:/My Dropbox/software_libraries/windows/frameworks/qf-1.0-src">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/C:/My Dropbox/software_libraries/windows/frameworks/qf-1.0-javadoc/qf-1.0-javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

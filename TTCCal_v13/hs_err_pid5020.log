@@ -1,0 +1,140 @@
+#
+# An unexpected error has been detected by Java Runtime Environment:
+#
+#  EXCEPTION_ACCESS_VIOLATION (0xc0000005) at pc=0x6d9c3635, pid=5020, tid=6612
+#
+# Java VM: Java HotSpot(TM) Client VM (11.0-b16 mixed mode windows-x86)
+# Problematic frame:
+# V  [jvm.dll+0x1c3635]
+#
+# If you would like to submit a bug report, please visit:
+#   http://java.sun.com/webapps/bugreport/crash.jsp
+#
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x0aac3800):  VMThread [stack: 0x0ab50000,0x0aba0000] [id=6612]
+
+siginfo: ExceptionCode=0xc0000005, writing address 0x00000014
+
+Registers:
+EAX=0x0090f724, EBX=0x00000000, ECX=0x00000000, EDX=0x009b7100
+ESP=0x0ab9fcd8, EBP=0x00000000, ESI=0x00000002, EDI=0x00000001
+EIP=0x6d9c3635, EFLAGS=0x00010246
+
+Top of Stack: (sp=0x0ab9fcd8)
+0x0ab9fcd8:   003e6bc8 0aac3800 0ab9fd2c 00000000
+0x0ab9fce8:   00000000 003e6998 0aac3800 00000000
+0x0ab9fcf8:   0aac3800 0aac3ed0 0aac3ef0 0aac3ef8
+0x0ab9fd08:   0aac42e4 0aac42f0 0ab9fd24 00000004
+0x0ab9fd18:   0ab9ff80 6d94e545 00000f78 00000002
+0x0ab9fd28:   6d9c3b55 0ab9ff80 6d9c3b5f 00961f81
+0x0ab9fd38:   0aac3800 00000000 00000000 00000000
+0x0ab9fd48:   00000000 00000000 00000000 6d95100c 
+
+Instructions: (pc=0x6d9c3635)
+0x6d9c3625:   10 8b 48 14 8b 50 10 89 51 10 8b 48 10 8b 50 14
+0x6d9c3635:   89 51 14 3b c5 a3 98 2f a3 6d 74 3c 8b 10 8b c8 
+
+
+Stack: [0x0ab50000,0x0aba0000],  sp=0x0ab9fcd8,  free space=319k
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+V  [jvm.dll+0x1c3635]
+
+[error occurred during error reporting (printing native stack), id 0xc0000005]
+
+
+---------------  P R O C E S S  ---------------
+
+Java Threads: ( => current thread )
+  0x0aafc800 JavaThread "Low Memory Detector" daemon [_thread_blocked, id=7856, stack(0x0aee0000,0x0af30000)]
+  0x0aafac00 JavaThread "CompilerThread0" daemon [_thread_blocked, id=8036, stack(0x0ae90000,0x0aee0000)]
+  0x0aaebc00 JavaThread "JDWP Event Helper Thread" daemon [_thread_blocked, id=6628, stack(0x0adf0000,0x0ae40000)]
+  0x0aade000 JavaThread "Attach Listener" daemon [_thread_blocked, id=7448, stack(0x0ac90000,0x0ace0000)]
+  0x0aadcc00 JavaThread "Signal Dispatcher" daemon [_thread_blocked, id=3204, stack(0x0ac40000,0x0ac90000)]
+  0x0aac9c00 JavaThread "Finalizer" daemon [_thread_blocked, id=6192, stack(0x0abf0000,0x0ac40000)]
+  0x0aac8800 JavaThread "Reference Handler" daemon [_thread_blocked, id=4724, stack(0x0aba0000,0x0abf0000)]
+  0x003e7c00 JavaThread "main" [_thread_in_vm, id=7492, stack(0x008c0000,0x00910000)]
+
+Other Threads:
+=>0x0aac3800 VMThread [stack: 0x0ab50000,0x0aba0000] [id=6612]
+  0x0ab06c00 WatcherThread [stack: 0x0af30000,0x0af80000] [id=7380]
+
+VM state:not at safepoint (normal execution)
+
+VM Mutex/Monitor currently owned by a thread:  ([mutex/lock_event])
+[0x003e6998] UNKNOWN - owner thread: 0x0aac3800
+
+Heap
+ def new generation   total 960K, used 257K [0x029b0000, 0x02ab0000, 0x02e90000)
+  eden space 896K,  28% used [0x029b0000, 0x029f0698, 0x02a90000)
+  from space 64K,   0% used [0x02a90000, 0x02a900a8, 0x02aa0000)
+  to   space 64K,   0% used [0x02aa0000, 0x02aa0000, 0x02ab0000)
+ tenured generation   total 4096K, used 119K [0x02e90000, 0x03290000, 0x069b0000)
+   the space 4096K,   2% used [0x02e90000, 0x02eade00, 0x02eade00, 0x03290000)
+ compacting perm gen  total 12288K, used 1826K [0x069b0000, 0x075b0000, 0x0a9b0000)
+   the space 12288K,  14% used [0x069b0000, 0x06b78b98, 0x06b78c00, 0x075b0000)
+No shared spaces configured.
+
+Dynamic libraries:
+0x00400000 - 0x00424000 	C:\Archivos de programa\Java\jre6\bin\javaw.exe
+0x7c910000 - 0x7c9c6000 	C:\WINDOWS\system32\ntdll.dll
+0x7c800000 - 0x7c902000 	C:\WINDOWS\system32\kernel32.dll
+0x77da0000 - 0x77e4c000 	C:\WINDOWS\system32\ADVAPI32.dll
+0x77e50000 - 0x77ee2000 	C:\WINDOWS\system32\RPCRT4.dll
+0x77fc0000 - 0x77fd1000 	C:\WINDOWS\system32\Secur32.dll
+0x7e390000 - 0x7e420000 	C:\WINDOWS\system32\USER32.dll
+0x77ef0000 - 0x77f38000 	C:\WINDOWS\system32\GDI32.dll
+0x76340000 - 0x7635d000 	C:\WINDOWS\system32\IMM32.DLL
+0x7c340000 - 0x7c396000 	C:\Archivos de programa\Java\jre6\bin\msvcr71.dll
+0x6d800000 - 0x6da56000 	C:\Archivos de programa\Java\jre6\bin\client\jvm.dll
+0x76b00000 - 0x76b2e000 	C:\WINDOWS\system32\WINMM.dll
+0x6d280000 - 0x6d288000 	C:\Archivos de programa\Java\jre6\bin\hpi.dll
+0x76bb0000 - 0x76bbb000 	C:\WINDOWS\system32\PSAPI.DLL
+0x6d370000 - 0x6d399000 	C:\Archivos de programa\Java\jre6\bin\jdwp.dll
+0x6d6a0000 - 0x6d6a6000 	C:\Archivos de programa\Java\jre6\bin\npt.dll
+0x6d7b0000 - 0x6d7bc000 	C:\Archivos de programa\Java\jre6\bin\verify.dll
+0x6d320000 - 0x6d33f000 	C:\Archivos de programa\Java\jre6\bin\java.dll
+0x6d7f0000 - 0x6d7ff000 	C:\Archivos de programa\Java\jre6\bin\zip.dll
+0x6d1f0000 - 0x6d1f7000 	C:\Archivos de programa\Java\jre6\bin\dt_socket.dll
+0x71a30000 - 0x71a47000 	C:\WINDOWS\system32\WS2_32.dll
+0x77be0000 - 0x77c38000 	C:\WINDOWS\system32\msvcrt.dll
+0x71a20000 - 0x71a28000 	C:\WINDOWS\system32\WS2HELP.dll
+0x719d0000 - 0x71a10000 	C:\WINDOWS\System32\mswsock.dll
+0x76ee0000 - 0x76f07000 	C:\WINDOWS\system32\DNSAPI.dll
+0x76f70000 - 0x76f78000 	C:\WINDOWS\System32\winrnr.dll
+0x76f20000 - 0x76f4d000 	C:\WINDOWS\system32\WLDAP32.dll
+0x16080000 - 0x16099000 	C:\Archivos de programa\Bonjour\mdnsNSP.dll
+0x76d20000 - 0x76d39000 	C:\WINDOWS\system32\Iphlpapi.dll
+0x76f80000 - 0x76f86000 	C:\WINDOWS\system32\rasadhlp.dll
+0x66740000 - 0x66799000 	C:\WINDOWS\system32\hnetcfg.dll
+0x71a10000 - 0x71a18000 	C:\WINDOWS\System32\wshtcpip.dll
+
+VM Arguments:
+jvm_args: -agentlib:jdwp=transport=dt_socket,suspend=y,address=localhost:2120 -Dfile.encoding=Cp1252 
+java_command: ppppp
+Launcher Type: SUN_STANDARD
+
+Environment Variables:
+JAVA_HOME=C:\Archivos de programa\Java\jdk1.6.0_05
+CLASSPATH=C:\Tomcat 6.0\lib\servlet-api.jar;C:\Tomcat 6.0\lib\jsp-api.jar;C:\Tomcat 6.0\lib\el-api.jar;C:\Tomcat 6.0\webapps\agenda;C:\Tomcat 6.0\webapps\agenda\WebContent\WEB-INF\lib\TADs.jar;C:\LaColla\lib\activation.jar;C:\Tomcat 6.0\webapps\agenda\src;C:\LaColla\lib\util.jar;C:\LaColla\lib\activation.jar;C:\LaColla\lib\chinook.jar;C:\LaColla\lib\commons-collections-3.1.jar;C:\LaColla\lib\commons-collections-testframework-3.1.jar;C:\LaColla\lib\commons-io-1.1.jar;C:\LaColla\lib\commons-logging.jar;C:\LaColla\lib\commons-logging-api.jar;C:\LaColla\lib\commons-vfs.jar;C:\LaColla\lib\hsqldb.jar;C:\LaColla\lib\imap.jar;C:\LaColla\lib\jdom.jar;C:\LaColla\lib\lacolla-1.0.11.jar;C:\LaColla\lib\lacolla-1.0.4.jar;C:\LaColla\lib\log4j-1.2.8.jar;C:\LaColla\lib\log4j.jar;C:\LaColla\lib\mail.jar;C:\LaColla\lib\mailapi.jar;C:\LaColla\lib\pop3.jar;C:\LaColla\lib\smtp.jar;C:\LaColla\lib\tyrex-1.0.3.jar;C:\Tomcat 6.0\webapps\agenda\build\classes;.;..;..\..
+PATH=C:/Archivos de programa/Java/jre6/bin/client;C:/Archivos de programa/Java/jre6/bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\Cadence\PSD_14.2\tools\Capture;C:\Cadence\PSD_14.2\tools\bin;C:\Cadence\PSD_14.2\tools\jre\bin;C:\Cadence\PSD_14.2\tools\fet\bin;C:\apache-ant-1.7.0\bin;C:\tinyos\ATT\Graphviz\bin;C:\Archivos de programa\Archivos comunes\Autodesk Shared\;;C:\ARCHIV~1\ARCHIV~1\MUVEET~1\030625
+USERNAME=pere
+OS=Windows_NT
+PROCESSOR_IDENTIFIER=x86 Family 6 Model 15 Stepping 11, GenuineIntel
+
+
+
+---------------  S Y S T E M  ---------------
+
+OS: Windows XP Build 2600 Service Pack 2
+
+CPU:total 4 (4 cores per cpu, 1 threads per core) family 6 model 15 stepping 11, cmov, cx8, fxsr, mmx, sse, sse2, sse3, ssse3
+
+Memory: 4k page, physical 2097151k(2097151k free), swap 4194303k(3861272k free)
+
+vm_info: Java HotSpot(TM) Client VM (11.0-b16) for windows-x86 JRE (1.6.0_11-b03), built on Nov 10 2008 02:15:12 by "java_re" with MS VC++ 7.1
+
+time: Fri Mar 06 16:42:50 2009
+elapsed time: 92036 seconds
+

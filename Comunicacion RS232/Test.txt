@@ -1,0 +1,5 @@
+ID?
+ACQ?
+BUSY?
+CURSOR?
+DISPLAY?

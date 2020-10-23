@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="C:/My Dropbox/software_libraries/windows/modBus/jamod-1.1/jamod.jar"/>
+	<classpathentry kind="lib" path="C:/My Dropbox/software_libraries/windows/modBus/jamod-1.2rc1-src/lib/RXTXcomm.jar"/>
+	<classpathentry kind="lib" path="C:/My Dropbox/software_libraries/windows/modBus/jamod-1.2rc1-src/lib/comm.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

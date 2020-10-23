@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/KeithleyInstruments"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/hobersal"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ElectronicDevices"/>
+	<classpathentry kind="lib" path="C:/My Dropbox/software_libraries/windows/chart_tools/jfreechart-1.0.12/lib/jcommon-1.0.15.jar"/>
+	<classpathentry kind="lib" path="C:/My Dropbox/software_libraries/windows/chart_tools/jfreechart-1.0.12/lib/jfreechart-1.0.12.jar"/>
+	<classpathentry kind="lib" path="C:/My Dropbox/software_libraries/windows/XML/libs/jdom.jar"/>
+	<classpathentry kind="lib" path="C:/My Dropbox/software_libraries/windows/Extructuras de Datos/TADs.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
