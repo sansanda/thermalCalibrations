@@ -287,7 +287,7 @@ public class S_Port implements Runnable, SerialPortEventListener{
 		 {
 			//El puerto se encuenta en el equipo y adquirimos un objeto
 			//tipo SerialPort para poder manejar dicho puerto
-			S_Port sp = new S_Port("COM5");
+			S_Port sp = new S_Port("COM8");
 			while (true){
 				System.out.println("Introduce la cadena de caracteres a enviar por el puerto serie: ");
 				sp.sendMessageToSerialPort(reader.readLine());

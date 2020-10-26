@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<InstrumentsData FilePath="C:\My Dropbox\thermalCalibrations_workspace\TTCCal_v17\ConfigurationFiles\instrumentsData.xml">
-  <MultimeterData Model="2404" Manufacturer="Keithley" ControllerID="0" ComPort="COM6" />
-  <OvenData Model="2700" Manufacturer="Obersal" ControllerID="1" ComPort="COM5" />
-</InstrumentsData>
-
