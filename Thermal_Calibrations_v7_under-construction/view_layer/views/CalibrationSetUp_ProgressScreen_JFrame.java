@@ -56,7 +56,6 @@ import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.time.*;
-import org.jfree.util.ShapeList;
 
 import sensors.TemperatureSensor;
 import calibrationSetUp.CalibrationSetUp;

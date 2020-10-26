@@ -2,7 +2,7 @@ package sourcemeters;
 import instrumentsWithRS232.*;
 
 
-public class Keithley2430 extends instrumentWithRS232{
+public class Keithley2430 extends instrumentWithRS232_32bits{
 	//Constants
 	//Variables
 

@@ -7,7 +7,7 @@ import javax.measure.quantity.ElectricResistance;
 import javax.measure.quantity.Temperature;
 import javax.measure.unit.SI;
 
-import Ports.S_Port2;
+import Ports.S_Port2_32bits;
 import interfaces.ICommunicationPort;
 import interfaces.ISingleChannelMultimeter;
 import interfaces.IThermometer;
@@ -21,7 +21,7 @@ public class Keithley2700_v3 implements IThermometer, IVoltmeter, ISingleChannel
 	private Measurable<?> lastMeasure = null;
 	
 	public Keithley2700_v3(String wantedPortName) throws Exception{
-		serialPortRS232 = new S_Port2(wantedPortName);
+		serialPortRS232 = new S_Port2_32bits(wantedPortName);
 	}
 	
 	//IMultimeter

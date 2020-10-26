@@ -9,20 +9,11 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="E:/repos/java_development_libraries/chart_tools/jfreechart-1.0.12/jfreechart-1.0.12.jar"/>
-	<classpathentry kind="lib" path="E:/repos/java_development_libraries/XML/libs/jdom.jar"/>
-	<classpathentry kind="lib" path="E:/repos/java_development_libraries/modBus/modbus4j/modbus4J.jar" sourcepath="C:/My Dropbox/software_libraries/windows/modBus/modbus4j/modbus4J-src.zip">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/C:/My Dropbox/software_libraries/windows/modBus/modbus4j/modbus4J-doc.zip!/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="E:/repos/java_development_libraries/Extructuras de Datos/TADs.jar"/>
-	<classpathentry kind="lib" path="E:/repos/java_development_libraries/frameworks/quantity_v_0_9.jar" sourcepath="C:/My Dropbox/software_libraries/windows/frameworks/qf-1.0-src">
-		<attributes>
-			<attribute name="javadoc_location" value="file:/C:/My Dropbox/software_libraries/windows/frameworks/qf-1.0-javadoc/qf-1.0-javadoc/"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/hobersal"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/KeithleyInstruments"/>
+	<classpathentry kind="lib" path="/java_development_libraries/chart_tools/jfreechart-1.0.12/jfreechart-1.0.12.jar"/>
+	<classpathentry kind="lib" path="/java_development_libraries/Extructuras de Datos/TADs.jar"/>
+	<classpathentry kind="lib" path="/java_development_libraries/frameworks/quantity_v_0_9.jar"/>
+	<classpathentry kind="lib" path="/java_development_libraries/XML/libs/jdom.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -5,7 +5,7 @@ import com.schneide.quantity.electricalQuantities.Volt;
 import com.schneide.quantity.miscQuantities.GradCelsius;
 import instrumentsWithRS232.*;
 
-public class Keithley2700_v2 extends instrumentWithRS232{
+public class Keithley2700_v2 extends instrumentWithRS232_32bits{
 	//Constants
 	private static int MAX_NUMBER_OF_CHANNELS = 10;
 	private static int MIN_NUMBER_OF_CHANNELS = 1;

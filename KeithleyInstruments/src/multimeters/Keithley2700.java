@@ -1,7 +1,7 @@
 package multimeters;
 import instrumentsWithRS232.*;
 
-public class Keithley2700 extends instrumentWithRS232{
+public class Keithley2700 extends instrumentWithRS232_32bits{
 	//Constants
 	private static int MAX_NUMBER_OF_CHANNELS = 22;
 	private static int MIN_NUMBER_OF_CHANNELS = 1;

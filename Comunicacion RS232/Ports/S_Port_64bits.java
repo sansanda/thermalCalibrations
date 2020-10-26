@@ -1,15 +1,19 @@
 package Ports;
 import java.io.*;
 
-
 import java.util.*;
-import javax.comm.*;
+
 import javax.swing.JOptionPane;
 
-import interfaces.ICommunicationPort;
+import gnu.io.CommPortIdentifier;
+import gnu.io.PortInUseException;
+import gnu.io.SerialPort;
+import gnu.io.SerialPortEvent;
+import gnu.io.SerialPortEventListener;
+import gnu.io.UnsupportedCommOperationException;
 
 
-public class S_Port2 implements ICommunicationPort, SerialPortEventListener{
+public class S_Port_64bits implements Runnable, SerialPortEventListener{
 
 	 //**************************************************************************
 	 //****************************CONSTANTES************************************
@@ -21,16 +25,17 @@ public class S_Port2 implements ICommunicationPort, SerialPortEventListener{
 	 //**************************************************************************
 
 
-	 private CommPortIdentifier 		portId = null;
+	 static CommPortIdentifier 					portId = null;
+	 static Enumeration<CommPortIdentifier>	   	portList = null;
+	 static String 						wantedPortName = null;
 	 private InputStream		      	inputStream;
 	 private OutputStream       		outputStream;
 	 private SerialPort		      		serialPort;
+	 private Thread		      			serialPortThread;
+	 private byte[] 					buffer = new byte[256];
+	 private int 						bufferPointer = 0;
 	 private boolean 					txOK = false;
-	 private StringBuffer 				readBuffer = null;
-	 private String 					receivedData = null;
-	 
 
-	 
 	 //**************************************************************************
 	 //****************************CONSTRUCTORES*********************************
 	 //**************************************************************************
@@ -39,73 +44,45 @@ public class S_Port2 implements ICommunicationPort, SerialPortEventListener{
 	  *
 	  *
 	  */
-	 public S_Port2(String wantedPortName) throws Exception{
-		 receivedData = "";
-		 readBuffer = new StringBuffer();
-		 initialize(wantedPortName);
+	 public S_Port_64bits(String wantedPortName) throws Exception{
+		 this.wantedPortName = wantedPortName;
+		 this.initializePort();
 	 }
 
 	 //**************************************************************************
 	 //****************************METODOS***************************************
 	 //**************************************************************************
-	 
-	 /**
-	  *
-	  * @return
-	  */
-	 public void open() throws Exception{
-		if (portId.isCurrentlyOwned())
-		{
-			System.out.println("Port "+portId.getName() + " currently owned"+" by"+portId.getCurrentOwner());
-			JOptionPane.showMessageDialog(null,"Port "+portId.getName() + " currently owned"+" by"+portId.getCurrentOwner());
-		}else
-		{
-			serialPort = (SerialPort) portId.open("RS232_PortApp", 2000); //SimpleReadApp
-		}
-	 }
-	 
+
 	 /**
 	  *
 	  */
-	 public void close() throws Exception{
-		 Thread.sleep(2000);  // Be sure data is xferred before closing
-		 serialPort.close(); 
+	 public void closeSerialPort(){
+		 try {
+			 Thread.sleep(2000);  // Be sure data is xferred before closing
+		 }
+		 catch (Exception e) {}
+		 this.serialPort.close();
+		 
 	 }
 
 	 /**
 	  *
 	  * @param message
 	  */
-	 public void sendData(String message){
+	 public void sendMessageToSerialPort(String message){
 		 //System.out.println("\n"+"Writing \""+message+"\" to "+serialPort.getName());
 		 try {
 			 outputStream.write((message + "\t\n").getBytes());
 		 } catch (IOException e) {}
 	 }
-	 
-	 /**
-	  *
-	  * @param message
-	  */
-	 public void sendData(byte[] message){
-		 //System.out.println("\n"+"Writing \""+message+"\" to "+serialPort.getName());
-		 byte[] m = new byte[message.length+2];
-		 m[m.length-2] = 13;//\t
-		 m[m.length-1] = 10;//\n
-		 
-		 try {
-			 outputStream.write((m));
-		 } catch (IOException e) {}
-	 }
-	 
 
 	 /**
 	  *
 	  */
-	 public void initialize(String wantedPortName) throws Exception{
+	 private void initializePort()throws Exception{
 
-		 portId = searchForSerialCommPort(wantedPortName);
-		 open();
+		 this.searchForSerialCommPort();
+		 this.openSerialPort();
 		 this.inputStream = this.getPortInputStream();
 		 this.outputStream = this.getPortOutputStream();
 		 try
@@ -133,6 +110,8 @@ public class S_Port2 implements ICommunicationPort, SerialPortEventListener{
 			System.out.println(e.toString());
 			System.exit(-1);
 		 }
+		 this.serialPortThread = new Thread(this);
+		 this.serialPortThread.start();
 	 }
 
 	 /**
@@ -161,36 +140,41 @@ public class S_Port2 implements ICommunicationPort, SerialPortEventListener{
 		case SerialPortEvent.OUTPUT_BUFFER_EMPTY:
 			//System.out.println("Output buffer is empty.");
 		case SerialPortEvent.DATA_AVAILABLE:
-			readBuffer = new StringBuffer();
-			int c;
-            try {
-                 while ((c=inputStream.read()) != 10){
-                   if(c!=13)  readBuffer.append((char) c);
-                 }
-                 receivedData = readBuffer.toString();
-                 String TimeStamp = new java.util.Date().toString();
-                 //System.out.println(TimeStamp + ": scanned input received:" + receivedData);
-                 inputStream.close();
-                 txOK = true;
-            } catch (IOException e) {}
-
-            break;
+			byte[] readBuffer = new byte[256];
+		    try
+		    {
+				while (inputStream.available() > 0) {
+				    int numBytes = inputStream.read(readBuffer);
+				    for (int i=0;i<numBytes;i++){
+				    	byte b = readBuffer[i];
+						buffer[bufferPointer+i]=b;
+						if (b==10){txOK = true;}
+					}
+				    bufferPointer = bufferPointer + numBytes;
+				}
+		    } catch (IOException e) {}
+		    break;
 		}
 	 }
-	 public byte[] readDataAsByteArray() throws Exception{
-		 waitForIncomingData();
-		 return readDataAsString().getBytes();
+	 public byte[] getReadData(){
+		 bufferPointer = 0;
+		 return buffer;
 	 }
-	 public String readDataAsString() throws Exception{
-		 waitForIncomingData();
-		 String copy = new String(receivedData);
-		 receivedData = "";
-		 return copy;
-	 }
-	 
-	 private void waitForIncomingData() throws Exception{
+	 public void waitForIncomingData() throws Exception{
 		 while (!txOK){}
 		 txOK = false;
+	 }
+	 public int getReadDataLength(){
+		return bufferPointer-1;
+	 }
+	 /**
+	  *
+	  */
+	 public void run() {
+		try
+		{
+		    Thread.sleep(20000);
+		} catch (InterruptedException e) {}
 	 }
 
 	 //**************************************************************************
@@ -206,9 +190,7 @@ public class S_Port2 implements ICommunicationPort, SerialPortEventListener{
 	 private void setPortParams(){
 		 try
 		 {
-			 serialPort.setSerialPortParams(9600,SerialPort.DATABITS_8,SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);
-			 serialPort.setDTR(false);
-			 serialPort.setRTS(false);
+			 this.serialPort.setSerialPortParams(9600,SerialPort.DATABITS_8,SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);
 		 } catch (UnsupportedCommOperationException e) {}
 	 }
 	 
@@ -221,30 +203,28 @@ public class S_Port2 implements ICommunicationPort, SerialPortEventListener{
 	 /**
 	  *
 	  */
-	 
-	private CommPortIdentifier searchForSerialCommPort(String wantedPortName) throws Exception{
+	 private void searchForSerialCommPort() throws Exception{
 
-		boolean								portFound 		= false;
-		CommPortIdentifier 					portId 	= null;
-		Enumeration<CommPortIdentifier>	   	portList = null;
-		 
+		boolean				portFound 		= false;
+		CommPortIdentifier 	WantedPortId 	= null;
+
 		//Preguntamos a todos los puertos de la lista
 		//si nuestro puerto se encuentra en el equipo
 		System.out.println("Buscando puertos del sistema....\n");
 		Thread.sleep(1000);
 		portList = CommPortIdentifier.getPortIdentifiers();
-		
-		while (portList.hasMoreElements() && !portFound) {
+		while (portList.hasMoreElements()) {
 			portId = portList.nextElement();
 			System.out.print(portId.getName()+ " ");
 			Thread.sleep(500);
 			if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
 				if (portId.getName().equals(wantedPortName)) {
-					portFound = true;	
+					portFound = true;
+					//Memorizamos el identificador del puerto que buscamos
+					WantedPortId = portId;
 				}
 			}
 		}
-		
 		if (!portFound) {
 		    System.out.println("port " + wantedPortName + " not found.");
 		    JOptionPane.showMessageDialog(null,"port " + wantedPortName + " not found.");
@@ -253,7 +233,7 @@ public class S_Port2 implements ICommunicationPort, SerialPortEventListener{
 			System.out.println(" ............ Found port: "+wantedPortName);
 		}
 		//portId es el identificador del puerto que buscamos
-		return portId;
+		portId = WantedPortId;
 	 }
 
 	 /**
@@ -280,6 +260,27 @@ public class S_Port2 implements ICommunicationPort, SerialPortEventListener{
 		 } catch (IOException e) {}
 		 return os;
 	 }
+	 /**
+	  *
+	  * @return
+	  */
+	 private void openSerialPort(){
+		try{
+			if (portId.isCurrentlyOwned())
+			{
+				System.out.println("Port "+portId.getName() + " currently owned"+" by"+portId.getCurrentOwner());
+				JOptionPane.showMessageDialog(null,"Port "+portId.getName() + " currently owned"+" by"+portId.getCurrentOwner());
+			}else
+			{
+				serialPort = (SerialPort) portId.open("RS232_PortApp", 2000); //SimpleReadApp
+			}
+		}
+		catch(PortInUseException e){
+			System.err.println("Port already in use: " + e.getMessage() +"\n"+ e.getCause() +"\n"+ e.getLocalizedMessage()+"\n"+e.getClass());
+			JOptionPane.showMessageDialog(null,"Port already in use.");
+
+		}
+	 }
 
 
 	/**
@@ -293,16 +294,15 @@ public class S_Port2 implements ICommunicationPort, SerialPortEventListener{
 		 {
 			//El puerto se encuenta en el equipo y adquirimos un objeto
 			//tipo SerialPort para poder manejar dicho puerto
-			S_Port2 sp = new S_Port2("COM7");
+			S_Port_64bits sp = new S_Port_64bits("COM8");
 			while (true){
 				System.out.println("Introduce la cadena de caracteres a enviar por el puerto serie: ");
-				sp.sendData(reader.readLine());
+				sp.sendMessageToSerialPort(reader.readLine());
 			}
 		 }
 		 catch(Exception e)
 		 {
-			// TODO Auto-generated catch block
-				e.printStackTrace();
+
 		 }
 	}
 

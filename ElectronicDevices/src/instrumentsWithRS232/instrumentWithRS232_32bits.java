@@ -5,11 +5,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 
-import Ports.S_Port;
+import Ports.S_Port_32bits;
 
 
-public abstract class instrumentWithRS232 extends S_Port{
-	public instrumentWithRS232(String wantedPortName) throws Exception{
+public abstract class instrumentWithRS232_32bits extends S_Port_32bits{
+	public instrumentWithRS232_32bits(String wantedPortName) throws Exception{
 		super(wantedPortName);
 	}
 	public void configure(String _configurationFile) throws Exception{

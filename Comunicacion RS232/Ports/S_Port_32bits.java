@@ -6,7 +6,7 @@ import javax.comm.*;
 import javax.swing.JOptionPane;
 
 
-public class S_Port implements Runnable, SerialPortEventListener{
+public class S_Port_32bits implements Runnable, SerialPortEventListener{
 
 	 //**************************************************************************
 	 //****************************CONSTANTES************************************
@@ -37,7 +37,7 @@ public class S_Port implements Runnable, SerialPortEventListener{
 	  *
 	  *
 	  */
-	 public S_Port(String wantedPortName) throws Exception{
+	 public S_Port_32bits(String wantedPortName) throws Exception{
 		 this.wantedPortName = wantedPortName;
 		 this.initializePort();
 	 }
@@ -287,7 +287,7 @@ public class S_Port implements Runnable, SerialPortEventListener{
 		 {
 			//El puerto se encuenta en el equipo y adquirimos un objeto
 			//tipo SerialPort para poder manejar dicho puerto
-			S_Port sp = new S_Port("COM8");
+			S_Port_32bits sp = new S_Port_32bits("COM8");
 			while (true){
 				System.out.println("Introduce la cadena de caracteres a enviar por el puerto serie: ");
 				sp.sendMessageToSerialPort(reader.readLine());
