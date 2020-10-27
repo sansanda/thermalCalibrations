@@ -48,7 +48,7 @@ public class SimpleWrite {
             portId = (CommPortIdentifier) portList.nextElement();
             if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
                 // if (portId.getName().equals("COM1")) {
-                if (portId.getName().equals("COM1")) {
+                if (portId.getName().equals("COM8")) {
                     try {
                         serialPort = (SerialPort)
                             portId.open("SimpleWriteApp", 2000);

@@ -36,6 +36,9 @@ public class S_Port_64bits implements Runnable, SerialPortEventListener{
 	 private int 						bufferPointer = 0;
 	 private boolean 					txOK = false;
 
+
+	 private String 					terminator = "\n";
+	 
 	 //**************************************************************************
 	 //****************************CONSTRUCTORES*********************************
 	 //**************************************************************************
@@ -44,9 +47,9 @@ public class S_Port_64bits implements Runnable, SerialPortEventListener{
 	  *
 	  *
 	  */
-	 public S_Port_64bits(String wantedPortName) throws Exception{
+	 public S_Port_64bits(String wantedPortName, String terminator) throws Exception{
 		 this.wantedPortName = wantedPortName;
-		 this.initializePort();
+		 this.initializePort(terminator);
 	 }
 
 	 //**************************************************************************
@@ -72,15 +75,16 @@ public class S_Port_64bits implements Runnable, SerialPortEventListener{
 	 public void sendMessageToSerialPort(String message){
 		 //System.out.println("\n"+"Writing \""+message+"\" to "+serialPort.getName());
 		 try {
-			 outputStream.write((message + "\t\n").getBytes());
+			 outputStream.write((message + terminator).getBytes());
 		 } catch (IOException e) {}
 	 }
 
 	 /**
 	  *
 	  */
-	 private void initializePort()throws Exception{
+	 private void initializePort(String terminator)throws Exception{
 
+		 this.terminator = terminator;
 		 this.searchForSerialCommPort();
 		 this.openSerialPort();
 		 this.inputStream = this.getPortInputStream();
@@ -148,11 +152,14 @@ public class S_Port_64bits implements Runnable, SerialPortEventListener{
 				    for (int i=0;i<numBytes;i++){
 				    	byte b = readBuffer[i];
 						buffer[bufferPointer+i]=b;
+						
 						if (b==10){txOK = true;}
 					}
+				    
 				    bufferPointer = bufferPointer + numBytes;
 				}
-		    } catch (IOException e) {}
+		    } catch (IOException e) {System.out.println(e.getStackTrace());System.out.println(e.getCause());}
+
 		    break;
 		}
 	 }
@@ -160,8 +167,16 @@ public class S_Port_64bits implements Runnable, SerialPortEventListener{
 		 bufferPointer = 0;
 		 return buffer;
 	 }
+	 
+	 /**
+	 * @return the txOK
+	 */
+	 public boolean isTxOK() {
+		 return txOK;
+	 }
+	
 	 public void waitForIncomingData() throws Exception{
-		 while (!txOK){}
+		 while (!txOK) {Thread.sleep(50);}
 		 txOK = false;
 	 }
 	 public int getReadDataLength(){
@@ -294,7 +309,7 @@ public class S_Port_64bits implements Runnable, SerialPortEventListener{
 		 {
 			//El puerto se encuenta en el equipo y adquirimos un objeto
 			//tipo SerialPort para poder manejar dicho puerto
-			S_Port_64bits sp = new S_Port_64bits("COM8");
+			S_Port_64bits sp = new S_Port_64bits("COM8","\n");
 			while (true){
 				System.out.println("Introduce la cadena de caracteres a enviar por el puerto serie: ");
 				sp.sendMessageToSerialPort(reader.readLine());
