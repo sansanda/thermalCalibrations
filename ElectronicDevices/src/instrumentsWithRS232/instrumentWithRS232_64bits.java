@@ -9,8 +9,9 @@ import Ports.S_Port_64bits;
 
 
 public abstract class instrumentWithRS232_64bits extends S_Port_64bits{
-	public instrumentWithRS232_64bits(String wantedPortName) throws Exception{
-		super(wantedPortName);
+	
+	public instrumentWithRS232_64bits(String wantedPortName, String terminator) throws Exception{
+		super(wantedPortName, terminator);
 	}
 	public void configure(String _configurationFile) throws Exception{
 		System.out.println("Configurando el instrumento...");
