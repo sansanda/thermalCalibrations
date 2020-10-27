@@ -235,4 +235,58 @@ public class Keithley2700_v3 implements IThermometer, IVoltmeter, ISingleChannel
 	public void reset() throws Exception{
 		serialPortRS232.sendData("*RST");
 	}
+
+	@Override
+	public void setMeasureMagtinude(Object _measurePhysicMagnitude) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Object getMeasureMagnitude() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setRange(Measurable<?> _range) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Measurable<?> getRange() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setNPLC(double _nplc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Measurable<?> getNPLC() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setRepeatFilterN(int _repeatFilterN) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Measurable<?> getRepeatFilterN() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean enableFourMeasure(boolean _enableFourMeasure) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

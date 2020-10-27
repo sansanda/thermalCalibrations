@@ -6,10 +6,10 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/ElectronicDevices"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ElectronicDevices"/>
 	<classpathentry kind="src" path="/InstrumentInterfaces"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Comunicacion RS232"/>
 	<classpathentry kind="lib" path="/java_development_libraries/tratamiento de unidades de medida/jscience-4.3.1.jar"/>
 	<classpathentry kind="lib" path="/java_development_libraries/frameworks/quantity_v_0_9.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/Comunicacion RS232"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

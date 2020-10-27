@@ -471,7 +471,7 @@ public class RunCalibrationSetUp_Action implements Action{
 		printActionMessage("Leyendo el fichero de configuracion de Instrumentos.");
 		instrumentsData = new InstrumentsData(INSTRUMENTS_DATA_FILE_PATH);
 		printActionMessage("Creando la instancia de Keithley2700.");
-		K2700 = new Keithley2700_v4(instrumentsData.getMultimeterData().getComPort());
+		K2700 = new Keithley2700_v4(instrumentsData.getMultimeterData().getComPort(),"\n");
 		printActionMessage("Creando la instancia de Eurotherm2404.");
 		E2404 = new Eurotherm2404_v4(instrumentsData.getOvenData().getComPort(),instrumentsData.getOvenData().getControllerID());
 		return 0;

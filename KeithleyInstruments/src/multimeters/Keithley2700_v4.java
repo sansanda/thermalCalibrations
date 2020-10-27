@@ -17,8 +17,8 @@ public class Keithley2700_v4 extends instrumentWithRS232_64bits{
 	//Variables
 
 	//default constructor
-	public Keithley2700_v4(String wantedPortName)throws Exception{
-		super(wantedPortName);
+	public Keithley2700_v4(String wantedPortName, String terminator)throws Exception{
+		super(wantedPortName, terminator);
 	}
 	//Getters and Setters
 	//Other Methods
@@ -46,8 +46,9 @@ public class Keithley2700_v4 extends instrumentWithRS232_64bits{
 		//sendMessageToSerialPort("ROUT:OPEN:ALL");
 		sendMessageToSerialPort(closeChannelOrder);
 		sendMessageToSerialPort("READ?");
-
+		
 		waitForIncomingData();
+		
 		dataLength = this.getReadDataLength();
 		data = this.getReadData();
 		if (dataLength>0){
@@ -847,25 +848,32 @@ public class Keithley2700_v4 extends instrumentWithRS232_64bits{
 		sendMessageToSerialPort("*RST");
 	}
 	
+	/**
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
 		 try
 		 {
+			 
 			 long t1,t2,t3,i;
-			 Keithley2700_v4 k = new Keithley2700_v4("COM4");
+			 
+			 Keithley2700_v4 k = new Keithley2700_v4("COM8", "\t\n");
 			 //k.initialize("k2700_InitFile_For_TTC.txt");
 			 //k.test("k2700_TestFile_For_TTC.txt");
 			 //k.configure("k2700_ConfigFile_For_TTC.txt");
+			 k.resetInstrument();
 			 k.enableBeeper(false);
-			 System.out.println("test result = " + k.testROM());
+			 
+			 //System.out.println("test result = " + k.testROM());
 			 System.out.println("Installed modules = " + k.getInstalledModules());
 			 System.out.println("Identification = " + k.getIdentification());
 			 
-			 //System.out.println("VOLTAGE MEASURE --> "+k.measureVoltage(6));
-			 //k.readVoltageAndStoreInBuffer(6,10,500);
-			 //System.out.println("DESVIACION ESTANDARD PARA EL VOLTAGE--> "+k.calculeVoltageStandardDeviationFromBufferData());
-			 //System.out.println("DESVIACION ESTANDARD PARA EL VOLTAGE con 10 muestras--> "+k.takeNVoltageMeasuresWithDelayAndReturnStDev(6, 100, 100));
+			 System.out.println("VOLTAGE MEASURE --> "+k.measureDCVoltage(6));
+			 k.readVoltageAndStoreInBuffer(6,10,500);
+			 System.out.println("DESVIACION ESTANDARD PARA EL VOLTAGE--> "+k.calculeVoltageStandardDeviationFromBufferData());
+			 //System.out.println("DESVIACION ESTANDARD PARA EL VOLTAGE con 10 muestras--> "+k.takeNVoltageMeasuresWithDelayAndReturnStDev(6, 100, 500));
 			 
 			 /*for (int j=0;j<10;j++){
 				 t1 = System.currentTimeMillis();
