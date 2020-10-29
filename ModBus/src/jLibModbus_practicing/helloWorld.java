@@ -9,7 +9,6 @@ import com.intelligt.modbus.jlibmodbus.exception.ModbusIOException;
 import com.intelligt.modbus.jlibmodbus.serial.SerialParameters;
 import com.intelligt.modbus.jlibmodbus.serial.SerialPort;
 import com.intelligt.modbus.jlibmodbus.serial.SerialPortFactoryJSSC;
-import com.intelligt.modbus.jlibmodbus.serial.SerialPortFactoryRXTX;
 import com.intelligt.modbus.jlibmodbus.serial.SerialUtils;
 
 import jssc.SerialPortList;
@@ -46,9 +45,12 @@ import jssc.SerialPortList;
  */
 public class helloWorld {
 
+	
     static public void main(String[] arg) {
+    	
         SerialParameters sp = new SerialParameters();
         Modbus.setLogLevel(Modbus.LogLevel.LEVEL_DEBUG);
+        
         try {
             // you can use just string to get connection with remote slave,
             // but you can also get a list of all serial ports available at your system.
@@ -94,6 +96,8 @@ public class helloWorld {
                     for (int value : registerValues) {
                         System.out.println("Address: " + offset++ + ", Value: " + value);
                     }
+                    
+                    
                 } catch (RuntimeException e) {
                     throw e;
                 } catch (Exception e) {
