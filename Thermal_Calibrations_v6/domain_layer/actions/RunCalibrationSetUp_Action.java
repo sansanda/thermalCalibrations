@@ -22,7 +22,7 @@ import views.CalibrationSetUp_ProgressScreen_JFrame;
 import Main.Calibration_MainController;
 import Main.MainController;
 import Ovens.Eurotherm2404_v4;
-import multimeters.Keithley2700;
+import multimeters.Keithley2700_v5;
 import fileUtilities.*;
 
 public class RunCalibrationSetUp_Action implements Action{
@@ -54,7 +54,7 @@ public class RunCalibrationSetUp_Action implements Action{
 	private InstrumentsData 							instrumentsData = null;
 	private TemperatureSensor 							temperatureSensorData = null;
 
-	private Keithley2700 		K2700;
+	private Keithley2700_v5 		K2700;
 	private Eurotherm2404_v4	E2404;
 	private int 				actualCalibrationStep;
 	private Timer 				progressScreenRefreshTimer;
@@ -502,7 +502,7 @@ public class RunCalibrationSetUp_Action implements Action{
 		printActionMessage("Leyendo el fichero de configuracion de Instrumentos.");
 		instrumentsData = new InstrumentsData(INSTRUMENTS_DATA_FILE_PATH);
 		printActionMessage("Creando la instancia de Keithley2700.");
-		K2700 = new Keithley2700(instrumentsData.getMultimeterData().getComPort());
+		K2700 = new Keithley2700_v5(instrumentsData.getMultimeterData().getComPort(),"\t\n");
 		K2700.enableBeeper(false);
 		printActionMessage("Creando la instancia de Eurotherm2404.");
 		E2404 = new Eurotherm2404_v4(instrumentsData.getOvenData().getComPort(),instrumentsData.getOvenData().getControllerID());

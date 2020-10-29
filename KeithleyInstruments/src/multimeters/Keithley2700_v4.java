@@ -5,6 +5,14 @@ import com.schneide.quantity.electricalQuantities.Volt;
 import com.schneide.quantity.miscQuantities.GradCelsius;
 import instrumentsWithRS232.*;
 
+/**
+ * Keithley2700_v4 es una copia de Keithley2700_v3 pero modificada para trabajar
+ * en un sistema de 64 bits. Por lo tanto hace uso de las librerias RXTX compiladas 
+ * para trabajar con esta arquitectura.
+ * @author david
+ *
+ */
+
 public class Keithley2700_v4 extends instrumentWithRS232_64bits{
 	//Constants
 	private static int MAX_NUMBER_OF_CHANNELS = 10;
@@ -859,7 +867,7 @@ public class Keithley2700_v4 extends instrumentWithRS232_64bits{
 			 
 			 long t1,t2,t3,i;
 			 
-			 Keithley2700_v4 k = new Keithley2700_v4("COM8", "\t\n");
+			 Keithley2700_v4 k = new Keithley2700_v4("COM4", "\t\n");
 			 //k.initialize("k2700_InitFile_For_TTC.txt");
 			 //k.test("k2700_TestFile_For_TTC.txt");
 			 //k.configure("k2700_ConfigFile_For_TTC.txt");

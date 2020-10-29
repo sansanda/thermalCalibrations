@@ -15,5 +15,6 @@
 	<classpathentry kind="lib" path="/java_development_libraries/Extructuras de Datos/TADs.jar"/>
 	<classpathentry kind="lib" path="/java_development_libraries/frameworks/quantity_v_0_9.jar"/>
 	<classpathentry kind="lib" path="/java_development_libraries/XML/libs/jdom.jar"/>
+	<classpathentry kind="lib" path="/java_development_libraries/chart_tools/jcommon-1.0.17.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

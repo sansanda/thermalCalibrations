@@ -13,6 +13,7 @@ import interfaces.ISingleChannelMultimeter;
 import interfaces.IThermometer;
 import interfaces.IVoltmeter;
 
+
 public class Keithley2700_v3 implements IThermometer, IVoltmeter, ISingleChannelMultimeter{
 
 	
