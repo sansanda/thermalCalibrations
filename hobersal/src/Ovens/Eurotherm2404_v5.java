@@ -24,7 +24,7 @@ import net.wimpi.modbus.procimg.SimpleRegister;
 import net.wimpi.modbus.util.SerialParameters;
 
 
-public class Eurotherm2404_v4 {
+public class Eurotherm2404_v5 {
 
 	/* The important instances of the classes mentioned before */
 
@@ -71,7 +71,7 @@ public class Eurotherm2404_v4 {
 	 * @param _controllerID
 	 * @throws Exception
 	 */
-	public Eurotherm2404_v4(String wantedPortName,int _controllerID) throws Exception {
+	public Eurotherm2404_v5(String wantedPortName,int _controllerID) throws Exception {
 		CONTROLLER_ID = _controllerID;
 		initializeSerialParameters(wantedPortName);
 		//mbsl = new ModbusSerialListener(sp);
@@ -278,7 +278,7 @@ public class Eurotherm2404_v4 {
 	public static void main(String[] args) {
 		try {
 
-			/*Eurotherm2404_v4 eurotherm2404 = new Eurotherm2404_v4("COM4",1);
+			/*Eurotherm2404_v5 eurotherm2404 = new Eurotherm2404_v5("COM4",1);
 			long timeA = System.currentTimeMillis();
 			long elapsed = 10000;
 			while ((System.currentTimeMillis()-timeA)<elapsed){
