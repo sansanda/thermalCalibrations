@@ -1,7 +1,5 @@
 package Ovens;
 
-import java.util.Arrays;
-
 import com.intelligt.modbus.jlibmodbus.Modbus;
 import com.intelligt.modbus.jlibmodbus.master.ModbusMaster;
 import com.intelligt.modbus.jlibmodbus.master.ModbusMasterFactory;
@@ -16,34 +14,9 @@ import com.schneide.quantity.miscQuantities.GradCelsius;
 
 
 /*
- * Copyright (C) 2016 "Invertor" Factory", JSC
- * All rights reserved
  *
- * This file is part of JLibModbus.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice,
- * this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- * this list of conditions and the following disclaimer in the documentation and/or
- * other materials provided with the distribution.
- *
- * 3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse
- * or promote products derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
- * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
- * OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
- * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
- * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * Authors: Vladislav Y. Kochedykov, software engineer.
- * email: vladislav.kochedykov@gmail.com
+ * Authors: David Sanchez Sanchez, software engineer.
+ * email: dsancheznsanc@uoc.edu
  * 
  * Clase hecha para la practica con la libreria JLibModbus con un horno hobersal que 
  * utiliza un Controlador Eurotherm 2404
@@ -53,10 +26,10 @@ public class Eurotherm2404_practices {
 	//TODO: Modificar la clase llamada Eurotherm2404_v5 para pasarle el mosdbus master en el constructory a partir de alli implementar todos los metodos de lectura e imposicion de temparatura etc.
 	
 	
-	public Eurotherm2404_practices(String commPort) throws RuntimeException, ModbusIOException, Exception{
+	public Eurotherm2404_practices(String commPort, Modbus.LogLevel logLevel) throws RuntimeException, ModbusIOException, Exception{
 		super();
 		// TODO Auto-generated constructor stub
-		this.initialize(commPort);
+		this.initialize(commPort, logLevel);
 	}
 
 
@@ -65,7 +38,8 @@ public class Eurotherm2404_practices {
 
 	static byte TEMP_ADDR = 1;
 
-	static char SET_TEMPERATURE_SETPOINT_ADDR = 2;
+	static char SET_TEMPERATURE_SETPOINT1_ADDR = 2;
+	static char SET_TEMPERATURE_SETPOINT2_ADDR = 3;
 	static char READ_SETPOINT1_ADDR = 24;
 	static char READ_SETPOINT2_ADDR = 25;
 	static char OUTPUTPOWER_ADDR = 3;
@@ -73,12 +47,21 @@ public class Eurotherm2404_practices {
 
 	static int 	USER_CALIBRATION_ENABLE_ADDR = 110;
 	
+	static int  MAX_TEMP = 500;
+	static int  MIN_TEMP = 0;
+	static int 	MIN_OUTPUTPOWER = 0;
+	static int 	MAX_OUTPUTPOWER = 100;
+	static byte MANUAL_MODE= 1;
+	static byte AUTO_MODE = 0;
+	static byte FACTORY_CALIBRATION = 0;
+	static byte USER_CALIBRATION = 0;
+	
 	SerialParameters sp = null;
 	ModbusMaster m = null;
 			
-	public void initialize(String commPort) throws RuntimeException, ModbusIOException, Exception{
+	public void initialize(String commPort,  Modbus.LogLevel logLevel) throws RuntimeException, ModbusIOException, Exception{
 		this.sp = initializeSerialConnection(commPort);
-		this.m = initializeModBusMaster(this.sp);
+		this.m = initializeModBusMaster(this.sp, logLevel);
 	}
 	
 	public SerialParameters initializeSerialConnection(String commPort) throws RuntimeException, ModbusIOException, Exception 
@@ -86,7 +69,7 @@ public class Eurotherm2404_practices {
 		SerialParameters sp = new SerialParameters(); 
 
         // set the serial port name
-        sp.setDevice(Eurotherm2404_practices.COMM_PORT);
+        sp.setDevice(Eurotherm2404_v5.COMM_PORT_1);
         // these parameters are set by default
         sp.setBaudRate(SerialPort.BaudRate.BAUD_RATE_9600);
         sp.setDataBits(8);
@@ -114,9 +97,9 @@ public class Eurotherm2404_practices {
     
 	}
 	
-	public ModbusMaster initializeModBusMaster(SerialParameters sp) throws RuntimeException, ModbusIOException, Exception {
+	public ModbusMaster initializeModBusMaster(SerialParameters sp, Modbus.LogLevel logLevel) throws RuntimeException, ModbusIOException, Exception {
 		//The Master is the PC
-		Modbus.setLogLevel(Modbus.LogLevel.LEVEL_DEBUG);
+		Modbus.setLogLevel(logLevel);
         ModbusMaster m = ModbusMasterFactory.createModbusMasterRTU(sp);
         m.connect();
         return m;
@@ -143,11 +126,185 @@ public class Eurotherm2404_practices {
 		return new GradCelsius(result);
 	}
 	
+	public GradCelsius readOutputPower(){
+		double result = Double.NaN;
+		
+		try {
+			int[] data = this.m.readInputRegisters(SLAVE_ID, OUTPUTPOWER_ADDR, 1);
+			result = data[0];
+		} catch (ModbusProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ModbusNumberException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ModbusIOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return new GradCelsius(result);
+	}
+	
+	public GradCelsius readTemperatureSetpoint1(){
+		double result = Double.NaN;
+		
+		try {
+			int[] data = this.m.readInputRegisters(SLAVE_ID, READ_SETPOINT1_ADDR, 1);
+			result = data[0];
+		} catch (ModbusProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ModbusNumberException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ModbusIOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return new GradCelsius(result);
+	}
+	
+	public GradCelsius readTemperatureSetpoint2(){
+		double result = Double.NaN;
+		
+		try {
+			int[] data = this.m.readInputRegisters(SLAVE_ID, READ_SETPOINT2_ADDR, 1);
+			result = data[0];
+		} catch (ModbusProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ModbusNumberException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ModbusIOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return new GradCelsius(result);
+	
+	}
+	
+	public void setTemperatureSetpoint1(int setPoint){
+		try {
+			this.m.writeSingleRegister(SLAVE_ID, SET_TEMPERATURE_SETPOINT1_ADDR, setPoint);
+		} catch (ModbusProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ModbusNumberException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ModbusIOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void setTemperatureSetpoint2(int setPoint){
+		try {
+			this.m.writeSingleRegister(SLAVE_ID, SET_TEMPERATURE_SETPOINT2_ADDR, setPoint);
+		} catch (ModbusProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ModbusNumberException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ModbusIOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void toggleMode(int mode) throws Exception{
+		if (mode!=AUTO_MODE || mode!=MANUAL_MODE){ return;}
+		
+		if (mode == AUTO_MODE) 	setInManualMode();
+		else if (mode == MANUAL_MODE)	setInAutoMode();
+		
+	}
+	
+	public void setInManualMode() throws Exception{
+		try {
+			this.m.writeSingleRegister(SLAVE_ID, MODE_ADDR, MANUAL_MODE);
+		} catch (ModbusProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ModbusNumberException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ModbusIOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void setInAutoMode() throws Exception{
+		try {
+			this.m.writeSingleRegister(SLAVE_ID, MODE_ADDR, AUTO_MODE);
+		} catch (ModbusProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ModbusNumberException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ModbusIOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 *
+	 */
+	public void enableUserCalibration(){
+		try {
+			this.m.writeSingleRegister(SLAVE_ID, USER_CALIBRATION_ENABLE_ADDR,USER_CALIBRATION);
+		} catch (ModbusProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ModbusNumberException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ModbusIOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 *
+	 */
+	public void enableFactoryCalibration(){
+		try {
+			this.m.writeSingleRegister(SLAVE_ID, USER_CALIBRATION_ENABLE_ADDR,FACTORY_CALIBRATION);
+		} catch (ModbusProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ModbusNumberException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ModbusIOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
     static public void main(String[] arg) {
     	try {
-			Eurotherm2404_practices e = new Eurotherm2404_practices("COM1");
-			System.out.println(e.readTemperature().getValue());
+    		
+			Eurotherm2404_practices e = new Eurotherm2404_practices("COM1", Modbus.LogLevel.LEVEL_WARNINGS);
+			System.out.println("Temperatura actual = " + e.readTemperature().getValue());
+			System.out.println("Potencia = " + e.readOutputPower().getValue());
+			e.setInAutoMode();
+			e.setTemperatureSetpoint1(0);
+			while (true)
+			{
+				System.out.println("Temperatura actual = " + e.readTemperature().getValue());
+				System.out.println("Potencia = " + e.readOutputPower().getValue());
+				Thread.sleep(1000);
+			}
 			
         } catch (RuntimeException e) {
             throw e;
