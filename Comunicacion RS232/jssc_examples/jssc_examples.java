@@ -25,7 +25,6 @@ public class jssc_examples implements SerialPortEventListener{
 	 //****************************VARIABLES*************************************
 	 //**************************************************************************
 
-	 static String 						wantedPortName = null;
 	 //private InputStream		      	inputStream;
 	 //private OutputStream       		outputStream;
 	 private SerialPort		      		serialPort;
@@ -45,9 +44,8 @@ public class jssc_examples implements SerialPortEventListener{
 	  *
 	  *
 	  */
-	 public jssc_examples(String wantedPortName, String terminator) throws Exception{
-		 this.wantedPortName = wantedPortName;
-		 this.initializePort(terminator);
+	 public jssc_examples(String commPort, String terminator) throws Exception{
+		 this.initializePort(commPort, terminator);
 	 }
 
 	 //**************************************************************************
@@ -59,17 +57,12 @@ public class jssc_examples implements SerialPortEventListener{
 	  */
 	 public void closeSerialPort(){
 		 try {
-			 Thread.sleep(2000);  // Be sure data is xferred before closing
-		 }
-		 catch (Exception e) {}
-		 try {
 			this.serialPort.closePort();
 		} catch (SerialPortException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		 
-	 }
+	}
 
 	 /**
 	  *
@@ -88,9 +81,10 @@ public class jssc_examples implements SerialPortEventListener{
 	 /**
 	  *
 	  */
-	 private void initializePort(String terminator)throws Exception{
+	 private void initializePort(String commPort, String terminator)throws Exception{
 
 		this.terminator = terminator;
+		this.serialPort = new SerialPort(commPort); 
 		this.serialPort.setParams(BAUDRATE_9600,  DATABITS_8, STOPBITS_1, PARITY_NONE);
 		// this.serialPort.setParams(9600, 8, 1, 0); // alternate technique
 		int mask = SerialPort.MASK_RXCHAR + SerialPort.MASK_CTS + SerialPort.MASK_DSR;
@@ -100,6 +94,15 @@ public class jssc_examples implements SerialPortEventListener{
 		//this.serialPortThread.start();
 	 }
 
+	 public void open() {
+		 try {
+			this.serialPort.openPort();
+		} catch (SerialPortException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	 }
+	 
 	 /**
 	  *
 	  */
@@ -174,6 +177,8 @@ public class jssc_examples implements SerialPortEventListener{
 		}
 	 }
 	 */
+	 
+	 
 	 public byte[] getReadData(){
 		 bufferPointer = 0;
 		 return buffer;
@@ -217,7 +222,8 @@ public class jssc_examples implements SerialPortEventListener{
 		 {
 			//El puerto se encuenta en el equipo y adquirimos un objeto
 			//tipo SerialPort para poder manejar dicho puerto
-			jssc_examples sp = new jssc_examples("COM4","\n");
+			jssc_examples sp = new jssc_examples("COM9","\n");
+			sp.open();
 			while (true){
 				System.out.println("Introduce la cadena de caracteres a enviar por el puerto serie: ");
 				sp.sendMessageToSerialPort(reader.readLine());
@@ -225,7 +231,7 @@ public class jssc_examples implements SerialPortEventListener{
 		 }
 		 catch(Exception e)
 		 {
-
+			 System.out.println(e);
 		 }
 	}
 

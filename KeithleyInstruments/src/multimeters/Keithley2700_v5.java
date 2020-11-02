@@ -861,7 +861,7 @@ public class Keithley2700_v5 extends instrumentWithRS232_64bits{
 
 		 try
 		 {
-			 Keithley2700_v5 k = new Keithley2700_v5("COM4", "\t\n");
+			 Keithley2700_v5 k = new Keithley2700_v5("COM9", "\t\n");
 			 //k.initialize("k2700_InitFile_For_TTC.txt");
 			 //k.test("k2700_TestFile_For_TTC.txt");
 			 //k.configure("k2700_ConfigFile_For_TTC.txt");
