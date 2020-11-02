@@ -61,8 +61,8 @@ public class RunCalibrationSetUp_Action implements Action{
 	private InstrumentsData 							instrumentsData = null;
 	private TemperatureSensor 							temperatureSensorData = null;
 
-	private Keithley2700_v5 	K2700;
-	private Eurotherm2404_v5	E2404;
+	private Keithley2700_v5 	k2700_v5;
+	private Eurotherm2404_v5	e2404_v5;
 	private int 				actualCalibrationStep;
 	private Timer 				progressScreenRefreshTimer;
 	private SwingWorker 		runProgramSwingWorker;
@@ -128,7 +128,7 @@ public class RunCalibrationSetUp_Action implements Action{
 		printActionMessageAndProgressScreenMessage("Serching for the room temperature after waiting "+ calibrationSetUp.getTemperatureStabilizationCriteria().getFirstTemperatureStepStabilitzationTimeInMinutes()+" minutes. ");
 		//Wait for room temperature stabilization by time
 		waitForTemperatureStabilizationByTime(_temperatureStabilizationTimeInMinutes, temperatureSensorData);
-		return K2700.measurePT100Temperature(_temperatureSensorData.getChannel());
+		return k2700_v5.measurePT100Temperature(_temperatureSensorData.getChannel());
 	}
 	private void waitForTemperatureStabilizationByTime(int _temperatureStabilizationTime,TemperatureSensor _temperatureSensorData) throws Exception{
 		printActionMessageAndProgressScreenMessage("Waiting... "+_temperatureStabilizationTime+" minutes for Temperature Stabilization ");
@@ -138,7 +138,7 @@ public class RunCalibrationSetUp_Action implements Action{
 		while (actualTime<futureTime){
 			actualTime = System.currentTimeMillis();
 			if ((actualTime % PROGRESS_SCREEN_REFRESH_TIME_PERIOD_MILLISECONDS)==0){
-				pt100RealT = K2700.measurePT100Temperature(_temperatureSensorData.getChannel());
+				pt100RealT = k2700_v5.measurePT100Temperature(_temperatureSensorData.getChannel());
 				insertTempPointsInGraph(System.currentTimeMillis(), pt100RealT,calibrationSetUp.getTemperatureProfile().getTemperatures()[actualCalibrationStep]);
 			}
 		}
@@ -153,8 +153,8 @@ public class RunCalibrationSetUp_Action implements Action{
 
 		printActionMessageAndProgressScreenMessage("Taking "+_ttcSetUpData.getTemperatureStabilizationCriteria().getMeasurementWindow()+" temperature measures in "+(_ttcSetUpData.getTemperatureStabilizationCriteria().getSamplingPeriode()*_ttcSetUpData.getTemperatureStabilizationCriteria().getMeasurementWindow())/1000+" seconds and calulating the Standard Deviation\n");
 		
-		actualStepStandardDeviation = K2700.takeNTemperatureMeasuresWithDelayAndReturnStDev(_temperatureSensorData.getChannel(),_ttcSetUpData.getTemperatureStabilizationCriteria().getMeasurementWindow(),_ttcSetUpData.getTemperatureStabilizationCriteria().getSamplingPeriode());
-		measuredTemperature = K2700.measurePT100Temperature(_temperatureSensorData.getChannel());
+		actualStepStandardDeviation = k2700_v5.takeNTemperatureMeasuresWithDelayAndReturnStDev(_temperatureSensorData.getChannel(),_ttcSetUpData.getTemperatureStabilizationCriteria().getMeasurementWindow(),_ttcSetUpData.getTemperatureStabilizationCriteria().getSamplingPeriode());
+		measuredTemperature = k2700_v5.measurePT100Temperature(_temperatureSensorData.getChannel());
 		desiredTemperature = _ttcSetUpData.getTemperatureProfile().getTemperatures()[actualCalibrationStep];
 		actualAbsoluteTemperatureError = Math.abs(measuredTemperature-desiredTemperature);
 		maximumAdmissibleTemperatureError = _ttcSetUpData.getTemperatureStabilizationCriteria().getMaxAdminssibleTemperatureError();
@@ -193,8 +193,8 @@ public class RunCalibrationSetUp_Action implements Action{
 			printActionMessageAndProgressScreenMessage("|");
 			printActionMessageAndProgressScreenMessage("Taking "+_ttcSetUpData.getTemperatureStabilizationCriteria().getMeasurementWindow()+" temperature measures in "+(_ttcSetUpData.getTemperatureStabilizationCriteria().getSamplingPeriode()*_ttcSetUpData.getTemperatureStabilizationCriteria().getMeasurementWindow())/1000+" seconds and calulating the Standard Deviation\n");
 			
-			actualStepStandardDeviation = K2700.takeNTemperatureMeasuresWithDelayAndReturnStDev(_temperatureSensorData.getChannel(),_ttcSetUpData.getTemperatureStabilizationCriteria().getMeasurementWindow(),_ttcSetUpData.getTemperatureStabilizationCriteria().getSamplingPeriode());
-			measuredTemperature = K2700.measurePT100Temperature(_temperatureSensorData.getChannel());
+			actualStepStandardDeviation = k2700_v5.takeNTemperatureMeasuresWithDelayAndReturnStDev(_temperatureSensorData.getChannel(),_ttcSetUpData.getTemperatureStabilizationCriteria().getMeasurementWindow(),_ttcSetUpData.getTemperatureStabilizationCriteria().getSamplingPeriode());
+			measuredTemperature = k2700_v5.measurePT100Temperature(_temperatureSensorData.getChannel());
 			desiredTemperature = _ttcSetUpData.getTemperatureProfile().getTemperatures()[actualCalibrationStep];
 			actualAbsoluteTemperatureError = Math.abs(measuredTemperature-desiredTemperature);
 			maximumAdmissibleTemperatureError = _ttcSetUpData.getTemperatureStabilizationCriteria().getMaxAdminssibleTemperatureError();
@@ -283,11 +283,11 @@ public class RunCalibrationSetUp_Action implements Action{
 		printActionMessageAndProgressScreenMessage("Testing the devices to measure.");
 
 		printActionMessageAndProgressScreenMessage("Reading the Oven Display Temperature. \n");
-		ovenDisplayTemp = E2404.readTemperature().getValue();
+		ovenDisplayTemp = e2404_v5.readTemperature().getValue();
 		printActionMessageAndProgressScreenMessage("Reading the temperature at the PT100 \n");
-		pt100RealT = K2700.measureAveragePT100Temperature(_temperatureSensorData.getChannel(),avg);
+		pt100RealT = k2700_v5.measureAveragePT100Temperature(_temperatureSensorData.getChannel(),avg);
 		printActionMessageAndProgressScreenMessage("Reading the 4-Wire Resistance at the PT100 \n");
-		pt1004WResistance = K2700.measureAverage4WireResistance(_temperatureSensorData.getChannel(),avg);
+		pt1004WResistance = k2700_v5.measureAverage4WireResistance(_temperatureSensorData.getChannel(),avg);
 		printActionMessageAndProgressScreenMessage("Reading the Devices To Measure. \n");
 
 		currentTimeInMillis = System.currentTimeMillis();
@@ -300,7 +300,7 @@ public class RunCalibrationSetUp_Action implements Action{
 			while (devicesEnumeration.hasMoreElements()){
 	            r = (Resistance)devicesEnumeration.nextElement();
 				printActionMessageAndProgressScreenMessage("Reading the Device Number "+Integer.toString(i+1)+". \n");
-	            resultRow[i+1] = Double.toString(K2700.measureAverage4WireResistance(r.getConnectedToMultimeterChannelNumber(),avg));
+	            resultRow[i+1] = Double.toString(k2700_v5.measureAverage4WireResistance(r.getConnectedToMultimeterChannelNumber(),avg));
 	            i++;
 			}
 	        resultRow[nDevicesToCalibrate+1] = pt1004WResistance;
@@ -318,7 +318,7 @@ public class RunCalibrationSetUp_Action implements Action{
 			while (devicesEnumeration.hasMoreElements()){
 	            d = (Diode)devicesEnumeration.nextElement();
 				printActionMessageAndProgressScreenMessage("Reading the Device Number "+Integer.toString(i+1)+". \n");
-	            resultRow[i+1] = Double.toString(K2700.measureAverageVoltage(d.getConnectedToMultimeterChannelNumber(),avg));
+	            resultRow[i+1] = Double.toString(k2700_v5.measureAverageVoltage(d.getConnectedToMultimeterChannelNumber(),avg));
 	            i++;
 			}
 	        resultRow[nDevicesToCalibrate+1] = pt1004WResistance;
@@ -349,7 +349,7 @@ public class RunCalibrationSetUp_Action implements Action{
 						{
 							//Set the desired oven temperature
 							printActionMessageAndProgressScreenMessage("Setting the TSP1 to "+calibrationSetUp.getTemperatureProfile().getTemperatures()[actualCalibrationStep]+" ºC \n");
-							E2404.setTemperatureSetpoint1(calibrationSetUp.getTemperatureProfile().getTemperatures()[actualCalibrationStep]);
+							e2404_v5.setTemperatureSetpoint1(calibrationSetUp.getTemperatureProfile().getTemperatures()[actualCalibrationStep]);
 							//wait for stable oven temperature reading the standard deviation
 							waitForTemperatureStandardDeviation(
 									calibrationSetUp.getTemperatureStabilizationCriteria().getStDev(),
@@ -368,7 +368,7 @@ public class RunCalibrationSetUp_Action implements Action{
 						{
 							//Set the desired oven temperature
 							printActionMessageAndProgressScreenMessage("Setting the TSP1 to "+calibrationSetUp.getTemperatureProfile().getTemperatures()[actualCalibrationStep]+" ºC \n");
-							E2404.setTemperatureSetpoint1(calibrationSetUp.getTemperatureProfile().getTemperatures()[actualCalibrationStep]);
+							e2404_v5.setTemperatureSetpoint1(calibrationSetUp.getTemperatureProfile().getTemperatures()[actualCalibrationStep]);
 							//wait for stable oven temperature by time
 							waitForTemperatureStabilizationByTime(calibrationSetUp.getTemperatureStabilizationCriteria().getTemperatureStabilitzationTime(),temperatureSensorData);
 							//Measure devices at stable temperature point and save data
@@ -436,11 +436,11 @@ public class RunCalibrationSetUp_Action implements Action{
 		Object[] resultRow = new Object[resultsTableHeader.length];
 
 		printActionMessageAndProgressScreenMessage("Reading the Oven Display Temperature. \n");
-		ovenDisplayTemp = E2404.readTemperature().getValue();
+		ovenDisplayTemp = e2404_v5.readTemperature().getValue();
 		printActionMessageAndProgressScreenMessage("Reading the temperature at the PT100 \n");
-		pt100RealT = K2700.measureAveragePT100Temperature(_temperatureSensorData.getChannel(),avg);
+		pt100RealT = k2700_v5.measureAveragePT100Temperature(_temperatureSensorData.getChannel(),avg);
 		printActionMessageAndProgressScreenMessage("Reading the 4-Wire Resistance at the PT100 \n");
-		pt1004WResistance = K2700.measureAverage4WireResistance(_temperatureSensorData.getChannel(),avg);
+		pt1004WResistance = k2700_v5.measureAverage4WireResistance(_temperatureSensorData.getChannel(),avg);
 		printActionMessageAndProgressScreenMessage("Reading the Devices To Measure. \n");
 
 		currentTimeInMillis = System.currentTimeMillis();
@@ -453,7 +453,7 @@ public class RunCalibrationSetUp_Action implements Action{
 			while (devicesEnumeration.hasMoreElements()){
 	            r = (Resistance)devicesEnumeration.nextElement();
 				printActionMessageAndProgressScreenMessage("Reading the Device Number "+Integer.toString(i+1)+". \n");
-	            resultRow[i+1] = Double.toString(K2700.measureAverage4WireResistance(r.getConnectedToMultimeterChannelNumber(),avg));
+	            resultRow[i+1] = Double.toString(k2700_v5.measureAverage4WireResistance(r.getConnectedToMultimeterChannelNumber(),avg));
 	            i++;
 			}
 	        resultRow[nDevicesToCalibrate+1] = pt1004WResistance;
@@ -467,7 +467,7 @@ public class RunCalibrationSetUp_Action implements Action{
 			while (devicesEnumeration.hasMoreElements()){
 	            d = (Diode)devicesEnumeration.nextElement();
 				printActionMessageAndProgressScreenMessage("Reading the Device Number "+Integer.toString(i+1)+". \n");
-	            resultRow[i+1] = Double.toString(K2700.measureAverageVoltage(d.getConnectedToMultimeterChannelNumber(),avg));
+	            resultRow[i+1] = Double.toString(k2700_v5.measureAverageVoltage(d.getConnectedToMultimeterChannelNumber(),avg));
 	            i++;
 			}
 	        resultRow[nDevicesToCalibrate+1] = pt1004WResistance;
@@ -509,14 +509,14 @@ public class RunCalibrationSetUp_Action implements Action{
 		printActionMessage("Leyendo el fichero de configuracion de Instrumentos.");
 		instrumentsData = new InstrumentsData(INSTRUMENTS_DATA_FILE_PATH);
 		printActionMessage("Creando la instancia de Keithley2700.");
-		K2700 = new Keithley2700_v5(instrumentsData.getMultimeterData().getComPort(),"\t\n");
-		K2700.enableBeeper(false);
+		k2700_v5 = new Keithley2700_v5(instrumentsData.getMultimeterData().getComPort(),"\t\n");
+		k2700_v5.enableBeeper(false);
 		printActionMessage("Creando la instancia de Eurotherm2404.");
 		
 		SerialParameters sp = Eurotherm2404_v5.createSerialConnection(instrumentsData.getOvenData().getComPort(), BaudRate.BAUD_RATE_9600, 8, SerialPort.Parity.NONE, 1);
 		ModbusMaster m = Eurotherm2404_v5.createModBusMaster(sp, Modbus.LogLevel.LEVEL_WARNINGS);
 		
-		E2404 = new Eurotherm2404_v5(sp,m, instrumentsData.getOvenData().getControllerID());
+		e2404_v5 = new Eurotherm2404_v5(sp,m, instrumentsData.getOvenData().getControllerID());
 		
 		return 0;
 	}
@@ -524,9 +524,9 @@ public class RunCalibrationSetUp_Action implements Action{
 		printActionMessageAndProgressScreenMessage("INITIALIZING THE OVEN.... \n");
 		startProgramTimeInMillis = System.currentTimeMillis();
 		printActionMessageAndProgressScreenMessage("Setting the TSP1 to 0 ºC \n");
-		E2404.setTemperatureSetpoint1(0);
+		e2404_v5.setTemperatureSetpoint1(0);
 		printActionMessageAndProgressScreenMessage("Setting the 2404 in Auto Mode \n");
-		E2404.setInAutoMode();
+		e2404_v5.setInAutoMode();
 		//TODO Implementar la llamada a la calibracion de usuario del 2404 mediante dos puntos guardados en un archivo 2404TwoPointsUserCalibration.XML
 
 		return 0;
@@ -716,9 +716,9 @@ public class RunCalibrationSetUp_Action implements Action{
 			printActionMessageAndProgressScreenMessage("FINISHING THE PROGRAM \n");
 		}
 		printActionMessageAndProgressScreenMessage("Setting the TSP1 to 0 ºC \n");
-		E2404.setTemperatureSetpoint1(0);
+		e2404_v5.setTemperatureSetpoint1(0);
 		printActionMessageAndProgressScreenMessage("Setting the 2404 in Auto Mode \n");
-		E2404.setInAutoMode();
+		e2404_v5.setInAutoMode();
 		mainController.doAction(new ActionRequest("StopCalibrationProgramAction",frameWhoHasTheRequest));
 		try {
 			finalize();

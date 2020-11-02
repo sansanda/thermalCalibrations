@@ -73,6 +73,8 @@ public class Eurotherm2404_v5 {
 	public void initialize(SerialParameters sp, ModbusMaster m) throws RuntimeException, ModbusIOException, Exception{
 		this.sp = sp;
 		this.m = m;
+		//this.m.setResponseTimeout(5000);
+		
 	}
 	
 	/**

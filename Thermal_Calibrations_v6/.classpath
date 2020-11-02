@@ -4,7 +4,7 @@
 	<classpathentry kind="src" path="view_layer"/>
 	<classpathentry kind="src" path="data_layer"/>
 	<classpathentry kind="src" path="main"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre8">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
