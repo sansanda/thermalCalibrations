@@ -1,3 +1,6 @@
 /S_Port2_32bits.class
 /S_Port_32bits.class
 /S_Port_64bits.class
+/S_Port2_64bits.class
+/SerialPort_I.class
+/CommPort_I.class

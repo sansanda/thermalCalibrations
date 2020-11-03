@@ -10,7 +10,6 @@ import com.intelligt.modbus.jlibmodbus.serial.SerialParameters;
 import com.intelligt.modbus.jlibmodbus.serial.SerialPort;
 import com.intelligt.modbus.jlibmodbus.serial.SerialPort.BaudRate;
 import com.intelligt.modbus.jlibmodbus.serial.SerialPortFactoryJSSC;
-import com.intelligt.modbus.jlibmodbus.serial.SerialPortFactoryRXTX;
 import com.intelligt.modbus.jlibmodbus.serial.SerialUtils;
 import com.schneide.quantity.miscQuantities.GradCelsius;
 
@@ -74,7 +73,6 @@ public class Eurotherm2404_v5 {
 		this.sp = sp;
 		this.m = m;
 		//this.m.setResponseTimeout(5000);
-		
 	}
 	
 	/**
