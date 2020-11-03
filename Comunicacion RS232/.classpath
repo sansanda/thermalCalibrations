@@ -10,5 +10,15 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/java_development_libraries/comms/serial/jssc-2.9.2/jssc-2.9.2-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="/java_development_libraries/logging/slf4j-api-1.7.30/slf4j-api-1.7.30.jar" sourcepath="/java_development_libraries/logging/slf4j-api-1.7.30/slf4j-api-1.7.30-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/java_development_libraries/logging/slf4j-api-1.7.30/slf4j-api-1.7.30-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/java_development_libraries/logging/slf4j-simple-1.7.9/slf4j-simple-1.7.9.jar" sourcepath="/java_development_libraries/logging/slf4j-simple-1.7.9/slf4j-simple-1.7.9-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/java_development_libraries/logging/slf4j-simple-1.7.9/slf4j-simple-1.7.9-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path=""/>
 </classpath>

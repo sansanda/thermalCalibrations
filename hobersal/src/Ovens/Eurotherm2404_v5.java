@@ -106,6 +106,7 @@ public class Eurotherm2404_v5 {
         //SerialUtils.setSerialPortFactory(new SerialPortFactoryRXTX());
         //  JSSC is Java Simple Serial Connector
         SerialUtils.setSerialPortFactory(new SerialPortFactoryJSSC());
+        
         //  PJC is PureJavaComm.
         //SerialUtils.setSerialPortFactory(new SerialPortFactoryPJC());
         //  JavaComm is the Java Communications API (also known as javax.comm)

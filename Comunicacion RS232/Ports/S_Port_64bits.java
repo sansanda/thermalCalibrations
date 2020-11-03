@@ -309,7 +309,7 @@ public class S_Port_64bits implements Runnable, SerialPortEventListener{
 		 {
 			//El puerto se encuenta en el equipo y adquirimos un objeto
 			//tipo SerialPort para poder manejar dicho puerto
-			S_Port_64bits sp = new S_Port_64bits("COM4","\n");
+			S_Port_64bits sp = new S_Port_64bits("COM9","\n");
 			while (true){
 				System.out.println("Introduce la cadena de caracteres a enviar por el puerto serie: ");
 				sp.sendMessageToSerialPort(reader.readLine());

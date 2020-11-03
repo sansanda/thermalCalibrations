@@ -1,4 +1,9 @@
-package jssc_examples;
+package Ports;
+
+import static jssc.SerialPort.BAUDRATE_9600;
+import static jssc.SerialPort.DATABITS_8;
+import static jssc.SerialPort.PARITY_NONE;
+import static jssc.SerialPort.STOPBITS_1;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -10,10 +15,9 @@ import jssc.SerialPortEvent;
 import jssc.SerialPortEventListener;
 import jssc.SerialPortException;
 
-import static jssc.SerialPort.*;
 
 
-public class jssc_examples implements SerialPortEventListener{
+public class S_Port_JSSC implements SerialPortEventListener{
 
 	 //**************************************************************************
 	 //****************************CONSTANTES************************************
@@ -23,6 +27,7 @@ public class jssc_examples implements SerialPortEventListener{
 	 //**************************************************************************
 	 //****************************VARIABLES*************************************
 	 //**************************************************************************
+
 
 	 private SerialPort		      		serialPort;
 	 private final int					BUFFER_LENGTH = 256;
@@ -41,8 +46,7 @@ public class jssc_examples implements SerialPortEventListener{
 	  *
 	  *
 	  */
-	 public jssc_examples(String commPort, String terminator) throws Exception{
-		 
+	 public S_Port_JSSC(String commPort, String terminator) throws Exception{
 		 buffer = new byte[BUFFER_LENGTH];
 		 bufferPointer = 0;
 		 fifo = new LinkedList<byte[]>();
@@ -53,6 +57,8 @@ public class jssc_examples implements SerialPortEventListener{
 	 //****************************METODOS***************************************
 	 //**************************************************************************
 
+	 
+	 
 	 /**
 	  *
 	  */
@@ -72,7 +78,7 @@ public class jssc_examples implements SerialPortEventListener{
 		this.serialPort.setEventsMask(mask);
 
 	 }
-
+	 
 	 public void open() {
 		 try {
 			 if (this.serialPort.isOpened()) return;
@@ -94,7 +100,7 @@ public class jssc_examples implements SerialPortEventListener{
 		}
 	 }
 	 
-	 
+
 	 /**
 	  *
 	  * @param data
@@ -134,11 +140,12 @@ public class jssc_examples implements SerialPortEventListener{
 	 public void waitForIncomingData() throws Exception{
 		 while (!this.hasData()) {Thread.sleep(50);}
 	 }
-	 
+
+	
+
 	 /**
 	  *
 	  */
-	 
 	 
 	 public void serialEvent(SerialPortEvent event) {
 		 
@@ -168,41 +175,31 @@ public class jssc_examples implements SerialPortEventListener{
 				e.printStackTrace();
 	    	 }    
 	      }
-	 }	 
-	 
+	 }
 
 
-	 //**************************************************************************
-	 //****************************SETTERS***************************************
-	 //**************************************************************************
+	 /**
+		 * @param args
+		 */
+		public static void main(String[] args) {
+			// TODO Auto-generated method stub
+			 BufferedReader reader = new BufferedReader (new InputStreamReader(System.in));
 
+			 try
+			 {
+				//El puerto se encuenta en el equipo y adquirimos un objeto
+				//tipo SerialPort para poder manejar dicho puerto
+				S_Port_JSSC sp = new S_Port_JSSC("COM9","\n");
+				sp.sendData("*IDN?");
+				sp.waitForIncomingData();
+				System.out.println(new String(sp.getNewestReadedData(), StandardCharsets.UTF_8));
+				sp.close();
+				System.exit(0);
+			 }
+			 catch(Exception e)
+			 {
+				 System.out.println(e);
+			 }
+		}
 
-
-	 //**************************************************************************
-	 //****************************GETTERS***************************************
-	 //**************************************************************************
-
-
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		 BufferedReader reader = new BufferedReader (new InputStreamReader(System.in));
-
-		 try
-		 {
-			//El puerto se encuenta en el equipo y adquirimos un objeto
-			//tipo SerialPort para poder manejar dicho puerto
-			jssc_examples sp = new jssc_examples("COM9","\n");
-			sp.sendData("*IDN?");
-			sp.waitForIncomingData();
-			System.out.println(new String(sp.getNewestReadedData(), StandardCharsets.UTF_8));
-		 }
-		 catch(Exception e)
-		 {
-			 System.out.println(e);
-		 }
-	}
 }
