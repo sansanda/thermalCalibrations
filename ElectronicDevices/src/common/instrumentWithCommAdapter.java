@@ -1,18 +1,21 @@
-package instrumentsWithRS232;
+package common;
 import java.io.BufferedReader;
 
 
 import java.io.File;
 import java.io.FileReader;
 
-import rs_232.S_Port_64bits;
+import common.CommPort_I;
 
 
-public abstract class instrumentWithRS232_64bits extends S_Port_64bits{
+public abstract class instrumentWithCommAdapter{
 	
-	public instrumentWithRS232_64bits(String wantedPortName, String terminator) throws Exception{
-		super(wantedPortName, terminator);
+	protected CommPort_I commAdapter = null;
+	
+	public instrumentWithCommAdapter(CommPort_I commAdapter) throws Exception{
+		this.commAdapter = commAdapter;
 	}
+	
 	public void configure(String _configurationFile) throws Exception{
 		System.out.println("Configurando el instrumento...");
 		File instrumentConfigFile;
@@ -28,7 +31,7 @@ public abstract class instrumentWithRS232_64bits extends S_Port_64bits{
 				System.out.println(line);
 			}else
 			{
-				write(line);
+				this.commAdapter.write(line);
 				Thread.sleep(200);
 			}
 		}
@@ -49,7 +52,7 @@ public abstract class instrumentWithRS232_64bits extends S_Port_64bits{
 				System.out.println(line);
 			}else
 			{
-				write(line);
+				this.commAdapter.write(line);
 				Thread.sleep(500);
 			}
 		}
@@ -70,7 +73,7 @@ public abstract class instrumentWithRS232_64bits extends S_Port_64bits{
 				System.out.println(line);
 			}else
 			{
-				write(line);
+				this.commAdapter.write(line);
 				Thread.sleep(500);
 			}
 		}

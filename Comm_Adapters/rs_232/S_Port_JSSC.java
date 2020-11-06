@@ -1,4 +1,4 @@
-package Ports;
+package rs_232;
 
 import static jssc.SerialPort.BAUDRATE_9600;
 import static jssc.SerialPort.DATABITS_8;
@@ -9,7 +9,9 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 
+import javax.swing.JOptionPane;
 
+import common.CommPort_I;
 import jssc.SerialPort;
 import jssc.SerialPortEvent;
 import jssc.SerialPortEventListener;
@@ -17,7 +19,7 @@ import jssc.SerialPortException;
 
 
 
-public class S_Port_JSSC implements SerialPortEventListener{
+public class S_Port_JSSC implements CommPort_I, SerialPortEventListener{
 
 	 //**************************************************************************
 	 //****************************CONSTANTES************************************
@@ -79,46 +81,6 @@ public class S_Port_JSSC implements SerialPortEventListener{
 
 	 }
 	 
-	 public void open() {
-		 try {
-			 if (this.serialPort.isOpened()) return;
-			 this.serialPort.openPort();
-				
-		} catch (SerialPortException e) {
-			 // TODO Auto-generated catch block
-			 e.printStackTrace();
-		}
-	 }
-	 
-	 public void close() {
-		 try {
-			 if (!this.serialPort.isOpened()) return;
-			 this.serialPort.closePort();
-		} catch (SerialPortException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	 }
-	 
-
-	 /**
-	  *
-	  * @param data
-	  */
-	 public void sendData(String data){
-		 //System.out.println("\n"+"Writing \""+message+"\" to "+serialPort.getPortName());
-		 try {
-			 this.open();
-			 this.serialPort.writeBytes((data + terminator).getBytes());
-		} catch (SerialPortException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	 }
-
-	 
-
-	 
 	 public byte[] getNewestReadedData(){
 		 return this.fifo.getFirst();
 	 }
@@ -130,14 +92,12 @@ public class S_Port_JSSC implements SerialPortEventListener{
 	 public byte[] getReadedDataAtIndex(int index){
 		 return this.fifo.get(index);
 	 }
-	 /**
-	 * @return the txOK
-	 */
+	 
 	 public boolean hasData() {
 		 return !fifo.isEmpty();
 	 }
 	
-	 public void waitForIncomingData() throws Exception{
+	 private void waitForIncomingData() throws Exception{
 		 while (!this.hasData()) {Thread.sleep(50);}
 	 }
 
@@ -177,29 +137,95 @@ public class S_Port_JSSC implements SerialPortEventListener{
 	      }
 	 }
 
-
 	 /**
-		 * @param args
-		 */
-		public static void main(String[] args) {
-			// TODO Auto-generated method stub
-			 BufferedReader reader = new BufferedReader (new InputStreamReader(System.in));
+	  * Open the adapter
+	  * @throws Exception 
+	  */
+	 @Override
+	 public void open() throws Exception {
+		 if (this.serialPort.isOpened())
+		 {
+			 System.out.println("Port "+this.serialPort.getPortName() + " currently owned");
+			 JOptionPane.showMessageDialog(null,"Port "+this.serialPort.getPortName() + " currently owned");
+		 }
+		 this.serialPort.openPort();			
+	 }
+	 
+	 /**
+	  * Close the adapter
+	  * @throws Exception 
+	  */
+	 @Override
+	 public void close() throws Exception {
+		 if (!this.serialPort.isOpened()) return;
+		 this.serialPort.closePort();
+	 }
+	 
 
-			 try
-			 {
-				//El puerto se encuenta en el equipo y adquirimos un objeto
-				//tipo SerialPort para poder manejar dicho puerto
-				S_Port_JSSC sp = new S_Port_JSSC("COM9","\n");
-				sp.sendData("*IDN?");
-				sp.waitForIncomingData();
-				System.out.println(new String(sp.getNewestReadedData(), StandardCharsets.UTF_8));
-				sp.close();
-				System.exit(0);
-			 }
-			 catch(Exception e)
-			 {
-				 System.out.println(e);
-			 }
-		}
+	 
+	/**
+	 * Get last income data (the newest arrived data)
+	 * This method is synchrone, so if you invoque this method it will stop de Thread until a new data arrives 
+	 * @return the data readed as byte array.
+	 * @trhows Exception if something goes wrong
+	 * @author David Sanchez Sanchez
+	 * @mail dsanchezsanc@uoc.edu
+	 */
+	@Override
+	public byte[] read() throws Exception{
+		this.waitForIncomingData();
+		return this.fifo.getFirst();
+	}
 
+	/**
+	 * Sends the data to the output of the adapter
+	 * @trhows Exception if something goes wrong
+	 * @author David Sanchez Sanchez
+	 * @mail dsanchezsanc@uoc.edu
+	 */
+	@Override
+	public void write(String data) throws Exception{
+		 //System.out.println("\n"+"Writing \""+message+"\" to "+serialPort.getPortName());
+		 this.open();
+		 this.serialPort.writeBytes((data + terminator).getBytes());
+	}
+	
+	/**
+	 * Sends a query to the output of the adapter and waits for the response
+	 * This method is synchrone, so if you invoque this method it will stop de Thread until a new data arrives 
+	 * @return the response readed as byte array.
+	 * @trhows Exception if something goes wrong
+	 * @author David Sanchez Sanchez
+	 * @throws Exception 
+	 * @mail dsanchezsanc@uoc.edu
+	 */
+	@Override
+	public byte[] ask(String query) throws Exception {
+		this.write(query);
+		return this.read();
+	}
+	
+	 /**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		 BufferedReader reader = new BufferedReader (new InputStreamReader(System.in));
+
+		 try
+		 {
+			//El puerto se encuenta en el equipo y adquirimos un objeto
+			//tipo SerialPort para poder manejar dicho puerto
+			CommPort_I sp = new S_Port_JSSC("COM9","\n");	
+			System.out.println(new String(sp.ask("*IDN?"), StandardCharsets.UTF_8));
+			sp.close();
+			System.exit(0);
+		 }
+		 catch(Exception e)
+		 {
+			 System.out.println(e);
+		 }
+	}
+
+		
 }

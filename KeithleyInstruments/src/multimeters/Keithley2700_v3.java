@@ -7,11 +7,11 @@ import javax.measure.quantity.ElectricResistance;
 import javax.measure.quantity.Temperature;
 import javax.measure.unit.SI;
 
-import Ports.S_Port2_32bits;
 import interfaces.ICommunicationPort;
 import interfaces.ISingleChannelMultimeter;
 import interfaces.IThermometer;
 import interfaces.IVoltmeter;
+import rs_232.S_Port2_32bits;
 
 
 public class Keithley2700_v3 implements IThermometer, IVoltmeter, ISingleChannelMultimeter{

@@ -1,10 +1,11 @@
-package Ports;
+package rs_232;
 import java.io.*;
-
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import javax.swing.JOptionPane;
 
+import common.CommPort_I;
 import gnu.io.CommPortIdentifier;
 import gnu.io.PortInUseException;
 import gnu.io.SerialPort;
@@ -13,7 +14,7 @@ import gnu.io.SerialPortEventListener;
 import gnu.io.UnsupportedCommOperationException;
 
 
-public class S_Port_64bits implements Runnable, SerialPortEventListener{
+public class S_Port_64bits implements CommPort_I, SerialPortEventListener{
 
 	 //**************************************************************************
 	 //****************************CONSTANTES************************************
@@ -31,13 +32,12 @@ public class S_Port_64bits implements Runnable, SerialPortEventListener{
 	 private InputStream		      	inputStream;
 	 private OutputStream       		outputStream;
 	 private SerialPort		      		serialPort;
-	 private Thread		      			serialPortThread;
 	 private byte[] 					buffer = new byte[256];
 	 private int 						bufferPointer = 0;
 	 private boolean 					txOK = false;
 
 
-	 private String 					terminator = "\n";
+	 private String 					terminator = null;
 	 
 	 //**************************************************************************
 	 //****************************CONSTRUCTORES*********************************
@@ -49,44 +49,22 @@ public class S_Port_64bits implements Runnable, SerialPortEventListener{
 	  */
 	 public S_Port_64bits(String wantedPortName, String terminator) throws Exception{
 		 this.wantedPortName = wantedPortName;
-		 this.initializePort(terminator);
+		 this.terminator = terminator;
+		 this.initializePort();
 	 }
 
 	 //**************************************************************************
 	 //****************************METODOS***************************************
 	 //**************************************************************************
 
-	 /**
-	  *
-	  */
-	 public void closeSerialPort(){
-		 try {
-			 Thread.sleep(2000);  // Be sure data is xferred before closing
-		 }
-		 catch (Exception e) {}
-		 this.serialPort.close();
-		 
-	 }
-
-	 /**
-	  *
-	  * @param message
-	  */
-	 public void sendMessageToSerialPort(String message){
-		 //System.out.println("\n"+"Writing \""+message+"\" to "+serialPort.getName());
-		 try {
-			 outputStream.write((message + terminator).getBytes());
-		 } catch (IOException e) {}
-	 }
 
 	 /**
 	  *
 	  */
-	 private void initializePort(String terminator)throws Exception{
+	 private void initializePort()throws Exception{
 
-		 this.terminator = terminator;
 		 this.searchForSerialCommPort();
-		 this.openSerialPort();
+		 this.open();
 		 this.inputStream = this.getPortInputStream();
 		 this.outputStream = this.getPortOutputStream();
 		 try
@@ -114,8 +92,6 @@ public class S_Port_64bits implements Runnable, SerialPortEventListener{
 			System.out.println(e.toString());
 			System.exit(-1);
 		 }
-		 this.serialPortThread = new Thread(this);
-		 this.serialPortThread.start();
 	 }
 
 	 /**
@@ -144,52 +120,33 @@ public class S_Port_64bits implements Runnable, SerialPortEventListener{
 		case SerialPortEvent.OUTPUT_BUFFER_EMPTY:
 			//System.out.println("Output buffer is empty.");
 		case SerialPortEvent.DATA_AVAILABLE:
+			this.txOK = false;
 			byte[] readBuffer = new byte[256];
 		    try
 		    {
-				while (inputStream.available() > 0) {
-				    int numBytes = inputStream.read(readBuffer);
+				while (this.inputStream.available() > 0) {
+				    int numBytes = this.inputStream.read(readBuffer);
 				    for (int i=0;i<numBytes;i++){
 				    	byte b = readBuffer[i];
-						buffer[bufferPointer+i]=b;
-						
-						if (b==10){txOK = true;}
+						this.buffer[this.bufferPointer+i]=b;
+						if (b==10){
+							this.bufferPointer = 0;
+							this.txOK = true;
+						}
 					}
 				    
-				    bufferPointer = bufferPointer + numBytes;
+				    this.bufferPointer = this.bufferPointer + numBytes;
 				}
 		    } catch (IOException e) {System.out.println(e.getStackTrace());System.out.println(e.getCause());}
 
 		    break;
 		}
 	 }
-	 public byte[] getReadData(){
-		 bufferPointer = 0;
-		 return buffer;
-	 }
 	 
-	 /**
-	 * @return the txOK
-	 */
-	 public boolean isTxOK() {
-		 return txOK;
-	 }
 	
-	 public void waitForIncomingData() throws Exception{
-		 while (!txOK) {Thread.sleep(50);}
-		 txOK = false;
-	 }
-	 public int getReadDataLength(){
-		return bufferPointer-1;
-	 }
-	 /**
-	  *
-	  */
-	 public void run() {
-		try
-		{
-		    Thread.sleep(20000);
-		} catch (InterruptedException e) {}
+	 private void waitForIncomingData() throws Exception{
+		 while (!this.txOK) {Thread.sleep(50);}
+		 this.txOK = false;
 	 }
 
 	 //**************************************************************************
@@ -206,7 +163,8 @@ public class S_Port_64bits implements Runnable, SerialPortEventListener{
 		 try
 		 {
 			 this.serialPort.setSerialPortParams(9600,SerialPort.DATABITS_8,SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);
-		 } catch (UnsupportedCommOperationException e) {}
+		 } 
+		 catch (UnsupportedCommOperationException e) {}
 	 }
 	 
 
@@ -275,11 +233,18 @@ public class S_Port_64bits implements Runnable, SerialPortEventListener{
 		 } catch (IOException e) {}
 		 return os;
 	 }
+
+
+	 //**************************************************************************
+	 //*********************COMM_PORT_I INTERFACE METHODS************************
+	 //**************************************************************************
+	 
 	 /**
-	  *
-	  * @return
+	  * Open the adapter
+	  * @throws Exception 
 	  */
-	 private void openSerialPort(){
+	 @Override
+	 public void open() throws Exception {		 
 		try{
 			if (portId.isCurrentlyOwned())
 			{
@@ -293,10 +258,66 @@ public class S_Port_64bits implements Runnable, SerialPortEventListener{
 		catch(PortInUseException e){
 			System.err.println("Port already in use: " + e.getMessage() +"\n"+ e.getCause() +"\n"+ e.getLocalizedMessage()+"\n"+e.getClass());
 			JOptionPane.showMessageDialog(null,"Port already in use.");
-
-		}
+		}			
 	 }
+	 
+	 /**
+	  * Close the adapter
+	  * @throws Exception 
+	  */
+	 @Override
+	 public void close() throws Exception {
+		 Thread.sleep(2000);  // Be sure data is xferred before closing
+		 this.serialPort.close();
+	 }	 
+	 
+	 
+	/**
+	 * Get last income data (the newest arrived data)
+	 * This method is synchrone, so if you invoque this method it will stop de Thread until a new data arrives 
+	 * @return the data readed as byte array.
+	 * @trhows Exception if something goes wrong
+	 * @author David Sanchez Sanchez
+	 * @mail dsanchezsanc@uoc.edu
+	 */
+	@Override
+	public byte[] read() throws Exception{
+		this.waitForIncomingData();
+		return buffer;
+	}
 
+	/**
+	 * Sends the data to the output of the adapter
+	 * @trhows Exception if something goes wrong
+	 * @author David Sanchez Sanchez
+	 * @mail dsanchezsanc@uoc.edu
+	 */
+	@Override
+	public void write(String data) throws Exception{
+		//System.out.println("\n"+"Writing \""+message+"\" to "+serialPort.getPortName());
+		//System.out.println("\n"+"Writing \""+message+"\" to "+serialPort.getName());
+		outputStream.write((data + this.terminator).getBytes());
+	}
+	
+	/**
+	 * Sends a query to the output of the adapter and waits for the response
+	 * This method is synchrone, so if you invoque this method it will stop de Thread until a new data arrives 
+	 * @return the response readed as byte array.
+	 * @trhows Exception if something goes wrong
+	 * @author David Sanchez Sanchez
+	 * @throws Exception 
+	 * @mail dsanchezsanc@uoc.edu
+	 */
+	@Override
+	public byte[] ask(String query) throws Exception {
+		this.write(query);
+		return this.read();
+	}
+	
+	 //**************************************************************************
+	 //****************************TESTING***************************************
+	 //**************************************************************************
+	 
 
 	/**
 	 * @param args
@@ -309,11 +330,9 @@ public class S_Port_64bits implements Runnable, SerialPortEventListener{
 		 {
 			//El puerto se encuenta en el equipo y adquirimos un objeto
 			//tipo SerialPort para poder manejar dicho puerto
-			S_Port_64bits sp = new S_Port_64bits("COM9","\n");
-			while (true){
-				System.out.println("Introduce la cadena de caracteres a enviar por el puerto serie: ");
-				sp.sendMessageToSerialPort(reader.readLine());
-			}
+			CommPort_I sp = new S_Port_64bits("COM9","\n");
+			System.out.println(new String(sp.ask("*IDN?"), StandardCharsets.UTF_8));
+			
 		 }
 		 catch(Exception e)
 		 {

@@ -8,7 +8,7 @@
 	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/ElectronicDevices"/>
 	<classpathentry kind="src" path="/InstrumentInterfaces"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/Comunicacion RS232"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Comm_Adapters"/>
 	<classpathentry kind="lib" path="/java_development_libraries/tratamiento de unidades de medida/jscience-4.3.1.jar"/>
 	<classpathentry kind="lib" path="/java_development_libraries/frameworks/quantity_v_0_9.jar"/>
 	<classpathentry kind="output" path="bin"/>

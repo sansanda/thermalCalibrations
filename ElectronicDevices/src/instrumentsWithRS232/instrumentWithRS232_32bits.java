@@ -5,12 +5,12 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 
-import Ports.S_Port_32bits;
+import rs_232.S_Port_32bits;
 
 
 public abstract class instrumentWithRS232_32bits extends S_Port_32bits{
-	public instrumentWithRS232_32bits(String wantedPortName) throws Exception{
-		super(wantedPortName);
+	public instrumentWithRS232_32bits(String wantedPortName, String terminator) throws Exception{
+		super(wantedPortName,terminator);
 	}
 	public void configure(String _configurationFile) throws Exception{
 		System.out.println("Configurando el instrumento...");
@@ -27,7 +27,7 @@ public abstract class instrumentWithRS232_32bits extends S_Port_32bits{
 				System.out.println(line);
 			}else
 			{
-				sendMessageToSerialPort(line);
+				write(line);
 				Thread.sleep(200);
 			}
 		}
@@ -48,7 +48,7 @@ public abstract class instrumentWithRS232_32bits extends S_Port_32bits{
 				System.out.println(line);
 			}else
 			{
-				sendMessageToSerialPort(line);
+				write(line);
 				Thread.sleep(500);
 			}
 		}
@@ -69,7 +69,7 @@ public abstract class instrumentWithRS232_32bits extends S_Port_32bits{
 				System.out.println(line);
 			}else
 			{
-				sendMessageToSerialPort(line);
+				write(line);
 				Thread.sleep(500);
 			}
 		}
