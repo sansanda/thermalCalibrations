@@ -1,8 +1,13 @@
 package multimeters;
 
-import common.instrumentWithCommAdapter;
+
 import rs_232.S_Port_64bits;
 import rs_232.S_Port_JSSC;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+
 import common.CommPort_I;
 
 /**
@@ -12,7 +17,7 @@ import common.CommPort_I;
  * @author david
  *
  */
-public class Keithley2700_v6 extends instrumentWithCommAdapter{
+public class Keithley2700_v6 {
 	//Constants
 	private static int MAX_NUMBER_OF_CHANNELS = 22;
 	private static int MIN_NUMBER_OF_CHANNELS = 1;
@@ -25,9 +30,12 @@ public class Keithley2700_v6 extends instrumentWithCommAdapter{
 
 	//Variables
 
+	private CommPort_I commAdapter = null;
+	
 	//default constructor
-	public Keithley2700_v6(CommPort_I commPort)throws Exception{
-		super(commPort);		
+	public Keithley2700_v6(CommPort_I commAdapter)throws Exception{
+		super();
+		this.commAdapter = commAdapter; 
 	}
 	//Getters and Setters
 	//Other Methods
@@ -829,6 +837,74 @@ public class Keithley2700_v6 extends instrumentWithCommAdapter{
 		if (_ch>=10) channel = channel.concat("@1"+Integer.toString(_ch));
 		return "ROUT:CLOS ("+channel+")";	
 	}
+	
+	public void configure(String _configurationFile) throws Exception{
+		System.out.println("Configurando el instrumento...");
+		File instrumentConfigFile;
+		BufferedReader 	fReader 	= null;
+		instrumentConfigFile = new File(_configurationFile);
+		fReader  = new BufferedReader(new FileReader(instrumentConfigFile));
+		String line;
+		while (!((line = fReader.readLine()) == null))
+		{
+			if (line.startsWith("#")){
+				line = line.replaceFirst("#", "");
+				line = line.substring(0, line.length());
+				System.out.println(line);
+			}else
+			{
+				this.commAdapter.write(line);
+				Thread.sleep(200);
+			}
+		}
+		fReader.close();
+	}
+	public void initialize(String _initializationFile) throws Exception{
+		System.out.println("Inicializando el instrumento...");
+		File instrumentInitFile;
+		BufferedReader 	fReader 	= null;
+		instrumentInitFile = new File(_initializationFile);
+		fReader  = new BufferedReader(new FileReader(instrumentInitFile));
+		String line;
+		while (!((line = fReader.readLine()) == null))
+		{
+			if (line.startsWith("#")){
+				line = line.replaceFirst("#", "");
+				line = line.substring(0, line.length());
+				System.out.println(line);
+			}else
+			{
+				this.commAdapter.write(line);
+				Thread.sleep(500);
+			}
+		}
+		fReader.close();
+	}
+	
+	
+	public void execute_script(String _scriptFile) throws Exception{
+		System.out.println("Executing script name: " + _scriptFile);
+		File instrumentConfigFile;
+		BufferedReader 	fReader 	= null;
+		instrumentConfigFile = new File(_scriptFile);
+		fReader  = new BufferedReader(new FileReader(instrumentConfigFile));
+		String line;
+		while (!((line = fReader.readLine()) == null))
+		{
+			if (line.startsWith("#")){
+				line = line.replaceFirst("#", "");
+				line = line.substring(0, line.length());
+				System.out.println(line);
+			}else
+			{
+				this.commAdapter.write(line);
+				Thread.sleep(500);
+			}
+		}
+		fReader.close();
+	}
+	
+	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		
