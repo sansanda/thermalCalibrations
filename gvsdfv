@@ -1,0 +1,119 @@
+* [33mcommit 06a6c5b3b66f9aaf93bf309fc8f65d1bb366bbd2[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+[31m|[m Author: sansanda <dsanchezsanc@uoc.edu>
+[31m|[m Date:   Mon Nov 9 09:08:49 2020 +0100
+[31m|[m 
+[31m|[m     created jar 6.1
+[31m|[m 
+* [33mcommit a57ec029a8d3f05b67593fb3ac211c63a5fad299[m
+[31m|[m Author: sansanda <dsanchezsanc@uoc.edu>
+[31m|[m Date:   Mon Nov 9 09:03:43 2020 +0100
+[31m|[m 
+[31m|[m     version 6.1
+[31m|[m 
+* [33mcommit 96c53dd0336b58f5332688af020629b3f4de14ce[m
+[31m|[m Author: DavidS <dsanchezsanc@uoc.edu>
+[31m|[m Date:   Fri Nov 6 15:54:03 2020 +0100
+[31m|[m 
+[31m|[m     working on commsAdapter
+[31m|[m 
+* [33mcommit 76460b9d5ee51019183153961c2fec303de2261c[m
+[31m|[m Author: DavidS <dsanchezsanc@uoc.edu>
+[31m|[m Date:   Tue Nov 3 16:51:59 2020 +0100
+[31m|[m 
+[31m|[m     Created S_Port_JSSC
+[31m|[m 
+* [33mcommit a7fb90c583aff8998cabb9d265c727d18a5ae176[m
+[31m|[m Author: sansanda <dsanchezsanc@uoc.edu>
+[31m|[m Date:   Tue Nov 3 01:09:39 2020 +0100
+[31m|[m 
+[31m|[m     update
+[31m|[m 
+* [33mcommit f6f0572aa2f021317a14e3d4d7e5dbeb770db251[m
+[31m|[m Author: DavidS <dsanchezsanc@uoc.edu>
+[31m|[m Date:   Mon Nov 2 16:23:31 2020 +0100
+[31m|[m 
+[31m|[m     update
+[31m|[m 
+* [33mcommit be2a08f140d501da454f8ef23c7cce0553020464[m
+[31m|[m Author: sansanda <dsanchezsanc@gmail.com>
+[31m|[m Date:   Mon Nov 2 15:01:36 2020 +0100
+[31m|[m 
+[31m|[m     update
+[31m|[m 
+* [33mcommit 2428f8baf80156afd4d511974e48f4ac7aa832f4[m
+[31m|[m Author: sansanda <dsanchezsanc@gmail.com>
+[31m|[m Date:   Fri Oct 30 17:08:44 2020 +0100
+[31m|[m 
+[31m|[m     update
+[31m|[m 
+* [33mcommit 4b86425c6de3097a484c6a75321ba2f8ef310a37[m
+[31m|[m Author: sansanda <dsanchezsanc@gmail.com>
+[31m|[m Date:   Thu Oct 29 17:09:09 2020 +0100
+[31m|[m 
+[31m|[m     working on Eurotherm2404_v5
+[31m|[m 
+* [33mcommit a6381d45a7333d0428cc737de77ac11f8c0b80ca[m
+[31m|[m Author: sansanda <dsanchezsanc@gmail.com>
+[31m|[m Date:   Thu Oct 29 15:51:26 2020 +0100
+[31m|[m 
+[31m|[m     practicing wirh jlibmodbus library
+[31m|[m 
+* [33mcommit d4be26b7b29846897a8034d51ccdb37e22c0daad[m
+[31m|[m Author: DavidS <dsanchezsanc@uoc.edu>
+[31m|[m Date:   Thu Oct 29 14:49:20 2020 +0100
+[31m|[m 
+[31m|[m     created Eurotherm2404_v5
+[31m|[m 
+* [33mcommit 91af1acecefdef77392caa9577d5a4137603d791[m
+[31m|[m Author: sansanda <dsanchezsanc@gmail.com>
+[31m|[m Date:   Thu Oct 29 12:53:23 2020 +0100
+[31m|[m 
+[31m|[m     working on modbus library
+[31m|[m 
+* [33mcommit 0feed5a1b38fd6d505ab9065d864a0a66cbd8246[m
+[31m|[m Author: DavidS <dsanchezsanc@uoc.edu>
+[31m|[m Date:   Tue Oct 27 18:29:27 2020 +0100
+[31m|[m 
+[31m|[m     bats
+[31m|[m 
+* [33mcommit 399ec973596aedec05aa278c8734c9d9cb3e4ae0[m
+[31m|[m Author: DavidS <dsanchezsanc@uoc.edu>
+[31m|[m Date:   Tue Oct 27 18:28:17 2020 +0100
+[31m|[m 
+[31m|[m     update
+[31m|[m 
+* [33mcommit 39aff98f8bec4232bcb98bb78ab178f7ec1f85da[m
+[31m|[m Author: DavidS <dsanchezsanc@uoc.edu>
+[31m|[m Date:   Tue Oct 27 18:25:48 2020 +0100
+[31m|[m 
+[31m|[m     updated
+[31m|[m 
+* [33mcommit 24257c2fe55f9c012ce6b9507400c601763552fa[m
+[31m|[m Author: DavidS <dsanchezsanc@uoc.edu>
+[31m|[m Date:   Tue Oct 27 18:25:22 2020 +0100
+[31m|[m 
+[31m|[m     updated
+[31m|[m 
+* [33mcommit 7c2ad79296e19a9659d07c6a0db65270e75b76a4[m
+[31m|[m Author: DavidS <dsanchezsanc@uoc.edu>
+[31m|[m Date:   Tue Oct 27 18:24:33 2020 +0100
+[31m|[m 
+[31m|[m     updated
+[31m|[m 
+* [33mcommit 3b021ca47d78e8da6405787d09a412604e4ab960[m
+[31m|[m Author: sansanda <dsanchezsanc@uoc.edu>
+[31m|[m Date:   Mon Oct 26 22:19:34 2020 +0100
+[31m|[m 
+[31m|[m     workimg on thermalcalibrations v7
+[31m|[m 
+* [33mcommit 384de9ccf977e97d88d6842cb2611d24db4c411d[m
+[31m|[m Author: DavidS <dsanchezsanc@uoc.edu>
+[31m|[m Date:   Mon Oct 26 16:08:57 2020 +0100
+[31m|[m 
+[31m|[m     solving library dependencies and rs232 comms for 64bits
+[31m|[m 
+* [33mcommit 2c86473e83871571d88c83da2430f984e4348200[m
+  Author: DavidS <dsanchezsanc@uoc.edu>
+  Date:   Fri Oct 23 16:51:43 2020 +0200
+  
+      first commit
