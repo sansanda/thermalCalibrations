@@ -6,20 +6,7 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/Comm_Adapters"/>
-	<classpathentry kind="lib" path="/java_development_libraries/frameworks/quantity_v_0_9.jar" sourcepath="/java_development_libraries/frameworks/quantity_v_0_9_source"/>
-	<classpathentry exported="true" kind="lib" path="/java_development_libraries/modBus/jamod-1.2-SNAPSHOT.jar"/>
-	<classpathentry exported="true" kind="lib" path="/java_development_libraries/modBus/modbus4j/modbus4J.jar"/>
-	<classpathentry exported="true" kind="lib" path="/java_development_libraries/modBus/modbus4j/seroUtils.jar"/>
-	<classpathentry exported="true" kind="lib" path="/java_development_libraries/comms/serial/modbus/jLibModbus/jlibmodbus-1.2.9.7.jar" sourcepath="/java_development_libraries/comms/serial/modbus/jLibModbus/jlibmodbus-1.2.9.7-src">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/java_development_libraries/comms/serial/modbus/jLibModbus/jlibmodbus-1.2.9.7-javadoc/jlibmodbus-1.2.9.7-javadoc.zip!/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/java_development_libraries/comms/serial/jssc-2.9.2/jssc-2.9.2.jar" sourcepath="/java_development_libraries/comms/serial/jssc-2.9.2/jssc-2.9.2-sources.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/java_development_libraries/comms/serial/jssc-2.9.2/jssc-2.9.2-javadoc.jar!/"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/Comm_Adapters"/>
+	<classpathentry kind="lib" path="D:/repos/java_development_libraries/frameworks/quantity_v_0_9.jar" sourcepath="/java_development_libraries/frameworks/quantity_v_0_9_source"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

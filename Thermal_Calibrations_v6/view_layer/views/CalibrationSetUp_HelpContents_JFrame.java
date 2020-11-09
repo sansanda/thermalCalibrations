@@ -94,8 +94,8 @@ public class CalibrationSetUp_HelpContents_JFrame extends JFrame implements Acti
     				"	Thermal Calibration Program \n" +
     				"	CNM -IMB -CSIC				\n" +
     				"	Author: David Sanchez Sanchez\n" +
-    				"	Version: 6.0\n" +
-    				"	Date: 30-10-2020\n" +
+    				"	Version: 6.1\n" +
+    				"	Date: 09-11-2020\n" +
     				"	Id de Producto: 123456";
     }
     private void createFrameComponents(){

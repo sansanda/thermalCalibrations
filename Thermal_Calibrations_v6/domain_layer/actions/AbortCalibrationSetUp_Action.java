@@ -6,7 +6,7 @@ import controller.*;
 import views.CalibrationSetUp_MainScreen_JFrame;
 import views.CalibrationSetUp_OvenTemperatureWarning_JFrame;
 import Main.MainController;
-import Ovens.Eurotherm2404_v2;
+import Ovens.Eurotherm2404_v5;
 
 public class AbortCalibrationSetUp_Action implements Action{
 
@@ -17,10 +17,10 @@ public class AbortCalibrationSetUp_Action implements Action{
 
 	private CalibrationSetUp_MainScreen_JFrame mainScreenFrame;
 
-	private Eurotherm2404_v2 E2404;
+	private Eurotherm2404_v5 E2404_v5;
 
 
-	public AbortCalibrationSetUp_Action()throws Exception{
+	public AbortCalibrationSetUp_Action() throws Exception{
 		result=null;
 		mainController=null;
 	}
@@ -51,9 +51,9 @@ public class AbortCalibrationSetUp_Action implements Action{
 			printActionMessage("STOPPING THE PROGRAM \n");
 		}
 		printActionMessage("Setting the TSP1 to 0 ºC \n");
-		E2404.setTemperature(0);
+		E2404_v5.setTemperatureSetpoint1(0);
 		printActionMessage("Setting the 2404 in Auto Mode \n");
-		E2404.setInAutoMode();
+		E2404_v5.setInAutoMode();
 		return 0;
 	}
 	private void printActionMessage(String _msg){
