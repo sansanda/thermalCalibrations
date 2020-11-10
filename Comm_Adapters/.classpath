@@ -18,8 +18,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="/java_development_libraries/comms/serial/modbus/modbus4j/seroUtils.jar"/>
-	<classpathentry exported="true" kind="lib" path="/java_development_libraries/comms/serial/javacomm20-win32/commapi/comm.jar"/>
-	<classpathentry exported="true" kind="lib" path="/java_development_libraries/comms/serial/jssc-2.9.2/jssc-2.9.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="/java_development_libraries/comms/serial/mfz-rxtx-2.2-20081207-win-x64/RXTXcomm.jar"/>
+	<classpathentry exported="true" kind="lib" path="/java_development_libraries/comms/serial/rxtx/mfz-rxtx-2.2-20081207-win-x64/RXTXcomm.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>

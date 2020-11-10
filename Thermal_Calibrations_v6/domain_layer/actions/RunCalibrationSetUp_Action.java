@@ -34,7 +34,6 @@ import views.CalibrationSetUp_ProgressScreen_JFrame;
 import Main.Calibration_MainController;
 import Main.MainController;
 import Ovens.Eurotherm2404_v5;
-import multimeters.Keithley2700_v5;
 import multimeters.Keithley2700_v6;
 import rs_232.S_Port_JSSC;
 import fileUtilities.*;

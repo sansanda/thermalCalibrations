@@ -48,7 +48,7 @@ public class Keithley2700_v6 {
 	
 		String closeChannelOrder = createCloseChannelOrder(_ch);
 		
-		System.out.println("Measuring the instantaneous VOLTAGE in K2430....");
+		System.out.println("Measuring the instantaneous VOLTAGE in 2700....");
 		
 		this.commAdapter.write("*RST");
 		this.commAdapter.write("INIT:CONT OFF");
@@ -912,7 +912,7 @@ public class Keithley2700_v6 {
 		
 		 try
 		 {
-			 //CommPort_I commPort = new S_Port_64bits("COM9", "\t\n");
+			 //CommPort_I commPort = new S_Port_64bits("COM9", "\n");
 			 CommPort_I commPort = new S_Port_JSSC("COM9", "\t\n");
 			 
 			  
@@ -922,13 +922,13 @@ public class Keithley2700_v6 {
 			 //k.test("k2700_TestFile_For_TTC.txt");
 			 //k.configure("k2700_ConfigFile_For_TTC.txt");
 
-			 //System.out.println("VOLTAGE MEASURE --> "+k.measureVoltage(6));
+			 System.out.println("VOLTAGE MEASURE --> "+k.measureVoltage(6));
 			 //k.readVoltageAndStoreInBuffer(6,10,500);
 			 //System.out.println("DESVIACION ESTANDARD PARA EL VOLTAGE--> "+k.calculeVoltageStandardDeviationFromBufferData());
 			 //System.out.println("DESVIACION ESTANDARD PARA EL VOLTAGE con 10 muestras--> "+k.takeNVoltageMeasuresWithDelayAndReturnStDev(6, 100, 100));
 
 
-			 System.out.println("4-WIRE RESISTANCE --> "+k.measure4WireResistance(4));
+			 //System.out.println("4-WIRE RESISTANCE --> "+k.measure4WireResistance(4));
 			 //System.out.println("2-WIRE RESISTANCE --> "+k.read2WireResistance(4));
 			 //System.out.println("TEMPERATURE --> "+k.readPT100Temperature(4));
 
@@ -945,14 +945,14 @@ public class Keithley2700_v6 {
 			 //System.out.println("MEDIA PARA 4=WIRE RESISTANCE--> "+			k.takeN4WireResistanceMeasuresWithDelayAndReturnMean(4, 50, 100));
 			 //System.out.println("MEDIA PARA VOLTAGE--> "+						k.takeNVoltageMeasuresWithDelayAndReturnMean(6, 50, 100));
 
-			 System.out.println("TEMP--> "+										k.measurePT100Temperature(4));
-			 System.out.println("AVG PARA TEMP--> "+							k.measureAveragePT100Temperature(4,20));
-			 System.out.println("VOLTAGE--> "+									k.measureVoltage(6));
-			 System.out.println("AVG PARA VOLTAGE--> "+							k.measureAverageVoltage(6,20));
-			 System.out.println("2=WIRE RESISTANCE--> "+						k.measure2WireResistance(4));
-			 System.out.println("AVG PARA 2=WIRE RESISTANCE--> "+				k.measureAverage2WireResistance(4,20));
-			 System.out.println("4=WIRE RESISTANCE--> "+						k.measure4WireResistance(4));
-			 System.out.println("AVG PARA 4=WIRE RESISTANCE--> "+				k.measureAverage4WireResistance(4,20));
+			 //System.out.println("TEMP--> "+										k.measurePT100Temperature(4));
+			 //System.out.println("AVG PARA TEMP--> "+							k.measureAveragePT100Temperature(4,20));
+			 //System.out.println("VOLTAGE--> "+									k.measureVoltage(6));
+			 //System.out.println("AVG PARA VOLTAGE--> "+							k.measureAverageVoltage(6,20));
+			 //System.out.println("2=WIRE RESISTANCE--> "+						k.measure2WireResistance(4));
+			 //System.out.println("AVG PARA 2=WIRE RESISTANCE--> "+				k.measureAverage2WireResistance(4,20));
+			 //System.out.println("4=WIRE RESISTANCE--> "+						k.measure4WireResistance(4));
+			 //System.out.println("AVG PARA 4=WIRE RESISTANCE--> "+				k.measureAverage4WireResistance(4,20));
 
 			 //System.out.println("STDEV PARA TEMPERATURA--> "+					k.takeNTemperatureMeasuresWithDelayAndReturnStDev(4, 50, 100));
 			 //System.out.println("STDEV PARA 2=WIRE RESISTANCE--> "+			k.takeN2WireResistanceMeasuresWithDelayAndReturnStDev(4, 50, 100));

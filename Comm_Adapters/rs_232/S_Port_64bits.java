@@ -1,19 +1,23 @@
 package rs_232;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import javax.swing.JOptionPane;
 
 import common.CommPort_I;
 import gnu.io.CommPortIdentifier;
-import gnu.io.PortInUseException;
 import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
 import gnu.io.UnsupportedCommOperationException;
 
 
+/**
+ * Clase que implementa un puerto serie tipo RS232 haciendo uso de la libreria rxtx 
+ * compilada para maquinas de 64 bits en windows.
+ * @author DavidS
+ *
+ */
 public class S_Port_64bits implements CommPort_I, SerialPortEventListener{
 
 	 //**************************************************************************
@@ -245,19 +249,15 @@ public class S_Port_64bits implements CommPort_I, SerialPortEventListener{
 	  */
 	 @Override
 	 public void open() throws Exception {		 
-		try{
-			if (portId.isCurrentlyOwned())
-			{
-				System.out.println("Port "+portId.getName() + " currently owned"+" by"+portId.getCurrentOwner());
-				JOptionPane.showMessageDialog(null,"Port "+portId.getName() + " currently owned"+" by"+portId.getCurrentOwner());
-			}else
-			{
-				serialPort = (SerialPort) portId.open("RS232_PortApp", 2000); //SimpleReadApp
-			}
+		if (portId.isCurrentlyOwned())
+		{
+			System.out.println("Port "+portId.getName() + " currently owned"+" by"+portId.getCurrentOwner());
+			System.out.println("Going to close the port....");
+			this.serialPort.close();
 		}
-		catch(PortInUseException e){
-			System.err.println("Port already in use: " + e.getMessage() +"\n"+ e.getCause() +"\n"+ e.getLocalizedMessage()+"\n"+e.getClass());
-			JOptionPane.showMessageDialog(null,"Port already in use.");
+		else
+		{
+			this.serialPort = (SerialPort) portId.open("RS232_PortApp", 2000); //SimpleReadApp
 		}			
 	 }
 	 
@@ -318,26 +318,5 @@ public class S_Port_64bits implements CommPort_I, SerialPortEventListener{
 	 //****************************TESTING***************************************
 	 //**************************************************************************
 	 
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		 BufferedReader reader = new BufferedReader (new InputStreamReader(System.in));
-
-		 try
-		 {
-			//El puerto se encuenta en el equipo y adquirimos un objeto
-			//tipo SerialPort para poder manejar dicho puerto
-			CommPort_I sp = new S_Port_64bits("COM9","\n");
-			System.out.println(new String(sp.ask("*IDN?"), StandardCharsets.UTF_8));
-			
-		 }
-		 catch(Exception e)
-		 {
-
-		 }
-	}
 
 }
