@@ -35,7 +35,7 @@ import Main.Calibration_MainController;
 import Main.MainController;
 import Ovens.Eurotherm2404_v5;
 import multimeters.Keithley2700_v6;
-import rs_232.S_Port_JSSC;
+import rs232.JSSC_S_Port;
 import fileUtilities.*;
 
 public class RunCalibrationSetUp_Action implements Action{
@@ -516,7 +516,7 @@ public class RunCalibrationSetUp_Action implements Action{
 		instrumentsData = new InstrumentsData(INSTRUMENTS_DATA_FILE_PATH);
 		printActionMessage("Creando la instancia de Keithley2700.");
 		
-		CommPort_I commPort = new S_Port_JSSC(instrumentsData.getMultimeterData().getComPort(), "\t\n");
+		CommPort_I commPort = new JSSC_S_Port(instrumentsData.getMultimeterData().getComPort(), "\t\n");
 		
 		k2700_v6 = new Keithley2700_v6(commPort);
 		k2700_v6.enableBeeper(false);

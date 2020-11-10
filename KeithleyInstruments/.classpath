@@ -7,10 +7,8 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="/InstrumentInterfaces"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/64Bits_Comm_Adapters"/>
 	<classpathentry kind="lib" path="/java_development_libraries/tratamiento de unidades de medida/jscience-4.3.1.jar"/>
 	<classpathentry kind="lib" path="/java_development_libraries/frameworks/quantity_v_0_9.jar"/>
-	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/32_64Bits_Comm_Adapters"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/32Bits_Comm_Adapters"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Comm_Adapters"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry exported="true" kind="lib" path="/java_development_libraries/comms/serial/javacomm20-win32/commapi/comm.jar" sourcepath="/java_development_libraries/comms/serial/javacomm20-win32/javacomm20-win32.zip"/>
+	<classpathentry exported="true" kind="lib" path="/java_development_libraries/comms/serial/jssc-2.9.2/jssc-2.9.2.jar" sourcepath="/java_development_libraries/comms/serial/jssc-2.9.2/jssc-2.9.2-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/E:/repos/java_development_libraries/comms/serial/jssc-2.9.2/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="/java_development_libraries/comms/serial/rxtx/mfz-rxtx-2.2-20081207-win-x64/RXTXcomm.jar"/>
+	<classpathentry exported="true" kind="lib" path="/java_development_libraries/comms/serial/modbus/jamod-1.2-SNAPSHOT.jar" sourcepath="/java_development_libraries/comms/serial/modbus/jamod-1.2-SNAPSHOT-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="/java_development_libraries/comms/serial/modbus/jLibModbus/jlibmodbus-1.2.9.7.jar" sourcepath="/java_development_libraries/comms/serial/modbus/jLibModbus/jlibmodbus-1.2.9.7-src"/>
+	<classpathentry exported="true" kind="lib" path="/java_development_libraries/comms/serial/modbus/modbus4j/seroUtils.jar"/>
+	<classpathentry exported="true" kind="lib" path="/java_development_libraries/comms/serial/modbus/modbus4j/modbus4J.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

@@ -1,14 +1,12 @@
 package multimeters;
 
 
-import rs_232.S_Port_64bits;
-import rs_232.S_Port_JSSC;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 
 import common.CommPort_I;
+import rs232.JSSC_S_Port;
 
 /**
  * Keithley2700_v5 es una copia de Keithley2700 pero modificada para trabajar
@@ -913,7 +911,7 @@ public class Keithley2700_v6 {
 		 try
 		 {
 			 //CommPort_I commPort = new S_Port_64bits("COM9", "\n");
-			 CommPort_I commPort = new S_Port_JSSC("COM9", "\t\n");
+			 CommPort_I commPort = new JSSC_S_Port("COM9", "\t\n");
 			 
 			  
 			 Keithley2700_v6 k = new Keithley2700_v6(commPort);

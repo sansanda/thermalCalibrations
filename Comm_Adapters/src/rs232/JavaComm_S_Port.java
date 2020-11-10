@@ -1,9 +1,8 @@
-package rs_232;
+package rs232;
 import java.io.*;
 
 import java.util.*;
 import javax.comm.*;
-import javax.swing.JOptionPane;
 
 import common.CommPort_I;
 
@@ -14,7 +13,7 @@ import common.CommPort_I;
  *
  */
 
-public class S_Port_32bits implements CommPort_I, SerialPortEventListener{
+public class JavaComm_S_Port implements CommPort_I, SerialPortEventListener{
 
 	 //**************************************************************************
 	 //****************************CONSTANTES************************************
@@ -32,7 +31,7 @@ public class S_Port_32bits implements CommPort_I, SerialPortEventListener{
 	 private InputStream		      	inputStream;
 	 private OutputStream       		outputStream;
 	 private SerialPort		      		serialPort;
-	 private byte[] 					buffer = new byte[256];
+	 private byte[] 					buffer = null;
 	 private int 						bufferPointer = 0;
 	 private boolean 					txOK = false;
 	 private String 					terminator = null;
@@ -45,10 +44,12 @@ public class S_Port_32bits implements CommPort_I, SerialPortEventListener{
 	  *
 	  *
 	  */
-	 public S_Port_32bits(String wantedPortName, String terminator) throws Exception{
+	 public JavaComm_S_Port(String wantedPortName, int baudRate, int nDataBits, int nStopBits, int parityType, String terminator) throws Exception{
 		 this.wantedPortName = wantedPortName;
 		 this.terminator = terminator;
-		 this.initializePort();
+		 this.buffer = new byte[256];
+		 this.bufferPointer = 0;
+		 initialize(wantedPortName, baudRate, nDataBits, nStopBits, parityType);
 	 }
 
 	 //**************************************************************************
@@ -59,9 +60,9 @@ public class S_Port_32bits implements CommPort_I, SerialPortEventListener{
 	 /**
 	  *
 	  */
-	 private void initializePort()throws Exception{
+	 private void initialize(String wantedPortName, int baudRate, int nDataBits, int nStopBits, int parityType )throws Exception{
 
-		 this.searchForSerialCommPort();
+		 this.searchForSerialCommPort(wantedPortName);
 		 this.open();
 		 this.inputStream = this.getPortInputStream();
 		 this.outputStream = this.getPortOutputStream();
@@ -70,7 +71,7 @@ public class S_Port_32bits implements CommPort_I, SerialPortEventListener{
 			 this.serialPort.addEventListener(this);
 		 }
 		 catch (TooManyListenersException e) {}
-		 this.setPortParams();
+		 this.setPortParams(baudRate, nDataBits, nStopBits, parityType);
 
 		 try
 		 {
@@ -92,9 +93,49 @@ public class S_Port_32bits implements CommPort_I, SerialPortEventListener{
 		 }
 	 }
 
+	 
 	 /**
 	  *
 	  */
+	 private CommPortIdentifier searchForSerialCommPort(String wantedPortName) throws Exception{
+
+		boolean				portFound 		= false;
+		CommPortIdentifier 	WantedPortId 	= null;
+
+		//Preguntamos a todos los puertos de la lista
+		//si nuestro puerto se encuentra en el equipo
+		System.out.println("Buscando puertos del sistema....\n");
+		Thread.sleep(1000);
+		portList = CommPortIdentifier.getPortIdentifiers();
+		while (portList.hasMoreElements()) {
+			portId = portList.nextElement();
+			System.out.print(portId.getName()+ " ");
+			Thread.sleep(500);
+			if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
+				if (portId.getName().equals(wantedPortName)) {
+					portFound = true;
+					//Memorizamos el identificador del puerto que buscamos
+					WantedPortId = portId;
+				}
+			}
+		}
+		
+		if (!portFound) {
+		    System.out.println("port " + wantedPortName + " not found.");
+		    return null;
+		}
+		
+		System.out.println(" ............ Found port: "+wantedPortName);
+		//portId es el identificador del puerto que buscamos
+		return portId;
+		
+	 }
+	 
+	 
+	 /**
+	  *
+	  */
+	 
 	 public void serialEvent(SerialPortEvent event) {
 
 		switch (event.getEventType()) {
@@ -155,55 +196,16 @@ public class S_Port_32bits implements CommPort_I, SerialPortEventListener{
 	  *
 	  * Permite inicializar todos los parametros del puerto
 	  */
-	 private void setPortParams(){
-		 try
-		 {
-			 this.serialPort.setSerialPortParams(9600,SerialPort.DATABITS_8,SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);
-		 } 
-		 catch (UnsupportedCommOperationException e) {}
+	 private void setPortParams(int baudRate, int nDataBits, int nStopBits, int parityType) throws Exception{
+		 serialPort.setSerialPortParams(baudRate,nDataBits,nStopBits,parityType);
+		 //serialPort.setDTR(false);
+		 //serialPort.setRTS(false);
 	 }
 	 
 
 	 //**************************************************************************
 	 //****************************GETTERS***************************************
 	 //**************************************************************************
-
-
-	 /**
-	  *
-	  */
-	 private void searchForSerialCommPort() throws Exception{
-
-		boolean				portFound 		= false;
-		CommPortIdentifier 	WantedPortId 	= null;
-
-		//Preguntamos a todos los puertos de la lista
-		//si nuestro puerto se encuentra en el equipo
-		System.out.println("Buscando puertos del sistema....\n");
-		Thread.sleep(1000);
-		portList = CommPortIdentifier.getPortIdentifiers();
-		while (portList.hasMoreElements()) {
-			portId = portList.nextElement();
-			System.out.print(portId.getName()+ " ");
-			Thread.sleep(500);
-			if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
-				if (portId.getName().equals(wantedPortName)) {
-					portFound = true;
-					//Memorizamos el identificador del puerto que buscamos
-					WantedPortId = portId;
-				}
-			}
-		}
-		if (!portFound) {
-		    System.out.println("port " + wantedPortName + " not found.");
-		    JOptionPane.showMessageDialog(null,"port " + wantedPortName + " not found.");
-		}else
-		{
-			System.out.println(" ............ Found port: "+wantedPortName);
-		}
-		//portId es el identificador del puerto que buscamos
-		portId = WantedPortId;
-	 }
 
 	 /**
 	  * Permite obtener el flujo de datos de entrada del puerto serie

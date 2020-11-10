@@ -1,4 +1,4 @@
-package rs_232;
+package rs232;
 
 import static jssc.SerialPort.BAUDRATE_9600;
 import static jssc.SerialPort.DATABITS_8;
@@ -21,7 +21,7 @@ import jssc.SerialPortException;
  * @author DavidS
  *
  */
-public class S_Port_JSSC implements CommPort_I, SerialPortEventListener{
+public class JSSC_S_Port implements CommPort_I, SerialPortEventListener{
 
 	 //**************************************************************************
 	 //****************************CONSTANTES************************************
@@ -50,23 +50,21 @@ public class S_Port_JSSC implements CommPort_I, SerialPortEventListener{
 	  *
 	  *
 	  */
-	 public S_Port_JSSC(String commPort, String terminator) throws Exception{
+	 public JSSC_S_Port(String commPort, String terminator) throws Exception{
 		 buffer = new byte[BUFFER_LENGTH];
 		 bufferPointer = 0;
 		 fifo = new LinkedList<byte[]>();
-		 this.initializePort(commPort, terminator);
+		 this.initialize(commPort, terminator);
 	 }
 
 	 //**************************************************************************
 	 //****************************METODOS***************************************
 	 //**************************************************************************
-
-	 
 	 
 	 /**
 	  *
 	  */
-	 private void initializePort(String commPort, String terminator)throws Exception{
+	 private void initialize(String commPort, String terminator)throws Exception{
 
 		this.terminator = terminator;
 		this.serialPort = new SerialPort(commPort); 
