@@ -4,6 +4,8 @@ package multimeters;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import common.CommPort_I;
 import rs232.JSSC_S_Port;
@@ -37,29 +39,43 @@ public class Keithley2700_v6 {
 	}
 	//Getters and Setters
 	//Other Methods
-	public float measureVoltage(int _ch) throws Exception{
+	
+	
+	//********************************************************************************************
+	//**************************GET DATA REALTED COMMANDS*****************************************
+	//********************************************************************************************
+	
+	
+	public float read() throws Exception{
 		
-		verifyParameters(_ch, -1,-1,-1);
 		
 		float res = -1;
 		byte[] data;
-	
-		String closeChannelOrder = createCloseChannelOrder(_ch);
-		
-		System.out.println("Measuring the instantaneous VOLTAGE in 2700....");
-		
-		this.commAdapter.write("*RST");
-		this.commAdapter.write("INIT:CONT OFF");
-		this.commAdapter.write("TRIG:COUN 1");
-		this.commAdapter.write("SAMP:COUN 1");
-		this.commAdapter.write("SENS:FUNC 'VOLT:DC'");
-		this.commAdapter.write("SENS:VOLT:DC:RANG:AUTO ON");
 
-		this.commAdapter.write("ROUT:OPEN:ALL");
-		this.commAdapter.write(closeChannelOrder);
+		//Use of regular expressions to match Strings containing substrings like:
+		//-1.23E99 | 1E0 | -9.999e-999 --> Match
+		//+10E0 | 2.3e5.4 --> Not Match
+		//The objective is to extract +1.23456789E-03 from +1.23456789E-03VDC, for example
+		
+		Pattern pattern = Pattern.compile("[+-]?\\d(\\.\\d+)?[Ee][+-]?\\d+");
+		
+		/*  The READ? command performs an INITiate and then a FETCh?. The INITiate triggers a
+			measurement cycle which puts new data in the sample buffer. With no math function
+			enabled, FETCh? reads the data arrays from the sample buffer. With a math function
+			enabled, the readings are the result of the math calculation.
+			The following conditions must be met in order to use READ?:
+				• Continuous initiation must be disabled. It can be disabled by sending *RST or
+				  INIT:CONT OFF.
+				• If there are readings stored in the data store, the sample count (SAMP:COUN)
+			      must be set to 1.
+				• To use a sample count >1, the data store must be cleared (empty). It can be cleared
+				  by sending TRAC:CLE. 
+		 */
+		
 		this.commAdapter.write("READ?");
 		
 		data = this.commAdapter.read();
+		
 		
 		if (data.length>0){
 			String str = new String(data);
@@ -67,14 +83,54 @@ public class Keithley2700_v6 {
 			{
 				//System.out.println(str);
 				String[] rawData = str.split(",");
-				rawData[0] = rawData[0].substring(0, rawData[0].length()-3);
-				res = Float.valueOf(rawData[0]);
-				//System.out.println(res);
+				Matcher matcher = pattern.matcher(rawData[0]);
+				if (matcher.find())
+				{
+					res = Float.parseFloat(matcher.group(0));
+				}
 			}
 		}
-		this.commAdapter.write("ROUT:OPEN:ALL");
+		
 		return res;
 	}
+	
+	//********************************************************************************************
+	//**************************CHANNEL REALTED COMMANDS******************************************
+	//********************************************************************************************
+	
+	public void closeChannel(int _ch) throws Exception {
+		
+		verifyParameters(_ch, -1,-1,-1);
+		String closeChannelOrder = createCloseChannelOrder(_ch);
+		this.commAdapter.write(closeChannelOrder);
+		
+	}
+	
+	public void openAllChannels() throws Exception {
+		this.commAdapter.write("ROUT:OPEN:ALL");
+	}
+	
+	
+	//********************************************************************************************
+	//**************************DC VOLTAGE REALTED COMMANDS***************************************
+	//********************************************************************************************
+	
+	public void configureAsMeasureDCVoltage(float range) throws Exception{
+		
+		
+		//System.out.println("Configuring the instrument as DC Measure VOLTAGE....");
+		
+		this.commAdapter.write("*RST");
+		this.commAdapter.write("INIT:CONT OFF");
+		this.commAdapter.write("TRIG:COUN 1");
+		this.commAdapter.write("SAMP:COUN 1");
+		this.commAdapter.write("SENS:FUNC 'VOLT:DC'");
+		if (range < 0 || range > 1000) this.commAdapter.write("SENS:VOLT:DC:RANG:AUTO ON");
+		else this.commAdapter.write("SENS:VOLT:DC:RANG " + Float.toString(range));
+		
+	}
+	
+	
 	public float measure2WireResistance(int _ch) throws Exception{
 		
 		verifyParameters(_ch, -1,-1,-1);
@@ -911,7 +967,7 @@ public class Keithley2700_v6 {
 		 try
 		 {
 			 //CommPort_I commPort = new S_Port_64bits("COM9", "\n");
-			 CommPort_I commPort = new JSSC_S_Port("COM9", "\t\n");
+			 CommPort_I commPort = new JSSC_S_Port("COM9", 19200, 8, 1, 0, "\n", 250, 0);
 			 
 			  
 			 Keithley2700_v6 k = new Keithley2700_v6(commPort);
@@ -920,7 +976,19 @@ public class Keithley2700_v6 {
 			 //k.test("k2700_TestFile_For_TTC.txt");
 			 //k.configure("k2700_ConfigFile_For_TTC.txt");
 
-			 System.out.println("VOLTAGE MEASURE --> "+k.measureVoltage(6));
+			 int i = 0;
+			 
+			 k.configureAsMeasureDCVoltage(10);
+			 k.openAllChannels();
+			 k.closeChannel(3);
+			 
+			 while (i<100)
+			 {
+				 
+
+			 
+			 System.out.println("VOLTAGE MEASURE --> "+k.read());
+			 
 			 //k.readVoltageAndStoreInBuffer(6,10,500);
 			 //System.out.println("DESVIACION ESTANDARD PARA EL VOLTAGE--> "+k.calculeVoltageStandardDeviationFromBufferData());
 			 //System.out.println("DESVIACION ESTANDARD PARA EL VOLTAGE con 10 muestras--> "+k.takeNVoltageMeasuresWithDelayAndReturnStDev(6, 100, 100));
@@ -956,8 +1024,8 @@ public class Keithley2700_v6 {
 			 //System.out.println("STDEV PARA 2=WIRE RESISTANCE--> "+			k.takeN2WireResistanceMeasuresWithDelayAndReturnStDev(4, 50, 100));
 			 //System.out.println("STDEV PARA 4=WIRE RESISTANCE--> "+			k.takeN4WireResistanceMeasuresWithDelayAndReturnStDev(4, 50, 100));
 			 //System.out.println("STDEV PARA VOLTAGE--> "+						k.takeNVoltageMeasuresWithDelayAndReturnStDev(6, 50, 100));
-
-
+			 	i++;
+			 }
 
 			 System.out.println("Ending process...");
 			 System.out.println("Closing ports...");

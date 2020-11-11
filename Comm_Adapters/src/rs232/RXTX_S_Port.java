@@ -40,6 +40,8 @@ public class RXTX_S_Port implements CommPort_I, SerialPortEventListener{
 	 private StringBuffer 				readBuffer = null;
 	 private String 					receivedData = null;
 	 private String 					terminator = null;
+	 private int 						writeWaitTime = 100;
+	 private int 						readWaitTime = 100; 
 	 
 
 	 
@@ -51,10 +53,14 @@ public class RXTX_S_Port implements CommPort_I, SerialPortEventListener{
 	  *
 	  *
 	  */
-	 public RXTX_S_Port(String wantedPortName, int baudRate, int nDataBits, int nStopBits, int parityType, String terminator) throws Exception{
+	 public RXTX_S_Port(String wantedPortName, int baudRate, int nDataBits, int nStopBits, int parityType, String terminator, int writeWaitTime, int readWaitTime) throws Exception{
 		 this.receivedData = "";
 		 this.terminator = terminator;
 		 readBuffer = new StringBuffer();
+		 
+		 this.writeWaitTime = writeWaitTime;
+		 this.readWaitTime = readWaitTime;
+		 
 		 initialize(wantedPortName, baudRate, nDataBits, nStopBits, parityType);
 	 }
 
@@ -325,31 +331,34 @@ public class RXTX_S_Port implements CommPort_I, SerialPortEventListener{
 	 */
 	@Override
 	public byte[] read() throws Exception{
+		Thread.sleep(this.readWaitTime);
 		this.waitForIncomingData();
 		return this.readDataAsString().getBytes();
 	}
 
 	/**
 	 * Sends the data to the output of the adapter
-	 * @trhows Exception if something goes wrong
-	 * @author David Sanchez Sanchez
-	 * @mail dsanchezsanc@uoc.edu
+	 * @author 	David Sanchez Sanchez
+	 * @mail 	dsanchezsanc@uoc.edu
+	 * @param 	data is the String to send to the output
+	 * @trhows 	Exception if something goes wrong
 	 */
 	@Override
 	public void write(String data) throws Exception{
 		//System.out.println("\n"+"Writing \""+message+"\" to "+serialPort.getPortName());
 		//System.out.println("\n"+"Writing \""+message+"\" to "+serialPort.getName());
+		Thread.sleep(this.writeWaitTime);
 		outputStream.write((data + this.terminator).getBytes());
 	}
 	
 	/**
 	 * Sends a query to the output of the adapter and waits for the response
 	 * This method is synchrone, so if you invoque this method it will stop de Thread until a new data arrives 
-	 * @return the response readed as byte array.
-	 * @trhows Exception if something goes wrong
-	 * @author David Sanchez Sanchez
-	 * @throws Exception 
-	 * @mail dsanchezsanc@uoc.edu
+	 * @author 	David Sanchez Sanchez
+	 * @mail 	dsanchezsanc@uoc.edu
+	 * @param 	query is the String to send to the output as query
+	 * @return 	the response readed as byte array.
+	 * @trhows 	Exception if something goes wrong
 	 */
 	@Override
 	public byte[] ask(String query) throws Exception {

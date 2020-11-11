@@ -23,7 +23,7 @@ public class Keithley2700 extends instrumentWithCommAdapter{
 	}
 	//Getters and Setters
 	//Other Methods
-	public float measureVoltage(int _ch) throws Exception{
+	public float configureAsMeasureDCVoltage(int _ch) throws Exception{
 		
 		verifyParameters(_ch, -1,-1,-1);
 		

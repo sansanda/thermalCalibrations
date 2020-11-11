@@ -516,7 +516,8 @@ public class RunCalibrationSetUp_Action implements Action{
 		instrumentsData = new InstrumentsData(INSTRUMENTS_DATA_FILE_PATH);
 		printActionMessage("Creando la instancia de Keithley2700.");
 		
-		CommPort_I commPort = new JSSC_S_Port(instrumentsData.getMultimeterData().getComPort(), "\t\n");
+		
+		CommPort_I commPort = new JSSC_S_Port(instrumentsData.getMultimeterData().getComPort(), 19200, 8, 1, 0, "\n", 250);
 		
 		k2700_v6 = new Keithley2700_v6(commPort);
 		k2700_v6.enableBeeper(false);

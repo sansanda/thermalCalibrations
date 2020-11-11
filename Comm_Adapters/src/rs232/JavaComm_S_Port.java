@@ -35,20 +35,28 @@ public class JavaComm_S_Port implements CommPort_I, SerialPortEventListener{
 	 private int 						bufferPointer = 0;
 	 private boolean 					txOK = false;
 	 private String 					terminator = null;
+	 private int 						writeWaitTime = 100;
+	 private int 						readWaitTime = 100;
+	 
 
 	 //**************************************************************************
 	 //****************************CONSTRUCTORES*********************************
 	 //**************************************************************************
 
 	 /**
+	 * @param readWaitTime 
 	  *
 	  *
 	  */
-	 public JavaComm_S_Port(String wantedPortName, int baudRate, int nDataBits, int nStopBits, int parityType, String terminator) throws Exception{
+	 public JavaComm_S_Port(String wantedPortName, int baudRate, int nDataBits, int nStopBits, int parityType, String terminator, int writeWaitTime, int readWaitTime) throws Exception{
 		 this.wantedPortName = wantedPortName;
 		 this.terminator = terminator;
 		 this.buffer = new byte[256];
 		 this.bufferPointer = 0;
+		 
+		 this.writeWaitTime = writeWaitTime;
+		 this.readWaitTime = readWaitTime;
+		 
 		 initialize(wantedPortName, baudRate, nDataBits, nStopBits, parityType);
 	 }
 
@@ -276,29 +284,32 @@ public class JavaComm_S_Port implements CommPort_I, SerialPortEventListener{
 	 */
 	@Override
 	public byte[] read() throws Exception{
+		Thread.sleep(this.readWaitTime);
 		this.waitForIncomingData();
 		return buffer;
 	}
 
 	/**
 	 * Sends the data to the output of the adapter
-	 * @trhows Exception if something goes wrong
-	 * @author David Sanchez Sanchez
-	 * @mail dsanchezsanc@uoc.edu
+	 * @author 	David Sanchez Sanchez
+	 * @mail 	dsanchezsanc@uoc.edu
+	 * @param 	data is the String to send to the output
+	 * @trhows 	Exception if something goes wrong
 	 */
 	@Override
 	public void write(String data) throws Exception{
+		Thread.sleep(this.writeWaitTime);
 		outputStream.write((data + this.terminator).getBytes());
 	}
 	
 	/**
 	 * Sends a query to the output of the adapter and waits for the response
 	 * This method is synchrone, so if you invoque this method it will stop de Thread until a new data arrives 
-	 * @return the response readed as byte array.
-	 * @trhows Exception if something goes wrong
-	 * @author David Sanchez Sanchez
-	 * @throws Exception 
-	 * @mail dsanchezsanc@uoc.edu
+	 * @author 	David Sanchez Sanchez
+	 * @mail 	dsanchezsanc@uoc.edu
+	 * @param 	query is the String to send to the output as query
+	 * @return 	the response readed as byte array.
+	 * @trhows 	Exception if something goes wrong
 	 */
 	@Override
 	public byte[] ask(String query) throws Exception {

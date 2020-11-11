@@ -39,6 +39,8 @@ public class JSSC_S_Port implements CommPort_I, SerialPortEventListener{
 	 private int 						bufferPointer;
 
 	 private String 					terminator = "\n";
+	 private int 						writeWaitTime = 100;
+	 private int 						readWaitTime = 100;
 	 
 	 private LinkedList<byte[]> 		fifo = null;
 	 
@@ -47,14 +49,20 @@ public class JSSC_S_Port implements CommPort_I, SerialPortEventListener{
 	 //**************************************************************************
 
 	 /**
+	 * @param readWaitTime 
 	  *
 	  *
 	  */
-	 public JSSC_S_Port(String commPort, String terminator) throws Exception{
-		 buffer = new byte[BUFFER_LENGTH];
-		 bufferPointer = 0;
-		 fifo = new LinkedList<byte[]>();
-		 this.initialize(commPort, terminator);
+	 public JSSC_S_Port(String wantedPortName, int baudRate, int nDataBits, int nStopBits, int parityType, String terminator, int writeWaitTime, int readWaitTime) throws Exception{
+		 this.buffer = new byte[BUFFER_LENGTH];
+		 this.bufferPointer = 0;
+		 this.terminator = terminator;
+		 this.fifo = new LinkedList<byte[]>();
+		 
+		 this.writeWaitTime = writeWaitTime;
+		 this.readWaitTime = readWaitTime;
+		 
+		 this.initialize(wantedPortName, baudRate, nDataBits, nStopBits, parityType);
 	 }
 
 	 //**************************************************************************
@@ -64,15 +72,14 @@ public class JSSC_S_Port implements CommPort_I, SerialPortEventListener{
 	 /**
 	  *
 	  */
-	 private void initialize(String commPort, String terminator)throws Exception{
+	 private void initialize(String wantedPortName, int baudRate, int nDataBits, int nStopBits, int parityType)throws Exception{
 
-		this.terminator = terminator;
-		this.serialPort = new SerialPort(commPort); 
+		this.serialPort = new SerialPort(wantedPortName); 
 		this.open();
 		//this.pr = new PortReader(this.serialPort);
 		this.serialPort.addEventListener(this);/* defined below */
 		
-		this.serialPort.setParams(BAUDRATE_9600,  DATABITS_8, STOPBITS_1, PARITY_NONE);
+		this.serialPort.setParams(baudRate,  nDataBits, nStopBits, parityType);
 		// this.serialPort.setParams(9600, 8, 1, 0); // alternate technique
 		//serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN | SerialPort.FLOWCONTROL_RTSCTS_OUT);
 		
@@ -176,30 +183,33 @@ public class JSSC_S_Port implements CommPort_I, SerialPortEventListener{
 	 */
 	@Override
 	public byte[] read() throws Exception{
+		Thread.sleep(this.readWaitTime);
 		this.waitForIncomingData();
 		return this.fifo.getFirst();
 	}
 
 	/**
 	 * Sends the data to the output of the adapter
-	 * @trhows Exception if something goes wrong
-	 * @author David Sanchez Sanchez
-	 * @mail dsanchezsanc@uoc.edu
+	 * @author 	David Sanchez Sanchez
+	 * @mail 	dsanchezsanc@uoc.edu
+	 * @param 	data is the String to send to the output
+	 * @trhows 	Exception if something goes wrong
 	 */
 	@Override
 	public void write(String data) throws Exception{
 		 //System.out.println("\n"+"Writing \""+message+"\" to "+serialPort.getPortName());
-		 this.serialPort.writeBytes((data + terminator).getBytes());
+		Thread.sleep(this.writeWaitTime);
+		this.serialPort.writeBytes((data + terminator).getBytes());
 	}
 	
 	/**
 	 * Sends a query to the output of the adapter and waits for the response
 	 * This method is synchrone, so if you invoque this method it will stop de Thread until a new data arrives 
-	 * @return the response readed as byte array.
-	 * @trhows Exception if something goes wrong
-	 * @author David Sanchez Sanchez
-	 * @throws Exception 
-	 * @mail dsanchezsanc@uoc.edu
+	 * @author 	David Sanchez Sanchez
+	 * @mail 	dsanchezsanc@uoc.edu
+	 * @param 	query is the String to send to the output as query
+	 * @return 	the response readed as byte array.
+	 * @trhows 	Exception if something goes wrong
 	 */
 	@Override
 	public byte[] ask(String query) throws Exception {
