@@ -116,6 +116,48 @@ public class JSSC_S_Port implements CommPort_I, SerialPortEventListener{
 	 
 	 public void serialEvent(SerialPortEvent event) {
 		 
+		 
+		 
+//		 if (event.isCTS())
+//		 {
+//			System.out.println("CTS"); 
+//		 }
+//		 
+//		 if (event.isDSR())
+//		 {
+//			System.out.println("DSR"); 
+//		 }
+//		 
+//		 if (event.isERR())
+//		 {
+//			System.out.println("ERR"); 
+//		 }
+//		 
+//		 if (event.isRING())
+//		 {
+//			System.out.println("RING"); 
+//		 }
+//		 
+//		 if (event.isRLSD())
+//		 {
+//			System.out.println("RLSD"); 
+//		 }
+//		 
+//		 if (event.isRXCHAR())
+//		 {
+//			System.out.println("RXCHAR"); 
+//		 }
+//		 
+//		 if (event.isRXFLAG())
+//		 {
+//			System.out.println("RXFLAG"); 
+//		 }
+//		 
+//		 if (event.isTXEMPTY())
+//		 {
+//			System.out.println("TXEMPTY"); 
+//		 }
+		 
 		 if(event.isRXCHAR()){ // data is available
 	         // read data, quantity = getEventValue bytes 
 	    	 int nBytesToRead = event.getEventValue();
@@ -174,7 +216,7 @@ public class JSSC_S_Port implements CommPort_I, SerialPortEventListener{
 
 	 
 	/**
-	 * Get last income data (the newest arrived data)
+	 * Get and remove the last income data (the newest arrived data) 
 	 * This method is synchrone, so if you invoque this method it will stop de Thread until a new data arrives 
 	 * @return the data readed as byte array.
 	 * @trhows Exception if something goes wrong
@@ -185,7 +227,7 @@ public class JSSC_S_Port implements CommPort_I, SerialPortEventListener{
 	public byte[] read() throws Exception{
 		Thread.sleep(this.readWaitTime);
 		this.waitForIncomingData();
-		return this.fifo.getFirst();
+		return this.fifo.pop();
 	}
 
 	/**

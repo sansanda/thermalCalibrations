@@ -324,7 +324,7 @@ public class RunCalibrationSetUp_Action implements Action{
 			while (devicesEnumeration.hasMoreElements()){
 	            d = (Diode)devicesEnumeration.nextElement();
 				printActionMessageAndProgressScreenMessage("Reading the Device Number "+Integer.toString(i+1)+". \n");
-	            resultRow[i+1] = Double.toString(k2700_v6.measureAverageVoltage(d.getConnectedToMultimeterChannelNumber(),avg));
+	            resultRow[i+1] = Double.toString(k2700_v6.configureAsDCVoltageAverageMeasure(d.getConnectedToMultimeterChannelNumber(),avg));
 	            i++;
 			}
 	        resultRow[nDevicesToCalibrate+1] = pt1004WResistance;
@@ -473,7 +473,7 @@ public class RunCalibrationSetUp_Action implements Action{
 			while (devicesEnumeration.hasMoreElements()){
 	            d = (Diode)devicesEnumeration.nextElement();
 				printActionMessageAndProgressScreenMessage("Reading the Device Number "+Integer.toString(i+1)+". \n");
-	            resultRow[i+1] = Double.toString(k2700_v6.measureAverageVoltage(d.getConnectedToMultimeterChannelNumber(),avg));
+	            resultRow[i+1] = Double.toString(k2700_v6.configureAsDCVoltageAverageMeasure(d.getConnectedToMultimeterChannelNumber(),avg));
 	            i++;
 			}
 	        resultRow[nDevicesToCalibrate+1] = pt1004WResistance;
@@ -517,7 +517,7 @@ public class RunCalibrationSetUp_Action implements Action{
 		printActionMessage("Creando la instancia de Keithley2700.");
 		
 		
-		CommPort_I commPort = new JSSC_S_Port(instrumentsData.getMultimeterData().getComPort(), 19200, 8, 1, 0, "\n", 250);
+		CommPort_I commPort = new JSSC_S_Port(instrumentsData.getMultimeterData().getComPort(), 19200, 8, 1, 0, "\n", 250, 0);
 		
 		k2700_v6 = new Keithley2700_v6(commPort);
 		k2700_v6.enableBeeper(false);
