@@ -3,7 +3,13 @@ import instrumentsWithRS232.*;
 
 
 public class Keithley2430 extends instrumentWithRS232_32bits{
-	//Constants
+
+	 //**************************************************************************
+	 //****************************CONSTANTES************************************
+	 //**************************************************************************
+
+	final static String VERSION = "1.0.0";
+	
 	//Variables
 
 	//default constructor
@@ -280,6 +286,16 @@ public class Keithley2430 extends instrumentWithRS232_32bits{
 		}
 		return res;
 	}
+	
+	//**************************************************************************
+	//****************************VERSION***************************************
+	//**************************************************************************
+		
+	public static String getVersion() {
+		return VERSION;
+	}
+	
+	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 

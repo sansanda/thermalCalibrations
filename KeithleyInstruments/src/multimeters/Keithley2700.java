@@ -23,7 +23,7 @@ public class Keithley2700 extends instrumentWithCommAdapter{
 	}
 	//Getters and Setters
 	//Other Methods
-	public float measureVoltage(int _ch) throws Exception{
+	public float configureAsMeasureDCVoltage(int _ch) throws Exception{
 		
 		verifyParameters(_ch, -1,-1,-1);
 		
@@ -176,7 +176,7 @@ public class Keithley2700 extends instrumentWithCommAdapter{
 		sendMessageToSerialPort("ROUT:OPEN:ALL");
 		return res;
 	}
-	public float measureAverageVoltage(int _ch, int _avg) throws Exception{
+	public float configureAsDCVoltageAverageMeasure(int _ch, int _avg) throws Exception{
 		verifyParameters(_ch, _avg,-1,-1);
 		
 		float res = -1;

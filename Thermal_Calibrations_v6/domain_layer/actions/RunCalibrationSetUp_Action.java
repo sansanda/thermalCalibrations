@@ -34,9 +34,8 @@ import views.CalibrationSetUp_ProgressScreen_JFrame;
 import Main.Calibration_MainController;
 import Main.MainController;
 import Ovens.Eurotherm2404_v5;
-import multimeters.Keithley2700_v5;
 import multimeters.Keithley2700_v6;
-import rs_232.S_Port_JSSC;
+import rs232.JSSC_S_Port;
 import fileUtilities.*;
 
 public class RunCalibrationSetUp_Action implements Action{
@@ -325,7 +324,7 @@ public class RunCalibrationSetUp_Action implements Action{
 			while (devicesEnumeration.hasMoreElements()){
 	            d = (Diode)devicesEnumeration.nextElement();
 				printActionMessageAndProgressScreenMessage("Reading the Device Number "+Integer.toString(i+1)+". \n");
-	            resultRow[i+1] = Double.toString(k2700_v6.measureAverageVoltage(d.getConnectedToMultimeterChannelNumber(),avg));
+	            resultRow[i+1] = Double.toString(k2700_v6.configureAsDCVoltageAverageMeasure(d.getConnectedToMultimeterChannelNumber(),avg));
 	            i++;
 			}
 	        resultRow[nDevicesToCalibrate+1] = pt1004WResistance;
@@ -474,7 +473,7 @@ public class RunCalibrationSetUp_Action implements Action{
 			while (devicesEnumeration.hasMoreElements()){
 	            d = (Diode)devicesEnumeration.nextElement();
 				printActionMessageAndProgressScreenMessage("Reading the Device Number "+Integer.toString(i+1)+". \n");
-	            resultRow[i+1] = Double.toString(k2700_v6.measureAverageVoltage(d.getConnectedToMultimeterChannelNumber(),avg));
+	            resultRow[i+1] = Double.toString(k2700_v6.configureAsDCVoltageAverageMeasure(d.getConnectedToMultimeterChannelNumber(),avg));
 	            i++;
 			}
 	        resultRow[nDevicesToCalibrate+1] = pt1004WResistance;
@@ -517,7 +516,8 @@ public class RunCalibrationSetUp_Action implements Action{
 		instrumentsData = new InstrumentsData(INSTRUMENTS_DATA_FILE_PATH);
 		printActionMessage("Creando la instancia de Keithley2700.");
 		
-		CommPort_I commPort = new S_Port_JSSC(instrumentsData.getMultimeterData().getComPort(), "\t\n");
+		
+		CommPort_I commPort = new JSSC_S_Port(instrumentsData.getMultimeterData().getComPort(), 19200, 8, 1, 0, "\n", 250, 0);
 		
 		k2700_v6 = new Keithley2700_v6(commPort);
 		k2700_v6.enableBeeper(false);

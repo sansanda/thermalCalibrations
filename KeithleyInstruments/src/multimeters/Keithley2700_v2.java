@@ -22,7 +22,7 @@ public class Keithley2700_v2 extends instrumentWithRS232_32bits{
 	}
 	//Getters and Setters
 	//Other Methods
-	public Volt measureDCVoltage(int _ch) throws Exception{
+	public Volt configureAsMeasureDCVoltage(int _ch) throws Exception{
 		if(_ch>MAX_NUMBER_OF_CHANNELS || _ch<MIN_NUMBER_OF_CHANNELS){
 			System.err.println("Error en parametros de entrada para measureVoltage.");
 			System.exit(-1);

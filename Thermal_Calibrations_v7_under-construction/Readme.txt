@@ -1,1 +1,0 @@
-Proyecto creado para trabajar bajo entornos windows con maquinas de 64bits
