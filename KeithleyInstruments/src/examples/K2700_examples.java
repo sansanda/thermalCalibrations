@@ -29,10 +29,10 @@ public class K2700_examples {
 	private static int parityType = 0;
 	private static String terminator = "\n";
 	
-	private static int writePort_waitTime = 250; //in milliseconds
+	private static int writePort_waitTime = 400; //in milliseconds
 	private static int readPort_waitTime = 0; //in milliseconds
-	boolean check_errors = true;
-	private static int debug_level = 3;
+	boolean check_errors = false;
+	private static int debug_level = 4;
 	
 	private static CommPort_I rs232_commPort = null;
 	
