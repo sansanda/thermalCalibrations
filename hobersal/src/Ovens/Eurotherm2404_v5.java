@@ -27,6 +27,13 @@ public class Eurotherm2404_v5 {
 	//TODO: Modificar la clase llamada Eurotherm2404_v5 para pasarle el mosdbus master en el constructory a partir de alli implementar todos los metodos de lectura e imposicion de temparatura etc.
 	
 	
+	 //**************************************************************************
+	 //****************************CONSTANTES************************************
+	 //**************************************************************************
+
+	final static String VERSION = "1.0.0";
+	
+	
 	public Eurotherm2404_v5(SerialParameters sp, ModbusMaster m, int id) throws RuntimeException, ModbusIOException, Exception{
 		super();
 		// TODO Auto-generated constructor stub
@@ -314,6 +321,14 @@ public class Eurotherm2404_v5 {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	//**************************************************************************
+	//****************************VERSION***************************************
+	//**************************************************************************
+		
+	public static String getVersion() {
+		return VERSION;
 	}
 	
     static public void main(String[] arg) {
