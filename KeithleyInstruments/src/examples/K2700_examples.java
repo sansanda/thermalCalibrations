@@ -3,7 +3,7 @@ package examples;
 import java.util.Arrays;
 
 import common.CommPort_I;
-import multimeters.Keithley2700_v6;
+import multimeters.Keithley2700;
 import rs232.JSSC_S_Port;
 
 /**
@@ -36,7 +36,7 @@ public class K2700_examples {
 	
 	private static CommPort_I rs232_commPort = null;
 	
-	private static Keithley2700_v6 k = null;
+	private static Keithley2700 k = null;
 	
 	
 	
@@ -45,15 +45,15 @@ public class K2700_examples {
 		String r = "";
 		
 		String[] ELEMENTS = {
-				Keithley2700_v6.FORMAT_ELEMENT_READING,
-				Keithley2700_v6.FORMAT_ELEMENT_UNITS
+				Keithley2700.FORMAT_ELEMENT_READING,
+				Keithley2700.FORMAT_ELEMENT_UNITS
 				};
 		
 		String[] DEFAULT_ELEMENTS = {
-				Keithley2700_v6.FORMAT_ELEMENT_READING
+				Keithley2700.FORMAT_ELEMENT_READING
 				};
 	
-		k = new Keithley2700_v6(rs232_commPort, check_errors, debug_level);
+		k = new Keithley2700(rs232_commPort, check_errors, debug_level);
 
 		
 		r = r + k.resetInstrument();
@@ -62,7 +62,7 @@ public class K2700_examples {
 		r = r + k.openAllChannels(100);
 		
 		r = r + k.formatElements(ELEMENTS, DEFAULT_ELEMENTS);
-		r = r + k.formatData(Keithley2700_v6.FORMAT_TYPE_ASCII,1);
+		r = r + k.formatData(Keithley2700.FORMAT_TYPE_ASCII,1);
 		 
 		return r;
 	}
@@ -76,10 +76,10 @@ public class K2700_examples {
 		
 		//Configuramos el keithley para la medida de temperatura.
 		r = r + k.configureForMeasuring_Temperature(
-				Keithley2700_v6.TEMPERATURE_SENSOR_TCOUPLE, 
-				Keithley2700_v6.TEMPERATURE_TCOUPLE_TYPE_K, 
-				Keithley2700_v6.TEMPERATURE_UNIT_C,
-				Keithley2700_v6.AVERAGE_FILTER_CONTROL_TYPE_REPEAT,
+				Keithley2700.TEMPERATURE_SENSOR_TCOUPLE, 
+				Keithley2700.TEMPERATURE_TCOUPLE_TYPE_K, 
+				Keithley2700.TEMPERATURE_UNIT_C,
+				Keithley2700.AVERAGE_FILTER_CONTROL_TYPE_REPEAT,
 				filterWindow,
 				filterCount,
 				enableFilter);
@@ -91,7 +91,7 @@ public class K2700_examples {
 		r = null;
 		
 		for (int i=0;i<nMeasures;i++) {
-			System.out.println(Arrays.toString(k.measure(Keithley2700_v6.FUNCTION_TEMPERATURE, -1, 0.1f, card, ch))); 
+			System.out.println(Arrays.toString(k.measure(Keithley2700.FUNCTION_TEMPERATURE, -1, 0.1f, card, ch))); 
 			Thread.sleep(1000);		 
 		}
 	}
@@ -140,9 +140,9 @@ public class K2700_examples {
 		 
 		r = r + k.setTriggerTimerInterval(0.1f);
 		r = r + k.setTriggerDelay(0f);
-		r = r + k.setTriggerCount(Keithley2700_v6.TRIGGER_COUNT_MAX + 1);
+		r = r + k.setTriggerCount(Keithley2700.TRIGGER_COUNT_MAX + 1);
 		r = r + k.setSampleCount(channels.length);
-		r = r + k.setTriggerSource(Keithley2700_v6.TRIGGER_SOURCE_BUS);
+		r = r + k.setTriggerSource(Keithley2700.TRIGGER_SOURCE_BUS);
 		 
 			
 		System.out.println("**************************************************");
@@ -181,9 +181,9 @@ public class K2700_examples {
 		int[] filters = {1,5,5};
 		
 		String[] functions = {
-				Keithley2700_v6.FUNCTION_TEMPERATURE,
-				Keithley2700_v6.FUNCTION_FOUR_WIRE_RESISTANCE,
-				Keithley2700_v6.FUNCTION_VOLTAGE_DC
+				Keithley2700.FUNCTION_TEMPERATURE,
+				Keithley2700.FUNCTION_FOUR_WIRE_RESISTANCE,
+				Keithley2700.FUNCTION_VOLTAGE_DC
 		};
 		
 		examples.inicializaInstrumento();
