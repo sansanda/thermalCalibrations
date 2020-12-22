@@ -13,5 +13,6 @@
 	<classpathentry exported="true" kind="lib" path="/java_development_libraries/comms/serial/modbus/jLibModbus/jlibmodbus-1.2.9.7.jar" sourcepath="/java_development_libraries/comms/serial/modbus/jLibModbus/jlibmodbus-1.2.9.7-src"/>
 	<classpathentry exported="true" kind="lib" path="/java_development_libraries/comms/serial/modbus/modbus4j/seroUtils.jar"/>
 	<classpathentry exported="true" kind="lib" path="/java_development_libraries/comms/serial/modbus/modbus4j/modbus4J.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/debug_tools"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
