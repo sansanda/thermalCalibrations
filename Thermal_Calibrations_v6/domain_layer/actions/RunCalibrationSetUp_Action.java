@@ -68,7 +68,7 @@ public class RunCalibrationSetUp_Action implements Action{
 	private TemperatureSensor 							temperatureSensorData = null;
 
 	private Keithley2700 		k2700;
-	private Eurotherm2404	e2404_v5;
+	private Eurotherm2404		e2404;
 	private int 				actualCalibrationStep;
 	private Timer 				progressScreenRefreshTimer;
 	private SwingWorker 		runProgramSwingWorker;
@@ -295,7 +295,7 @@ public class RunCalibrationSetUp_Action implements Action{
 		printActionMessageAndProgressScreenMessage("Testing the devices to measure.");
 
 		printActionMessageAndProgressScreenMessage("Reading the Oven Display Temperature. \n");
-		ovenDisplayTemp = e2404_v5.readTemperature().getValue();
+		ovenDisplayTemp = e2404.readTemperature().getValue();
 		printActionMessageAndProgressScreenMessage("Reading the temperature at the PT100 \n");
 		pt100RealT = k2700.measureAveragePT100Temperature(_temperatureSensorData.getChannel(),avg);
 		printActionMessageAndProgressScreenMessage("Reading the 4-Wire Resistance at the PT100 \n");
@@ -361,7 +361,7 @@ public class RunCalibrationSetUp_Action implements Action{
 						{
 							//Set the desired oven temperature
 							printActionMessageAndProgressScreenMessage("Setting the TSP1 to "+calibrationSetUp.getTemperatureProfile().getTemperatures()[actualCalibrationStep]+" ºC \n");
-							e2404_v5.setTemperatureSetpoint1(calibrationSetUp.getTemperatureProfile().getTemperatures()[actualCalibrationStep]);
+							e2404.setTemperatureSetpoint1(calibrationSetUp.getTemperatureProfile().getTemperatures()[actualCalibrationStep]);
 							//wait for stable oven temperature reading the standard deviation
 							waitForTemperatureStandardDeviation(
 									calibrationSetUp.getTemperatureStabilizationCriteria().getStDev(),
@@ -380,7 +380,7 @@ public class RunCalibrationSetUp_Action implements Action{
 						{
 							//Set the desired oven temperature
 							printActionMessageAndProgressScreenMessage("Setting the TSP1 to "+calibrationSetUp.getTemperatureProfile().getTemperatures()[actualCalibrationStep]+" ºC \n");
-							e2404_v5.setTemperatureSetpoint1(calibrationSetUp.getTemperatureProfile().getTemperatures()[actualCalibrationStep]);
+							e2404.setTemperatureSetpoint1(calibrationSetUp.getTemperatureProfile().getTemperatures()[actualCalibrationStep]);
 							//wait for stable oven temperature by time
 							waitForTemperatureStabilizationByTime(calibrationSetUp.getTemperatureStabilizationCriteria().getTemperatureStabilitzationTime(),temperatureSensorData);
 							//Measure devices at stable temperature point and save data
@@ -448,7 +448,7 @@ public class RunCalibrationSetUp_Action implements Action{
 		Object[] resultRow = new Object[resultsTableHeader.length];
 
 		printActionMessageAndProgressScreenMessage("Reading the Oven Display Temperature. \n");
-		ovenDisplayTemp = e2404_v5.readTemperature().getValue();
+		ovenDisplayTemp = e2404.readTemperature().getValue();
 		printActionMessageAndProgressScreenMessage("Reading the temperature at the PT100 \n");
 		pt100RealT = k2700.measureAveragePT100Temperature(_temperatureSensorData.getChannel(),avg);
 		printActionMessageAndProgressScreenMessage("Reading the 4-Wire Resistance at the PT100 \n");
@@ -533,7 +533,7 @@ public class RunCalibrationSetUp_Action implements Action{
 																		BaudRate.BAUD_RATE_9600, 8, 
 																		SerialPort.Parity.NONE, 1);
 		ModbusMaster m = Eurotherm2404.createModBusMaster(sp, Modbus.LogLevel.LEVEL_WARNINGS);	
-		e2404_v5 = new Eurotherm2404(sp,m, instrumentsData.getOvenData().getControllerID());
+		e2404 = new Eurotherm2404(sp,m, instrumentsData.getOvenData().getControllerID());
 		
 		return 0;
 	}
@@ -541,9 +541,9 @@ public class RunCalibrationSetUp_Action implements Action{
 		printActionMessageAndProgressScreenMessage("INITIALIZING THE OVEN.... \n");
 		startProgramTimeInMillis = System.currentTimeMillis();
 		printActionMessageAndProgressScreenMessage("Setting the TSP1 to 0 ºC \n");
-		e2404_v5.setTemperatureSetpoint1(0);
+		e2404.setTemperatureSetpoint1(0);
 		printActionMessageAndProgressScreenMessage("Setting the 2404 in Auto Mode \n");
-		e2404_v5.setInAutoMode();
+		e2404.setInAutoMode();
 		//TODO Implementar la llamada a la calibracion de usuario del 2404 mediante dos puntos guardados en un archivo 2404TwoPointsUserCalibration.XML
 
 		return 0;
@@ -733,9 +733,9 @@ public class RunCalibrationSetUp_Action implements Action{
 			printActionMessageAndProgressScreenMessage("FINISHING THE PROGRAM \n");
 		}
 		printActionMessageAndProgressScreenMessage("Setting the TSP1 to 0 ºC \n");
-		e2404_v5.setTemperatureSetpoint1(0);
+		e2404.setTemperatureSetpoint1(0);
 		printActionMessageAndProgressScreenMessage("Setting the 2404 in Auto Mode \n");
-		e2404_v5.setInAutoMode();
+		e2404.setInAutoMode();
 		mainController.doAction(new ActionRequest("StopCalibrationProgramAction",frameWhoHasTheRequest));
 		try {
 			finalize();
