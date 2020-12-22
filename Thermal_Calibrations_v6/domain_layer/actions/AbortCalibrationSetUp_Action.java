@@ -6,7 +6,7 @@ import controller.*;
 import views.CalibrationSetUp_MainScreen_JFrame;
 import views.CalibrationSetUp_OvenTemperatureWarning_JFrame;
 import Main.MainController;
-import Ovens.Eurotherm2404_v5;
+import Ovens.Eurotherm2404;
 
 public class AbortCalibrationSetUp_Action implements Action{
 
@@ -17,7 +17,7 @@ public class AbortCalibrationSetUp_Action implements Action{
 
 	private CalibrationSetUp_MainScreen_JFrame mainScreenFrame;
 
-	private Eurotherm2404_v5 E2404_v5;
+	private Eurotherm2404 E2404_v5;
 
 
 	public AbortCalibrationSetUp_Action() throws Exception{

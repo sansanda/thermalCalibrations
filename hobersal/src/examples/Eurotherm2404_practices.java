@@ -1,4 +1,4 @@
-package Ovens;
+package examples;
 
 import com.intelligt.modbus.jlibmodbus.Modbus;
 import com.intelligt.modbus.jlibmodbus.master.ModbusMaster;
@@ -11,6 +11,8 @@ import com.intelligt.modbus.jlibmodbus.serial.SerialPort;
 import com.intelligt.modbus.jlibmodbus.serial.SerialPortFactoryJSSC;
 import com.intelligt.modbus.jlibmodbus.serial.SerialUtils;
 import com.schneide.quantity.miscQuantities.GradCelsius;
+
+import Ovens.Eurotherm2404;
 
 
 /*
@@ -69,7 +71,7 @@ public class Eurotherm2404_practices {
 		SerialParameters sp = new SerialParameters(); 
 
         // set the serial port name
-        sp.setDevice(Eurotherm2404_v5.COMM_PORT_1);
+        sp.setDevice(Eurotherm2404.COMM_PORT_1);
         // these parameters are set by default
         sp.setBaudRate(SerialPort.BaudRate.BAUD_RATE_9600);
         sp.setDataBits(8);

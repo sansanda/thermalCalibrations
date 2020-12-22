@@ -2,7 +2,6 @@ package controller;
 
 import java.io.IOException;
 
-
 public class ReqUtility {
 	ActionRequest request;
 	
