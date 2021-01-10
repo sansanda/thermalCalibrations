@@ -38,7 +38,7 @@ import multimeters.Keithley2700;
 import rs232.JSSC_S_Port;
 import fileUtilities.*;
 
-public class RunCalibrationSetUp_Action implements Action{
+public class RunCalibrationSetUp_Action2 implements Action{
 
 	private static String 		DATE_FORMAT_NOW = "dd-MM-yyyy";
 	private static String 		TIME_FORMAT_NOW = "HH:mm:ss";
@@ -86,7 +86,7 @@ public class RunCalibrationSetUp_Action implements Action{
     private Object[]			resultsRow;
 	private double 				diodesCurrentInMilliAmps;
 
-	public RunCalibrationSetUp_Action()throws Exception{
+	public RunCalibrationSetUp_Action2()throws Exception{
 		printActionMessage("Setting the Security Manager to null");
 		System.setSecurityManager(null);
 		printActionMessage("Creando instancias para manejar fechas y horas");
@@ -111,8 +111,9 @@ public class RunCalibrationSetUp_Action implements Action{
 	    if (initializeResultsRow(resultsRow)==-1) return false;
 		if (initializeResultsFile(resultsFile)==-1) return false;
 		if (createInstruments()==-1) return false;
-		if (createCalibrationProgressScreen(calibrationSetUp,temperatureSensorData)==-1)return false;
+		if (initializeMultimeter()==-1) return false;
 		if (initializeOven()==-1) return false;
+		if (createCalibrationProgressScreen(calibrationSetUp,temperatureSensorData)==-1)return false;
 		if (testCalibrationSetUp(calibrationSetUp,temperatureSensorData)==-1) return false;
 		//Wait for room temperature stabilization by time
 		roomTemperature = determineRoomTemperatureByTime(calibrationSetUp.getTemperatureStabilizationCriteria().getFirstTemperatureStepStabilitzationTimeInMinutes(), temperatureSensorData);
@@ -473,6 +474,7 @@ public class RunCalibrationSetUp_Action implements Action{
 		printActionMessageAndProgressScreenMessage("Reading the Oven Display Temperature. \n");
 		ovenDisplayTemp = e2404.readTemperature().getValue();
 		printActionMessageAndProgressScreenMessage("Reading the temperature at the PT100 \n");
+		
 		pt100RealT = k2700.measureAveragePT100Temperature(_temperatureSensorData.getChannel(),avg);
 		printActionMessageAndProgressScreenMessage("Reading the 4-Wire Resistance at the PT100 \n");
 		pt1004WResistance = k2700.measureAverage4WireResistance(_temperatureSensorData.getChannel(),avg);
@@ -543,13 +545,27 @@ public class RunCalibrationSetUp_Action implements Action{
 	private int createInstruments()throws Exception{
 		printActionMessage("Leyendo el fichero de configuracion de Instrumentos.");
 		instrumentsData = new InstrumentsData(INSTRUMENTS_DATA_FILE_PATH);
+		
+		
 		printActionMessage("Creando la instancia de Keithley2700.");
 		
+		int baudRate = 19200;
+		int numberOfDataBits = 8;
+		int numberOfStopBits = 1;
+		int parityType = 0;
+		String terminator = "\n";
 		
-		CommPort_I commPort = new JSSC_S_Port(instrumentsData.getMultimeterData().getComPort(), 19200, 8, 1, 0, "\n", 250, 0);
+		int writePort_waitTime = 400; //in milliseconds
+		int readPort_waitTime = 0; //in milliseconds
+		boolean check_errors = false;
+		int debug_level = 4;
 		
-		k2700 = new Keithley2700(commPort);
-		k2700.enableBeeper(false);
+		CommPort_I rs232_commPort = new JSSC_S_Port(instrumentsData.getMultimeterData().getComPort(), 19200, numberOfDataBits, numberOfStopBits, parityType, terminator, writePort_waitTime, readPort_waitTime, debug_level);
+
+		
+		
+		k2700 = new Keithley2700(rs232_commPort, check_errors, debug_level);
+		
 		printActionMessage("Creando la instancia de Eurotherm2404.");
 		
 		SerialParameters sp = Eurotherm2404.createSerialConnection(instrumentsData.getOvenData().getComPort(), 
@@ -560,6 +576,33 @@ public class RunCalibrationSetUp_Action implements Action{
 		
 		return 0;
 	}
+	
+	private int initializeMultimeter() throws Exception{
+		printActionMessageAndProgressScreenMessage("INITIALIZING THE MULTIMETER.... \n");
+		startProgramTimeInMillis = System.currentTimeMillis();
+		
+		String[] ELEMENTS = {
+				Keithley2700.FORMAT_ELEMENT_READING,
+				Keithley2700.FORMAT_ELEMENT_UNITS
+				};
+		
+		String[] DEFAULT_ELEMENTS = {
+				Keithley2700.FORMAT_ELEMENT_READING
+				};
+		
+		k2700.resetInstrument();
+		k2700.resetRegisters();
+		k2700.clearErrorQueue();
+		k2700.openAllChannels(100);
+		
+		k2700.formatElements(ELEMENTS, DEFAULT_ELEMENTS);
+		k2700.formatData(Keithley2700.FORMAT_TYPE_ASCII,1);
+		
+		k2700.enableBeeper(false);
+		
+		return 0;
+	}
+	
 	private int initializeOven() throws Exception{
 		printActionMessageAndProgressScreenMessage("INITIALIZING THE OVEN.... \n");
 		startProgramTimeInMillis = System.currentTimeMillis();
@@ -571,6 +614,7 @@ public class RunCalibrationSetUp_Action implements Action{
 
 		return 0;
 	}
+	
 	private int createTemperatureSensor()throws Exception{
 		printActionMessage("Leyendo el fichero de configuracion de sensor de temperatura.");
 		temperatureSensorData = new TemperatureSensor(TEMPERATURE_SENSOR_DATA_FILE_PATH);

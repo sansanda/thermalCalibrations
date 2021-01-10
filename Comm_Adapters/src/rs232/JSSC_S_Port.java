@@ -289,6 +289,9 @@ public class JSSC_S_Port implements CommPort_I, SerialPortEventListener{
 		System.arraycopy(this.readBuffer, 0, returnBuffer, 0, this.readBuffer.length);
 		this.readBuffer = null;
 		
+		StackTraceElement[] st = Thread.currentThread().getStackTrace();
+		if (this.debug_level<4) System.out.println(st[1].getClassName()+":"+st[1].getMethodName()+"("+new String(returnBuffer)+")");
+		
 		return returnBuffer;
 	}
 
@@ -301,7 +304,6 @@ public class JSSC_S_Port implements CommPort_I, SerialPortEventListener{
 	 */
 	@Override
 	public void write(String data) throws Exception{
-		 //System.out.println("\n"+"Writing \""+message+"\" to "+serialPort.getPortName());
 		StackTraceElement[] st = Thread.currentThread().getStackTrace();
 		if (this.debug_level<4) System.out.println(st[1].getClassName()+":"+st[1].getMethodName()+"("+data+")");
 		st = null;

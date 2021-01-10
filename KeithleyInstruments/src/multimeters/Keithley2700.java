@@ -9,7 +9,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import common.CommPort_I;
-import rs232.JSSC_S_Port;
+import utils.Measure;
+import utils.Measures;
+
+import java.util.Dictionary;
+import java.util.Hashtable;
+
 
 /**
  * Keithley2700_v5 es una copia de Keithley2700 pero modificada para trabajar
@@ -21,7 +26,7 @@ import rs232.JSSC_S_Port;
 public class Keithley2700 {
 	
 	
-	final static String VERSION = "6.0.0";
+	final static String VERSION = "6.1.0";
 	
 	//********************************************************************************************
 	//********************************KEITHLEY PARAMETERS*****************************************
@@ -255,7 +260,14 @@ public class Keithley2700 {
 	//+10E0 | 2.3e5.4 --> Not Match
 	//The objective is to extract +1.23456789E-03 from +1.23456789E-03VDC, for example
 	public static Pattern SCIENTIFIC_NOTATION_PATTERN = Pattern.compile("[+-]?\\d(\\.\\d+)?[Ee][+-]?\\d+");
-	
+	//The objective is to match expressions like +36114.900SECS, for example
+	public static Pattern TIMESTAMP_NOTATION_PATTERN = Pattern.compile("[+]?\\d+(\\.\\d+)?[SECS]");
+	//The objective is to match expressions like +00000RDNG#, for example
+	public static Pattern READING_NOTATION_PATTERN = Pattern.compile("[+]?\\d+[RDNG#]");
+	//The objective is to match expressions like 110INTCHAN, for example
+	public static Pattern CHANNEL_NUMBER_NOTATION_PATTERN = Pattern.compile("\\d+[INTCHAN]");
+	//The objective is to match expressions like 0000LIMITS, for example
+	public static Pattern LIMITS_NOTATION_PATTERN = Pattern.compile("\\d+[LIMITS]");
 
 	//********************************************************************************************
 	//******************************************VARIABLES*****************************************
@@ -264,6 +276,9 @@ public class Keithley2700 {
 	private CommPort_I commAdapter = null;
 	private boolean checkErrors = true;
 	private int debug_level = 5;
+	
+	//Used to save in local the actual K2700 configuration 
+	private Dictionary<String, Object> configuration = new Hashtable<String, Object>(); 
 	
 	//default constructor
 	public Keithley2700(CommPort_I commAdapter, boolean _checkErrors, int debug_level)throws Exception{
@@ -495,6 +510,16 @@ public class Keithley2700 {
 		return new String(this.commAdapter.ask("SYSTem:ERRor?"));
 	}
 	
+	public int getErrorCode(String errorString)
+	{
+		return Integer.valueOf(errorString.split(",")[0]);
+	}
+	
+	public String getErrorMessage(String errorString)
+	{
+		return errorString.split(",")[1];
+	}
+	
 	//********************************************************************************************
 	//*********************REGISTERS AND QUEUES RELATED COMMANDS**********************************
 	//********************************************************************************************
@@ -523,6 +548,7 @@ public class Keithley2700 {
 	}
 	
 	public String clearErrorQueue() throws Exception {
+		
 		if (this.debug_level<5) System.out.println("Clearing error queues...");
 		
 		//*CLS --> Clear all messages from Error Queue 2
@@ -569,13 +595,15 @@ public class Keithley2700 {
 	 * @return
 	 * @throws Exception
 	 */
-	public String configureForMeasuring_Temperature(String _temperature_sensor, 
-													String _sensor_type_OR_value,
-													String _unit,
-													String _filterType,
-													float _filterWindow,
-													int _filterCount,
-													boolean _enableFilter) throws Exception{
+	public Measure measure_Temperature(	String _temperature_sensor, 
+										String _sensor_type_OR_value,
+										String _unit,
+										String _filterType,
+										float _filterWindow,
+										int _filterCount,
+										boolean _enableFilter,
+										int cardNumber,
+										int channel) throws Exception{
 		
 		//TODO Test
 
@@ -589,12 +617,14 @@ public class Keithley2700 {
 		
 		String errors 							= "";
 		String temperatureSensorType_or_Value 	= "";
+		
+		String functionOrder 					= "SENSe:FUNCtion 'TEMPerature' ";
 		String transducerOrder 					= "SENSe:TEMPerature:TRANsducer " + _temperature_sensor;
 		String transducerTypeOrder 				= "SENSe:TEMPerature:" + _temperature_sensor + ":TYPE " + _sensor_type_OR_value;
 		String unitOrder 						= "UNIT:TEMPerature " + _unit;
+		
 		String filterCountOrder 				= "SENSe:TEMPerature:AVERage:COUNt " + String.valueOf(filterCount);
 		String filterWindowOrder 				= "SENSe:TEMPerature:AVERage:WINDow " + String.valueOf(filterWindow);
-		
 		String filterTypeOrder 					= "SENSe:TEMPerature:AVERage:TCONtrol " + _filterType;
 		String enablefilterOrder 				= "SENSe:TEMPerature:AVERage:STATe " + (_enableFilter?"ON":"OFF");
 		
@@ -624,46 +654,172 @@ public class Keithley2700 {
 		}
 		
 		if (this.debug_level<5) System.out.println("Configuring the Keith for measurting temperature");
+		if (!this.checkErrors) errors = " NO CHECK ERRORS ";
+				
+		//this.resetInstrument();
+		this.clearDataBuffer();
 		
+		///////////////////////////////FUNCTION CONFIGURATION 
+		
+		this.commAdapter.write(functionOrder);
+		
+		if (this.checkErrors) errors = errors + "sense_configureTemperatureSensor: " + this.errors();
 		
 		///////////////////////////////TRANSDUCER CONFIGURATION 
 		
 		this.commAdapter.write(transducerOrder);
 		
-		if (this.checkErrors) errors = errors + "sense_configureTemperatureSensor: " + this.errors(); else return errors = errors + " NO CHECK ERRORS - ";
+		if (this.checkErrors) errors = errors + "sense_configureTemperatureSensor: " + this.errors();
 		
 		this.commAdapter.write(transducerTypeOrder);
 		
-		if (this.checkErrors) errors = errors + "sense_configureTemperatureSensor: " + this.errors(); else return errors = errors + " NO CHECK ERRORS - ";
+		if (this.checkErrors) errors = errors + "sense_configureTemperatureSensor: " + this.errors();
 		
 		/////////////////////////////UNITS CONFIGURATION
 		
 		this.commAdapter.write(unitOrder);
 		
-		if (this.checkErrors) errors = errors + "sense_configureTemperatureSensor: " + this.errors(); else return errors = errors + " NO CHECK ERRORS";
+		if (this.checkErrors) errors = errors + "sense_configureTemperatureSensor: " + this.errors();
 
 		//////////////////////////FILTER CONFIGURATION
 		
+		
 		this.commAdapter.write(filterTypeOrder);
 		
-		if (this.checkErrors) errors = errors + "sense_configureTemperatureSensor: " + this.errors(); else return errors = errors + " NO CHECK ERRORS";
+		if (this.checkErrors) errors = errors + "sense_configureTemperatureSensor: " + this.errors();
 		
 		this.commAdapter.write(filterWindowOrder);
 		
-		if (this.checkErrors) errors = errors + "sense_configureTemperatureSensor: " + this.errors(); else return errors = errors + " NO CHECK ERRORS";
+		if (this.checkErrors) errors = errors + "sense_configureTemperatureSensor: " + this.errors();
 		
 		this.commAdapter.write(filterCountOrder);
 		
-		if (this.checkErrors) errors = errors + "sense_configureTemperatureSensor: " + this.errors(); else return errors = errors + " NO CHECK ERRORS";
+		if (this.checkErrors) errors = errors + "sense_configureTemperatureSensor: " + this.errors();
 
 		this.commAdapter.write(enablefilterOrder);
 		
-		if (this.checkErrors) errors = errors + "sense_configureTemperatureSensor: " + this.errors(); else return errors = errors + " NO CHECK ERRORS";
+		if (this.checkErrors) errors = errors + "sense_configureTemperatureSensor: " + this.errors();
 
+		this.closeIndividualChannel(cardNumber, channel, 100);
 		
-		return errors;
+		return this.read();
 	}
 	
+	/**
+	 * 
+	 * @param _temperature_sensor
+	 * @param _sensor_type_OR_value
+	 * @param _unit
+	 * @param _filterType
+	 * @param _filterWindow
+	 * @param _filterCount
+	 * @param _enableFilter
+	 * @return
+	 * @throws Exception
+	 */
+	public void configure_as_OneShot_TEMPERATURE_measure(	String _temperature_sensor, 
+										String _sensor_type_OR_value,
+										String _unit,
+										String _filterType,
+										float _filterWindow,
+										int _filterCount,
+										boolean _enableFilter,
+										int cardNumber,
+										int channel) throws Exception{
+		
+		//TODO Test
+
+		this.validateTemperatureSensorType(_temperature_sensor);
+		String unit = this.validateTemperatureUnit(_unit, TEMPERATURE_UNITS_SET, TEMPERATURE_UNIT_C);
+		String filterType = this.validateFilterType(_filterType, AVERAGE_FILTER_CONTROL_TYPES_SET, AVERAGE_FILTER_CONTROL_TYPE_REPEAT);
+		float filterWindow = this.validateFilterWindow(_filterWindow, AVERAGE_FILTER_WINDOW_MIN, AVERAGE_FILTER_WINDOW_MAX, AVERAGE_FILTER_WINDOW_MIN);
+		int filterCount = this.validateFilterCount(_filterCount, AVERAGE_FILTER_COUNT_MIN, AVERAGE_FILTER_COUNT_MAX, AVERAGE_FILTER_COUNT_MIN);
+		
+		//Order for setting the temperature sensor (transducer)
+		
+		String errors 							= "";
+		String temperatureSensorType_or_Value 	= "";
+		
+		String functionOrder 					= "SENSe:FUNCtion 'TEMPerature' ";
+		String transducerOrder 					= "SENSe:TEMPerature:TRANsducer " + _temperature_sensor;
+		String transducerTypeOrder 				= "SENSe:TEMPerature:" + _temperature_sensor + ":TYPE " + _sensor_type_OR_value;
+		String unitOrder 						= "UNIT:TEMPerature " + _unit;
+		
+		String filterCountOrder 				= "SENSe:TEMPerature:AVERage:COUNt " + String.valueOf(filterCount);
+		String filterWindowOrder 				= "SENSe:TEMPerature:AVERage:WINDow " + String.valueOf(filterWindow);
+		String filterTypeOrder 					= "SENSe:TEMPerature:AVERage:TCONtrol " + _filterType;
+		String enablefilterOrder 				= "SENSe:TEMPerature:AVERage:STATe " + (_enableFilter?"ON":"OFF");
+		
+		switch (_temperature_sensor) {
+		
+			case TEMPERATURE_SENSOR_TCOUPLE:
+				temperatureSensorType_or_Value = this.validateTCOUPLESensorType(_sensor_type_OR_value, TEMPERATURE_TCOUPLE_TYPES_SET, TEMPERATURE_TCOUPLE_TYPE_K); 
+				break;
+				
+			case TEMPERATURE_SENSOR_THERmistor:
+				int tValue = Integer.parseInt(temperatureSensorType_or_Value);
+				
+				tValue = this.validateTHERmistorValue(  tValue, 
+														TEMPERATURE_THERmistor_TYPE_MIN, 
+														TEMPERATURE_THERmistor_TYPE_MAX, 
+														TEMPERATURE_THERmistor_TYPE_MIN);	
+				temperatureSensorType_or_Value = String.valueOf(tValue);
+				break;
+						
+			case TEMPERATURE_SENSOR_FRTD:
+				temperatureSensorType_or_Value = this.validateTCOUPLESensorType(_sensor_type_OR_value, TEMPERATURE_FRTD_TYPES_SET, TEMPERATURE_FRTD_TYPE_PT100); 
+				break;
+				
+	
+			default:
+				break;
+		}
+		
+		if (this.debug_level<5) System.out.println("Configuring the Keith for measurting temperature");
+		if (!this.checkErrors) errors = " NO CHECK ERRORS ";
+		
+		///////////////////////////////FUNCTION CONFIGURATION 
+		
+		this.commAdapter.write(functionOrder);
+		
+		if (this.checkErrors) errors = errors + "sense_configureTemperatureSensor: " + this.errors();
+		
+		///////////////////////////////TRANSDUCER CONFIGURATION 
+		
+		this.commAdapter.write(transducerOrder);
+		
+		if (this.checkErrors) errors = errors + "sense_configureTemperatureSensor: " + this.errors();
+		
+		this.commAdapter.write(transducerTypeOrder);
+		
+		if (this.checkErrors) errors = errors + "sense_configureTemperatureSensor: " + this.errors();
+		
+		/////////////////////////////UNITS CONFIGURATION
+		
+		this.commAdapter.write(unitOrder);
+		
+		if (this.checkErrors) errors = errors + "sense_configureTemperatureSensor: " + this.errors();
+
+		//////////////////////////FILTER CONFIGURATION
+		
+		
+		this.commAdapter.write(filterTypeOrder);
+		
+		if (this.checkErrors) errors = errors + "sense_configureTemperatureSensor: " + this.errors();
+		
+		this.commAdapter.write(filterWindowOrder);
+		
+		if (this.checkErrors) errors = errors + "sense_configureTemperatureSensor: " + this.errors();
+		
+		this.commAdapter.write(filterCountOrder);
+		
+		if (this.checkErrors) errors = errors + "sense_configureTemperatureSensor: " + this.errors();
+
+		this.commAdapter.write(enablefilterOrder);
+		
+		if (this.checkErrors) errors = errors + "sense_configureTemperatureSensor: " + this.errors();
+
+	}
 	//********************************************************************************************
 	//***************************TRIGGER RELATED COMMANDS*****************************************
 	//********************************************************************************************
@@ -675,20 +831,28 @@ public class Keithley2700 {
 	public String trigger_init() throws Exception {
 		
 		if (this.debug_level<5) System.out.println("Initiating trigger....");
+		
 		this.commAdapter.write("INIT");
+		
 		if (this.checkErrors) return "trigger_init: " + this.errors(); else return " NO CHECK ERRORS";
 		
 	}
 	
 	public String trigger_abort() throws Exception {
+		
 		if (this.debug_level<5) System.out.println("Aborting trigger....");
+		
 		this.commAdapter.write("ABORt");
+		
 		if (this.checkErrors) return "trigger_abort: " + this.errors(); else return " NO CHECK ERRORS";
 		
 	}
 	public String sendTriggerCommand() throws Exception {
+		
 		if (this.debug_level<5) System.out.println("Sending *TRG command to the bus....");
+		
 		this.commAdapter.write("*TRG");
+		
 		if (this.checkErrors) return "sendTriggerCommand: " + this.errors(); else return " NO CHECK ERRORS";
 	}
 	
@@ -795,7 +959,7 @@ public class Keithley2700 {
 	//********************************************************************************************
 	
 	
-	public byte[] read() throws Exception{
+	public Measure read() throws Exception{
 			
 		/*  The READ? command performs an INITiate and then a FETCh?. The INITiate triggers a
 			measurement cycle which puts new data in the sample buffer. With no math function
@@ -812,7 +976,21 @@ public class Keithley2700 {
 		
 		if (this.debug_level<5) System.out.println("Asking for READ?...");
 		
-		return this.commAdapter.ask("READ?");
+		byte[] data = this.commAdapter.ask("READ?");
+		
+		Measure measure = null;
+		
+		if (data.length>0){
+			
+			String[] measureAtts = (new String(data)).split(",");
+			System.out.println(Arrays.toString(measureAtts));
+			System.out.println(measureAtts.length);
+					
+			measure = new Measure(measureAtts); //value y units estan unidos
+		}
+		
+		return measure;
+		
 	}
 	
 	
@@ -824,7 +1002,7 @@ public class Keithley2700 {
 	 * @param reading
 	 * @return Array de numeros reales con los campos de la reading
 	 */
-	public float[] convertReadingToFloatArray(byte[] reading) 
+	public static float[] convertReadingToFloatArray(byte[] reading, int debug_level) 
 	{
 		//TODO: En este metodo asumimos que la reading, despues de convertir de byte[], estará en formato ASCII.
 		//		Es necesario implementar las otras posibilidades, es decir, que la reading pueda venir en formato 
@@ -839,9 +1017,14 @@ public class Keithley2700 {
 			
 			if (str!=null)
 			{
-				if (this.debug_level<5) System.out.println("Converting reading (byte[]) to float[]");
+				if (debug_level<5) System.out.println("Converting reading (byte[]) to float[]");
 				
 				//System.out.println(str);
+				
+				
+				//INtentamos dejar o extraer solo el texto entre una , y RDNG# 
+				String[] rdngs = str.split(",[+]?RDNG#");
+				System.out.println(Arrays.toString(rdngs));
 				
 				String[] rawData = str.split(",");
 				res = new float[rawData.length];
@@ -861,6 +1044,56 @@ public class Keithley2700 {
 		return res;
 	}
 	
+	public Dictionary<String, String>[] convertReadingToMeasuresArray(byte[] reading, int debug_level) throws Exception 
+	{
+		
+		//private Dictionary<String, Object> configuration = new Hashtable<String, Object>();
+		
+		Dictionary<String, String>[] res = null;
+		
+		if (reading.length>0){
+			
+			String str = new String(reading);
+			
+			if (str!=null)
+			{
+				if (debug_level<5) System.out.println("Converting reading to Measures Array");
+				
+				//System.out.println(str);
+				String[] rdngs = str.split(",[+]?RDNG#");
+				System.out.println(rdngs);
+				
+				String[] rawData = str.split(",");
+				
+				String[] formatElements = getFormatElements();
+				int nFormatElements = formatElements.length;
+				Dictionary<String, String> d = null;
+				
+//				for (int i=0;i<rawData.length;i++) {
+//					if ((i%nFormatElements)==0) {d = new Hashtable<String, String>();}
+//					Matcher scientificNot_matcher = SCIENTIFIC_NOTATION_PATTERN.matcher(rawData[i]);
+//					if (matcher.find()) matcher.group(0);
+//					
+//				}
+				
+//				res = new float[rawData.length];
+//				
+//				for (int i=0;i<rawData.length;i++)
+//				{
+//					Matcher matcher = SCIENTIFIC_NOTATION_PATTERN.matcher(rawData[i]);
+//					if (matcher.find())
+//					{
+//						res[i] = Float.parseFloat(matcher.group(0));
+//					}
+//				}
+				
+			}
+		}
+		
+		return res;
+	}
+	
+	
 	//********************************************************************************************
 	//**************************CHANNEL REALTED COMMANDS******************************************
 	//********************************************************************************************
@@ -876,7 +1109,9 @@ public class Keithley2700 {
 		if (this.debug_level<5) System.out.println("Closing individual channel nº" + channel);
 		
 		this.commAdapter.write("ROUT:CLOS " + "(@" + String.valueOf(cardNumber) + String.format("%02d",channel) +")");
+		
 		Thread.sleep(closeTime_ms);
+		
 		if (this.checkErrors) return "closeIndividualChannel: " + this.errors(); else return " NO CHECK ERRORS";
 		
 	}
@@ -885,8 +1120,11 @@ public class Keithley2700 {
 		
 		//TODO Test
 		if (this.debug_level<5) System.out.println("Closing consecutive channels from " + Integer.toString(_minChannel) + " to " + Integer.toString(_maxChannel));
-		this.commAdapter.write("ROUT:CLOS " + createChannelsList(_cardNumber, _minChannel, _maxChannel));
+		
+		this.commAdapter.write("ROUT:CLOS " + createChannelsList(_cardNumber, _minChannel, _maxChannel, this.debug_level));
+		
 		Thread.sleep(_closeTime_ms * (_maxChannel-_minChannel));
+		
 		if (this.checkErrors) return "closeConsecutiveChannels: " + this.errors(); else return " NO CHECK ERRORS";
 	}
 	
@@ -894,14 +1132,20 @@ public class Keithley2700 {
 		
 		//TODO Test
 		if (this.debug_level<5) System.out.println("Closing multiple channels " + Arrays.toString(_channelsList));
-		this.commAdapter.write("ROUTe:MULTiple:CLOSe " + createChannelsList(_cardNumber, _channelsList));
+		
+		this.commAdapter.write("ROUTe:MULTiple:CLOSe " + createChannelsList(_cardNumber, _channelsList, this.debug_level));
+		
 		Thread.sleep(closeTime_ms * (_channelsList.length));
+		
 		if (this.checkErrors) return "closeMultipleChannels: " + this.errors(); else return " NO CHECK ERRORS";
 	}
 
 	public String openAllChannels(long _openTime_ms) throws Exception {
+		
 		if (this.debug_level<5) System.out.println("Opening all channels...");
+		
 		this.commAdapter.write("ROUT:OPEN:ALL");
+		
 		if (this.checkErrors) return "openAllChannels: " + this.errors(); else return " NO CHECK ERRORS";
 	}
 
@@ -911,7 +1155,7 @@ public class Keithley2700 {
 	 * @param _channelsList
 	 * @return
 	 */
-	public static String createChannelsList(int _cardNumber, int[] _channelsList)
+	public static String createChannelsList(int _cardNumber, int[] _channelsList, int debug_level)
 	{
 		//TODO Test
 		
@@ -919,6 +1163,8 @@ public class Keithley2700 {
 		
 		if (_channelsList.length > 0)
 		{
+			if (debug_level<5) System.out.println("Creating channels list using an int array as parameter.");
+	
 			channelListAsString = "(@";
 			
 			for (int i=0;i<_channelsList.length;i++)
@@ -936,7 +1182,7 @@ public class Keithley2700 {
 		
 	}
 	
-	public static String createChannelsList(int _cardNumber, int _minChannel, int _maxChannel) throws Exception
+	public static String createChannelsList(int _cardNumber, int _minChannel, int _maxChannel, int debug_level) throws Exception
 	{
 		//TODO Test
 		
@@ -947,7 +1193,7 @@ public class Keithley2700 {
 		if (_maxChannel<1 || _maxChannel>20) return channelListAsString;
 		if (_minChannel>_maxChannel) return channelListAsString;
 		
-		
+		if (debug_level<5) System.out.println("Creating consecutive channels list using two parameters (min and max channel).");
 		
 		if (_minChannel==_maxChannel) channelListAsString = "(@" + String.valueOf(_cardNumber) + String.format("%02d", _minChannel) + ")";
 		else channelListAsString = "(@" + String.valueOf(_cardNumber) + String.format("%02d", _minChannel) + ":" + String.valueOf(_cardNumber) + String.format("%02d", _maxChannel) + ")";
@@ -1058,17 +1304,17 @@ public class Keithley2700 {
 	}
 	
 	public String setFunctionForScanListChannels(String _function, int _cardNumber, int[] _channelsList) throws Exception{	
-		String channelsList = createChannelsList(_cardNumber, _channelsList);
+		String channelsList = createChannelsList(_cardNumber, _channelsList, this.debug_level);
 		return "setFunctionForScanListChannels: " + this.setFunctionForScanListChannels(_function, channelsList);		
 	}
 	
 	public String setFunctionForScanListChannels(String _function, int _cardNumber, int _minChannel, int _maxChannel) throws Exception{
-		String channelsList = createChannelsList(_cardNumber,_minChannel,_maxChannel);
+		String channelsList = createChannelsList(_cardNumber,_minChannel,_maxChannel, this.debug_level);
 		return "setFunctionForScanListChannels: " + this.setFunctionForScanListChannels(_function, channelsList);			
 	}
 
 	public String setFunctionForScanChannel(String _function, int _cardNumber, int _channel) throws Exception{
-		String channelsList = createChannelsList(_cardNumber,_channel,_channel);
+		String channelsList = createChannelsList(_cardNumber,_channel,_channel, this.debug_level);
 		return "setFunctionForScanChannel:" + this.setFunctionForScanListChannels(_function, channelsList);			
 	}
 	
@@ -1087,9 +1333,7 @@ public class Keithley2700 {
 		if (this.debug_level<5) System.out.println("Configuration values = Function: " + _function);
 		
 		String order = "CONFigure:" + _function + " " + _channelsList; 
-
-		
-		
+	
 		this.commAdapter.write(order);
 		
 		if (this.checkErrors) return "setFunctionForScanListChannels: " + this.errors(); else return " NO CHECK ERRORS";
@@ -1118,20 +1362,20 @@ public class Keithley2700 {
 
 	public String setFilterCountForScanListChannel(String _function, int _filterCount, int _cardNumber, int _channel) throws Exception{
 		
-		String channelsList = createChannelsList(_cardNumber,_channel,_channel);
+		String channelsList = createChannelsList(_cardNumber,_channel,_channel, this.debug_level);
 		return this.setFilterCountForScanListChannels(_function, _filterCount, channelsList);				
 	}
 	
 	public String setFilterCountForScanListChannels(String _function, int _filterCount,  int _cardNumber, int[] _channelsList) throws Exception{
 		
-		String channelsList = createChannelsList(_cardNumber, _channelsList);
+		String channelsList = createChannelsList(_cardNumber, _channelsList, this.debug_level);
 		return this.setFilterCountForScanListChannels(_function, _filterCount, channelsList);
 				
 	}
 	
 	public String setFilterCountForScanListChannels(String _function, int _filterCount, int _cardNumber, int _minChannel, int _maxChannel) throws Exception{
 		
-		String channelsList = createChannelsList(_cardNumber,_minChannel,_maxChannel);
+		String channelsList = createChannelsList(_cardNumber,_minChannel,_maxChannel, this.debug_level);
 		return this.setFilterCountForScanListChannels(_function, _filterCount, channelsList);				
 	}
 	
@@ -1151,13 +1395,9 @@ public class Keithley2700 {
 		
 		order = _function + ":" + filterCountOrder + ", " + _channelsList;
 		
-		
-		
 		this.commAdapter.write(order);
 		
 		order = _function + ":" + filterEnableOrder + ", " + _channelsList;
-		
-		
 		
 		this.commAdapter.write(order);
 		
@@ -1187,20 +1427,20 @@ public class Keithley2700 {
 
 	public String setNPLCForScanListChannel(String _function, float _nplc, int _cardNumber, int _channel) throws Exception{
 		
-		String channelsList = createChannelsList(_cardNumber,_channel,_channel);
+		String channelsList = createChannelsList(_cardNumber,_channel,_channel, this.debug_level);
 		return this.setNPLCForScanListChannels(_function, _nplc, channelsList);				
 	}
 
 	public String setNPLCForScanListChannels(String _function, float _nplc,  int _cardNumber, int[] _channelsList) throws Exception{
 		
-		String channelsList = createChannelsList(_cardNumber, _channelsList);
+		String channelsList = createChannelsList(_cardNumber, _channelsList, this.debug_level);
 		return this.setNPLCForScanListChannels(_function, _nplc, channelsList);
 				
 	}
 	
 	public String setNPLCForScanListChannels(String _function, float _nplc, int _cardNumber, int _minChannel, int _maxChannel) throws Exception{
 		
-		String channelsList = createChannelsList(_cardNumber,_minChannel,_maxChannel);
+		String channelsList = createChannelsList(_cardNumber,_minChannel,_maxChannel, this.debug_level);
 		return this.setNPLCForScanListChannels(_function, _nplc, channelsList);				
 	}
 	
@@ -1217,8 +1457,6 @@ public class Keithley2700 {
 				", NPLC: " + String.valueOf(_nplc));
 		
 		order = _function + ":" + nplc + ", " + _channelsList;
-		
-		
 		
 		this.commAdapter.write(order);
 		
@@ -1248,20 +1486,20 @@ public class Keithley2700 {
 
 	public String setRangeForScanListChannel(String _function, float _range, int _cardNumber, int _channel) throws Exception{
 		
-		String channelsList = createChannelsList(_cardNumber,_channel,_channel);
+		String channelsList = createChannelsList(_cardNumber,_channel,_channel, this.debug_level);
 		return this.setRangeForScanListChannels(_function, _range, channelsList);				
 	}
 	
 	public String setRangeForScanListChannels(String _function, float _range,  int _cardNumber, int[] _channelsList) throws Exception{
 		
-		String channelsList = createChannelsList(_cardNumber, _channelsList);
+		String channelsList = createChannelsList(_cardNumber, _channelsList, this.debug_level);
 		return this.setRangeForScanListChannels(_function, _range, channelsList);
 				
 	}
 	
 	public String setRangeForScanListChannels(String _function, float _range, int _cardNumber, int _minChannel, int _maxChannel) throws Exception{
 		
-		String channelsList = createChannelsList(_cardNumber,_minChannel,_maxChannel);
+		String channelsList = createChannelsList(_cardNumber,_minChannel,_maxChannel, this.debug_level);
 		return this.setRangeForScanListChannels(_function, _range, channelsList);				
 	}
 	
@@ -1293,16 +1531,21 @@ public class Keithley2700 {
 	}
 	
 	public String setScanListChannels(int _cardNumber, int[] _channelList) throws Exception {
-		return this.setScanListChannels(createChannelsList(_cardNumber, _channelList));
+		return this.setScanListChannels(createChannelsList(_cardNumber, _channelList, this.debug_level));
 	}
 	
 	public String setScanListChannels(int _cardNumber, int _minChannel, int _maxChannel) throws Exception {
-		return this.setScanListChannels(createChannelsList(_cardNumber, _minChannel, _maxChannel));		
+		
+		return this.setScanListChannels(createChannelsList(_cardNumber, _minChannel, _maxChannel, this.debug_level));		
+	
 	}
 	
 	private String setScanListChannels(String _channelsList) throws Exception {
+		
 		if (this.debug_level<5) System.out.println("Setting " + _channelsList + " channels " + "for scan list...");
+		
 		this.commAdapter.write("ROUT:SCAN " + _channelsList);
+		
 		if (this.checkErrors) return "setScanListChannels: " + this.errors(); else return " NO CHECK ERRORS";
 	}
 	
@@ -1398,10 +1641,21 @@ public class Keithley2700 {
 		if (this.debug_level<5) System.out.println("Formating Data...");
 		
 		this.commAdapter.write(order);
+		
 		if (this.checkErrors) return "formatData: " + this.errors(); else return " NO CHECK ERRORS";
 		
 	}
 	
+	public String getFormatData() throws Exception {
+		
+		if (this.debug_level<5) System.out.println("Asking at Keithley 2700 for the format data confiuration...");		
+		
+		String data = new String(this.commAdapter.ask("FORMat:DATA?"));
+		
+		this.configuration.put("FORMat:DATA", data);
+		
+		return data;
+	}
 	
 	public String formatElements(String[] _elements, String[] _defaultElements) throws Exception
 	{
@@ -1416,12 +1670,25 @@ public class Keithley2700 {
 			order = order + elements[i] + ",";
 			
 		}
+		
 		order = order.substring(0, order.length()-1);
 		
 		this.commAdapter.write("FORMat:ELEMents " + order);
-		if (this.checkErrors) return "formatElements: " + this.errors(); else return " NO CHECK ERRORS";	
+		
+		if (this.checkErrors) return "formatElements: " + this.errors(); else return " NO CHECK ERRORS";
+		
 	}
 	
+	public String[] getFormatElements() throws Exception {
+		
+		if (this.debug_level<5) System.out.println("Asking at Keithley 2700 for the format elements confiuration...");		
+		
+		String[] elements = (new String(this.commAdapter.ask("FORMat:ELEMents?"))).split(",");
+		
+		this.configuration.put("FORMat:ELEMents", elements);
+		
+		return elements;
+	}
 	
 	//********************************************************************************************
 	//***************************MEASURE REALTED COMMANDS*****************************************
@@ -1513,7 +1780,7 @@ public class Keithley2700 {
 		
 		String order = "";
 		
-		String channelsList = createChannelsList(cardNumber, channel, channel);
+		String channelsList = createChannelsList(cardNumber, channel, channel, this.debug_level);
 		
 		String resolution = String.valueOf(_resolution);
 		
@@ -1533,7 +1800,7 @@ public class Keithley2700 {
 			
 		reading = this.commAdapter.ask(order);
 		
-		return this.convertReadingToFloatArray(reading);
+		return convertReadingToFloatArray(reading, this.debug_level);
 	}
 	
 	
@@ -1756,8 +2023,11 @@ public class Keithley2700 {
 	
 	public String clearDataBuffer() throws Exception 
 	{
+		
 		if (this.debug_level<5) System.out.println("Clearing data buffer...");
+		
 		this.commAdapter.write("TRACe:CLEar");
+		
 		if (this.checkErrors) return "clearDataBuffer: " + this.errors(); else return " NO CHECK ERRORS";
 	}
 
@@ -1774,14 +2044,38 @@ public class Keithley2700 {
 	 * @return
 	 * @throws Exception
 	 */
-	public float[] getBufferData(int nSamples) throws Exception
-	{
-		float[] res = null;
-		byte[] data;
-		
+	public Measures getBufferData(int nSamples) throws Exception
+	{	
 		if (this.debug_level<5) System.out.println("Getting buffer data...");
 		
-		data = this.commAdapter.ask("TRACE:DATA?");
+		byte[] data = this.commAdapter.ask("TRACE:DATA?");
+		Measures measures = null;
+		
+		if (data.length>0){
+			
+			String[] measuresAtts = (new String(data)).split(",");
+			int nAttsPerMeasure = this.getFormatElements().length;
+			System.out.println(Arrays.toString(measuresAtts));
+			System.out.println(nAttsPerMeasure);
+					
+			measures = new Measures(measuresAtts,nAttsPerMeasure-1); //value y units estan unidos
+		}
+		
+		return measures;
+	}
+	
+	/**
+	 * @return
+	 * @throws Exception
+	 */
+	public float getData() throws Exception
+	{
+		float res = Float.MAX_VALUE;
+		byte[] data;
+		
+		if (this.debug_level<5) System.out.println("Getting data...");
+		
+		data = this.commAdapter.ask("DATA?");
 		
 		//System.out.println(Arrays.toString(data));
 		
@@ -1791,7 +2085,6 @@ public class Keithley2700 {
 			
 			if (str!=null)
 			{	
-				res = new float[nSamples];
 				Matcher matcher = null;
 				//System.out.println(str);
 				String[] rawData = str.split(",");
@@ -1801,7 +2094,7 @@ public class Keithley2700 {
 					matcher = SCIENTIFIC_NOTATION_PATTERN.matcher(rawData[i]);
 					if (matcher.find())
 					{
-						res[i] = Float.parseFloat(matcher.group(0));
+						res = Float.parseFloat(matcher.group(0));
 					}
 				}
 			}
@@ -1817,6 +2110,7 @@ public class Keithley2700 {
 		if (this.debug_level<5) System.out.println("Configuring auto clear buffer as " + order);
 		
 		this.commAdapter.write(order);
+		
 		if (this.checkErrors) return "enableAutoClearBuffer: " + this.errors(); else return " NO CHECK ERRORS";			
 	}
 	
@@ -1827,6 +2121,7 @@ public class Keithley2700 {
 		if (this.debug_level<5) System.out.println("Configuring statistics calculation as " + order);
 		
 		this.commAdapter.write(order);
+		
 		if (this.checkErrors) return "enableStatisticsCalculation: " + this.errors(); else return " NO CHECK ERRORS";
 	
 	}
@@ -1842,6 +2137,7 @@ public class Keithley2700 {
 		order = order + "CALC2:IMM";
 		
 		this.commAdapter.write(order);
+		
 		if (this.checkErrors) return "calculateStandardDeviationOfBufferData: " + this.errors(); else return " NO CHECK ERRORS";
 		
 	}
@@ -1856,6 +2152,7 @@ public class Keithley2700 {
 		order = order + "CALC2:IMM";
 		
 		this.commAdapter.write(order);
+		
 		if (this.checkErrors) return "calculateMeanOfBufferData: " + this.errors(); else return " NO CHECK ERRORS";
 
 	}
@@ -1917,8 +2214,10 @@ public class Keithley2700 {
 		if (this.debug_level<5) System.out.println("Configuring beeper as " + order);
 		
 		this.commAdapter.write(order);
+		
 		if (this.checkErrors) return "enableBeeper: " + this.errors(); else return " NO CHECK ERRORS";
 	}
+	
 	public String getIdentification() throws Exception{
 		
 		if (this.debug_level<5) System.out.println("Asking instrument for identification...");
@@ -1977,8 +2276,11 @@ public class Keithley2700 {
 	 * @throws Exception 
 	 */
 	public String resetInstrument() throws Exception{
+		
 		if (this.debug_level<5) System.out.println("Reseting the instrument....");
+		
 		this.commAdapter.write("*RST");
+		
 		if (this.checkErrors) return "resetInstrument: " + this.errors(); else return " NO CHECK ERRORS";
 	}
 	

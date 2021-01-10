@@ -5,6 +5,8 @@ import java.util.Arrays;
 import common.CommPort_I;
 import multimeters.Keithley2700;
 import rs232.JSSC_S_Port;
+import utils.Measure;
+import utils.Measures;
 
 /**
  * Clase creada para mostrar varios ejemplos de uso de la clase Keithley2700.
@@ -18,7 +20,7 @@ import rs232.JSSC_S_Port;
 public class K2700_examples {
 
 	
-	final static String VERSION = "1.0.0";
+	final static String VERSION = "1.0.1";
 	
 
 	//RS232 Communication port parameters and objects
@@ -29,15 +31,14 @@ public class K2700_examples {
 	private static int parityType = 0;
 	private static String terminator = "\n";
 	
-	private static int writePort_waitTime = 400; //in milliseconds
+	private static int writePort_waitTime = 500; //in milliseconds
 	private static int readPort_waitTime = 0; //in milliseconds
 	boolean check_errors = false;
-	private static int debug_level = 4;
+	private static int debug_level = 5;
 	
 	private static CommPort_I rs232_commPort = null;
 	
 	private static Keithley2700 k = null;
-	
 	
 	
 	private String inicializaInstrumento() throws Exception {
@@ -46,7 +47,11 @@ public class K2700_examples {
 		
 		String[] ELEMENTS = {
 				Keithley2700.FORMAT_ELEMENT_READING,
-				Keithley2700.FORMAT_ELEMENT_UNITS
+				Keithley2700.FORMAT_ELEMENT_UNITS,
+				Keithley2700.FORMAT_ELEMENT_TSTAMP,
+				Keithley2700.FORMAT_ELEMENT_RNUMBER,
+				Keithley2700.FORMAT_ELEMENT_CHANNEL,
+				Keithley2700.FORMAT_ELEMENT_LIMITS
 				};
 		
 		String[] DEFAULT_ELEMENTS = {
@@ -61,49 +66,122 @@ public class K2700_examples {
 		r = r + k.clearErrorQueue();
 		r = r + k.openAllChannels(100);
 		
-		r = r + k.formatElements(ELEMENTS, DEFAULT_ELEMENTS);
+		k.formatElements(ELEMENTS, DEFAULT_ELEMENTS);
 		r = r + k.formatData(Keithley2700.FORMAT_TYPE_ASCII,1);
-		 
+		
+		
 		return r;
 	}
 	
 	private void ejemplo_medidaInstantaneaDeTemperatura(int card, int ch, int nMeasures) throws Exception {
+		
 		String r = "";
 		
-		int 	filterCount 	= 30;
+		int 	filterCount 	= 20;
 		float 	filterWindow 	= 0f;
 		boolean enableFilter 	= true;
+		Measure measure;
 		
-		//Configuramos el keithley para la medida de temperatura.
-		r = r + k.configureForMeasuring_Temperature(
+		r = r + k.openAllChannels(100);
+		
+		for (int i=0;i<nMeasures;i++)
+		{
+			//Configuramos el keithley para la medida de temperatura.
+			
+			long t0 = System.currentTimeMillis();
+			
+			measure = k.measure_Temperature(
+					Keithley2700.TEMPERATURE_SENSOR_TCOUPLE, 
+					Keithley2700.TEMPERATURE_TCOUPLE_TYPE_K, 
+					Keithley2700.TEMPERATURE_UNIT_C,
+					Keithley2700.AVERAGE_FILTER_CONTROL_TYPE_REPEAT,
+					filterWindow,
+					filterCount,
+					enableFilter,
+					1,
+					10);
+			
+			long t1 = System.currentTimeMillis();
+			
+			System.out.print("Temperature measure = " + measure + "ºC takes " + (t1-t0) + " milliseconds. \n");
+			
+			
+		}
+	
+	}
+	
+	private void ejemplo_medidaInstantaneaDeTemperatura2(int card, int ch, int nMeasures) throws Exception {
+		
+		String r = "";
+		
+		int 	filterCount 	= 1;
+		float 	filterWindow 	= 0f;
+		boolean enableFilter 	= true;
+		Measure measure;		
+		
+		r = r + k.openAllChannels(100);
+		
+		k.resetInstrument();
+		k.resetRegisters();
+		
+		k.configure_as_OneShot_TEMPERATURE_measure(
 				Keithley2700.TEMPERATURE_SENSOR_TCOUPLE, 
 				Keithley2700.TEMPERATURE_TCOUPLE_TYPE_K, 
 				Keithley2700.TEMPERATURE_UNIT_C,
 				Keithley2700.AVERAGE_FILTER_CONTROL_TYPE_REPEAT,
 				filterWindow,
 				filterCount,
-				enableFilter);
+				enableFilter,
+				1,
+				10);
 		
-		r = r + k.openAllChannels(100);
-		 
-		System.out.println(r);
+		k.clearDataBuffer();
+		k.openAllChannels(50);
+		k.closeIndividualChannel(1, 10, 100);
 		
-		r = null;
-		
-		for (int i=0;i<nMeasures;i++) {
-			System.out.println(Arrays.toString(k.measure(Keithley2700.FUNCTION_TEMPERATURE, -1, 0.1f, card, ch))); 
-			Thread.sleep(1000);		 
+		for (int i=0;i<nMeasures;i++)
+		{
+			//Configuramos el keithley para la medida de temperatura.
+			
+			long t0 = System.currentTimeMillis();
+			
+			measure = k.read(); //read always returns a new reading
+			
+			long t1 = System.currentTimeMillis();
+			
+			System.out.print(measure.toString() + "Takes " + (t1-t0) + " milliseconds. \n");
+			
 		}
+	
 	}
+
 	
 	private void ejemplo_scan(String[] functions, float[] ranges, float[] nplcs, int[] filters, int cardNumber, int[] channels) throws Exception {
 		
 		String r = "";
 		
+		k.resetInstrument();
+		k.resetRegisters();
+		
+		String[] ELEMENTS = {
+				Keithley2700.FORMAT_ELEMENT_READING,
+				Keithley2700.FORMAT_ELEMENT_UNITS,
+				Keithley2700.FORMAT_ELEMENT_TSTAMP,
+				Keithley2700.FORMAT_ELEMENT_RNUMBER,
+				Keithley2700.FORMAT_ELEMENT_CHANNEL,
+				Keithley2700.FORMAT_ELEMENT_LIMITS
+				};
+		
+		String[] DEFAULT_ELEMENTS = {
+				Keithley2700.FORMAT_ELEMENT_READING
+				};
+		
+		k.formatElements(ELEMENTS, DEFAULT_ELEMENTS);
+		
 		System.out.println("**************************************************");
 		System.out.println("****************CONFIGURING SCAN******************");
 		System.out.println("**************************************************");
-		 
+		
 		r = r + k.setFunctionsForScanListChannels(functions, cardNumber, channels);
 		 
 		r = r + k.setRangesForScanListChannels(functions, ranges, cardNumber, channels);
@@ -149,13 +227,16 @@ public class K2700_examples {
 		System.out.println("************END CONFIGURING TRIGGER***************");
 		System.out.println("**************************************************");
 		
+		
 		r = r + k.trigger_init();
 		r = r + k.sendTriggerCommand();
 	 	 
-		Thread.sleep(1000);
-		 
-		System.out.println(Arrays.toString(k.getBufferData(channels.length)));
-		 
+		Thread.sleep(2000);
+		
+		Measures measures = k.getBufferData(channels.length);
+		
+		System.out.println(measures.toString());
+		
 		r = r + k.trigger_abort();		 
 		 
 		System.out.println(r);
@@ -164,11 +245,13 @@ public class K2700_examples {
 		
 	}
 	
+	
 	public static String getVersion() {
 		return VERSION;
 	}
 
 	public static void main(String[] args) throws Exception {
+		
 		// TODO Auto-generated method stub
 		rs232_commPort = new JSSC_S_Port(portName, baudRate, numberOfDataBits, numberOfStopBits, parityType, terminator, writePort_waitTime, readPort_waitTime, debug_level);
 		K2700_examples examples = new K2700_examples();
@@ -187,10 +270,15 @@ public class K2700_examples {
 		};
 		
 		examples.inicializaInstrumento();
+			
 		examples.ejemplo_medidaInstantaneaDeTemperatura(cardNumber, channel, 10);
+		
+		examples.ejemplo_medidaInstantaneaDeTemperatura2(cardNumber, channel, 10);
 
 		examples.ejemplo_scan(functions, ranges, nplcs, filters, cardNumber, channels);
 		
+		examples.ejemplo_medidaInstantaneaDeTemperatura2(cardNumber, channel, 10);
+	
 		System.exit(0);
 	}
 
