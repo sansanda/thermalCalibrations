@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ThermalCalibrationProgramData CalibrationSetUp_Type="0">
+  <CalibrationSetUp_Description ProgramName="Program1" ProgramAuthor="Author x" ProgramDescription="Program for calibrating Thermal Test Chips." />
+  <CalibrationSetUp_DevicesToCalibrate>
+    <DeviceToCalibrate0 DeviceType="0" DeviceReference="" DeviceTemp="0.0" MultimeterChannel="1" I="0.01" V="0.0" Io="0.01" ETA="2.0" />
+    <DeviceToCalibrate1 DeviceType="0" DeviceReference="" DeviceTemp="0.0" MultimeterChannel="2" I="0.01" V="0.0" Io="0.01" ETA="2.0" />
+    <DeviceToCalibrate2 DeviceType="0" DeviceReference="" DeviceTemp="0.0" MultimeterChannel="3" I="0.01" V="0.0" Io="0.01" ETA="2.0" />
+    <DeviceToCalibrate3 DeviceType="0" DeviceReference="" DeviceTemp="0.0" MultimeterChannel="4" I="0.01" V="0.0" Io="0.01" ETA="2.0" />
+  </CalibrationSetUp_DevicesToCalibrate>
+  <CalibrationSetUp_TemperatureProfile TemperatureProfileName="TemperatureProfileData_1" Temperatures="0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,105,110,115,120,125," />
+  <CalibrationSetUp_TemperatureStabilizationCriteria FirstTemperatureStepStabilitzationTime="10" MaximunAdmissibleTemperatureError="5.0" StandardDeviation="0.03" MeasurementWindow="120" SamplingPeriode="1000" NumberOfSuccessiveWindowsUnderStDev="1" TemperatureStabilitzationTime="10" TemperatureStabilitzationMethod="0" />
+</ThermalCalibrationProgramData>
+

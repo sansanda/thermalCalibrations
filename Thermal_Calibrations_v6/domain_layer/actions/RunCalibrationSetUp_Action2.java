@@ -111,7 +111,7 @@ public class RunCalibrationSetUp_Action2 implements Action{
 	    if (initializeResultsRow(resultsRow)==-1) return false;
 		if (initializeResultsFile(resultsFile)==-1) return false;
 		if (createInstruments()==-1) return false;
-		if (initializeMultimeter()==-1) return false;
+		if (initializeMultimeter(calibrationSetUp,temperatureSensorData)==-1) return false;
 		if (initializeOven()==-1) return false;
 		if (createCalibrationProgressScreen(calibrationSetUp,temperatureSensorData)==-1)return false;
 		if (testCalibrationSetUp(calibrationSetUp,temperatureSensorData)==-1) return false;
@@ -577,7 +577,9 @@ public class RunCalibrationSetUp_Action2 implements Action{
 		return 0;
 	}
 	
-	private int initializeMultimeter() throws Exception{
+	private int initializeMultimeter(CalibrationSetUp calibrationSetUp, TemperatureSensor temperatureSensorData) throws Exception{
+		
+		
 		printActionMessageAndProgressScreenMessage("INITIALIZING THE MULTIMETER.... \n");
 		startProgramTimeInMillis = System.currentTimeMillis();
 		
