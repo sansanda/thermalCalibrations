@@ -15,7 +15,7 @@ import Data.TemperatureSensorData;
 import Data.TTCSetUpData;
 import Main.MainController;
 import Ovens.Eurotherm2404_v2;
-import multimeters.Keithley2700;
+import keithley.Keithley2700;
 import fileUtilities.*;
 import frontController.*;
 

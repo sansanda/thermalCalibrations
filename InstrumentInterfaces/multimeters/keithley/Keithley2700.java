@@ -1,4 +1,4 @@
-package multimeters;
+package keithley;
 
 
 import java.io.BufferedReader;
@@ -9,8 +9,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import common.CommPort_I;
-import utils.Measure;
-import utils.Measures;
+import common.Multimeter;
+import measure.Measure;
+import measure.Measures;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -23,7 +24,7 @@ import java.util.Hashtable;
  * @author david
  *
  */
-public class Keithley2700 {
+public class Keithley2700 extends Multimeter{
 	
 	
 	final static String VERSION = "6.1.0";
@@ -39,7 +40,7 @@ public class Keithley2700 {
 	public final static String FUNCTION_CURRENT_DC = 				"CURRent:DC";
 	public final static String FUNCTION_CURRENT_AC = 				"CURRent:AC";
 	public final static String FUNCTION_RESISTANCE = 				"RESistance";
-	public final static String FUNCTION_FOUR_WIRE_RESISTANCE = 	"FRESistance";
+	public final static String FUNCTION_FOUR_WIRE_RESISTANCE = 		"FRESistance";
 	public final static String FUNCTION_FREQUENCY = 				"FREQuency";
 	public final static String FUNCTION_PERIOD = 					"PERiod";
 	public final static String FUNCTION_TEMPERATURE = 				"TEMPerature";

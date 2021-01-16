@@ -18,7 +18,7 @@ import view.OvenTemperatureWarningFrame;
 import Data.TTCSetUpData;
 import Main.MainController;
 import Ovens.Eurotherm2404;
-import multimeters.Keithley2700;
+import keithley.Keithley2700;
 import frontController.*;
 
 import ThreadManagement.*;

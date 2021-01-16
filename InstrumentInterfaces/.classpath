@@ -6,6 +6,9 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="src" path="multimeters"/>
+	<classpathentry kind="src" path="source_meters"/>
+	<classpathentry kind="src" path="utils"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>
@@ -13,5 +16,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="/java_development_libraries/tratamiento de unidades de medida/jscience-4.3.1.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Comm_Adapters"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

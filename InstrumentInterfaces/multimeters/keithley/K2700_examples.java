@@ -1,12 +1,9 @@
-package examples;
-
-import java.util.Arrays;
+package keithley;
 
 import common.CommPort_I;
-import multimeters.Keithley2700;
+import measure.Measure;
+import measure.Measures;
 import rs232.JSSC_S_Port;
-import utils.Measure;
-import utils.Measures;
 
 /**
  * Clase creada para mostrar varios ejemplos de uso de la clase Keithley2700.
@@ -162,6 +159,8 @@ public class K2700_examples {
 		
 		k.resetInstrument();
 		k.resetRegisters();
+		
+		k.redirectOutputTo("front");
 		
 		String[] ELEMENTS = {
 				Keithley2700.FORMAT_ELEMENT_READING,
