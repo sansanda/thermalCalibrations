@@ -12,24 +12,24 @@ import java.util.regex.Pattern;
  */
 public class Measure {
 	
-	final static String VERSION = "1.0.0";
+	final static String VERSION 	= "1.0.0";
 	
-	private double 	value;
-	private String 	unit;
-	private float  	tStamp = -1f;
-	private long	readingNumber = -1;
-	private int 	channelNumber = -1;
-	private int 	cardNumber = -1;
+	private double 	value 			= Double.MAX_VALUE;
+	private String 	unit 			= null;
+	private float  	tStamp 			= -1f;
+	private long	readingNumber 	= -1;
+	private int 	channelNumber 	= -1;
+	private int 	cardNumber 		= -1;
 	
-	private boolean highLimit1Passes = 	false;
-	private boolean highLimit2Passes = 	false;
-	private boolean lowLimit1Passes = 	false;
-	private boolean lowLimit2Passes = 	false;
+	private boolean highLimit1Passes 	= false;
+	private boolean highLimit2Passes 	= false;
+	private boolean lowLimit1Passes 	= false;
+	private boolean lowLimit2Passes 	= false;
 
-	public static String tStampTag = 		"SECS";
-	public static String readingNumberTag = "RDNG#";
-	public static String channelNumberTag = "INTCHAN";
-	public static String limitsTag = 		"LIMITS";
+	public static String tStampTag 			= "SECS";
+	public static String readingNumberTag 	= "RDNG#";
+	public static String channelNumberTag 	= "INTCHAN";
+	public static String limitsTag 			= "LIMITS";
 	
 	//The objective is to extract +1.23456789E-03 from +1.23456789E-03VDC, for example
 	public static Pattern SCIENTIFIC_NOTATION_PATTERN = Pattern.compile("[+-]?\\d(\\.\\d+)?[Ee][+-]?\\d+");
@@ -155,8 +155,10 @@ public class Measure {
 	
 	public static void main(String[] args)
 	{
-		Measure m = new Measure("+1.05720816E+01ºC,+40670.266SECS,+214613RDNG#,110INTCHAN,0000LIMITS".split(","));
+		Measure m = new Measure("+1.05720816E+01,+40670.266SECS,+214613RDNG#,110INTCHAN,0000LIMITS".split(","));
 		System.out.println(m.toString());
+		System.out.println(m.isHighLimit1Passes());
+		
 	}
 	
 }
