@@ -163,7 +163,7 @@ public class Keithley2700 extends Multimeter{
 	public final static String TRIGGER_SOURCE_IMMEDIATE = 	"IMMediate";
 	public final static String TRIGGER_SOURCE_TIMER = 		"TIMer";
 	public final static String TRIGGER_SOURCE_MANUAL= 		"MANual";
-	public final static String TRIGGER_SOURCE_BUS= 		"BUS";
+	public final static String TRIGGER_SOURCE_BUS= 			"BUS";
 	public final static String TRIGGER_SOURCE_EXTERNAL= 	"EXTernal";
 	
 	public final static String[] TRIGGER_SOURCE_SET = {
