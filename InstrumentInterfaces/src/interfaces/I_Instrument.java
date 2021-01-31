@@ -27,6 +27,8 @@ public interface I_Instrument {
 	void 	setOtherAttribute(String attribute, Object value) throws Exception;
 	void 	setImage(BufferedImage image) throws Exception;
 	
+
+	
 	//communications
 	CommPort_I 	getCommPort() throws Exception;
 	void 		setCommPort(CommPort_I commPort) throws Exception;
