@@ -1,13 +1,14 @@
-package common;
+package information;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 
-import interfaces.I_InstrumentComponent;
+import common.I_InstrumentComponent;
+import common.InstrumentComponent;
 
-public class GeneralInformation_Component extends Instrument_Component {
+public class GeneralInformation_Component extends InstrumentComponent {
 	
+	private static int classVersion = 0;
 	protected String serialNumber = null;
 	protected String model = null;
 	protected String manufacturer = null;
@@ -27,9 +28,9 @@ public class GeneralInformation_Component extends Instrument_Component {
 	 * @param firmwareVersion
 	 * @param otherAttributes
 	 */
-	public GeneralInformation_Component(String name, int version, I_InstrumentComponent parent, String serialNumber,
+	public GeneralInformation_Component(String name, long id, I_InstrumentComponent parent, String serialNumber,
 			String model, String manufacturer, String observations, String firmwareVersion) {
-		super(name, version, parent);
+		super(name, id, parent);
 		this.serialNumber = serialNumber;
 		this.model = model;
 		this.manufacturer = manufacturer;
@@ -38,17 +39,25 @@ public class GeneralInformation_Component extends Instrument_Component {
 		this.otherAttributes = new HashMap<String, Object>();
 	}
 	
-	public GeneralInformation_Component(String name, int version, ArrayList<String> descriptiveTags,
+	public GeneralInformation_Component(String name, long id, ArrayList<String> descriptiveTags,
 			ArrayList<I_InstrumentComponent> components, I_InstrumentComponent parent, String serialNumber,
 			String model, String manufacturer, String observations, String firmwareVersion,
 			HashMap<String, Object> otherAttributes) {
-		super(name, version, descriptiveTags, components, parent);
+		super(name, id, descriptiveTags, components, parent);
 		this.serialNumber = serialNumber;
 		this.model = model;
 		this.manufacturer = manufacturer;
 		this.observations = observations;
 		this.firmwareVersion = firmwareVersion;
 		this.otherAttributes = otherAttributes;
+	}
+	
+	public static int getVersion() throws Exception {
+		return classVersion;
+	}
+
+	public static void setVersion(int version) throws Exception {
+		classVersion = version;
 	}
 	
 	public String getSerialNumber() throws Exception {
@@ -106,19 +115,18 @@ public class GeneralInformation_Component extends Instrument_Component {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
+		try {
+			builder.append("GeneralInformation_Component class version = ").append(GeneralInformation_Component.getVersion()).append("\n");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		builder.append("GeneralInformation_Component [serialNumber=").append(serialNumber).append(", model=")
 				.append(model).append(", manufacturer=").append(manufacturer).append(", observations=")
 				.append(observations).append(", firmwareVersion=").append(firmwareVersion).append(", otherAttributes=")
-				.append(otherAttributes).append(", name=").append(name).append(", version=").append(version)
+				.append(otherAttributes).append(", name=").append(name).append(", id=").append(id)
 				.append(", descriptiveTags=").append(descriptiveTags).append(", components=").append(components)
 				.append(", parent=").append(parent).append("]");
 		return builder.toString();
-	}
-
-	public static void main(String[] args)
-	{
-		GeneralInformation_Component gic = new GeneralInformation_Component("gic",0,null,"010203","model","davidCO","obs","firmware version 0");
-		System.out.println(gic.toString());
-	}
-	
+	}	
 }

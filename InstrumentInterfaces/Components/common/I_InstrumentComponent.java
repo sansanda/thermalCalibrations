@@ -1,7 +1,7 @@
 /**
  * 
  */
-package interfaces;
+package common;
 
 import java.util.ArrayList;
 
@@ -13,13 +13,11 @@ import java.util.ArrayList;
 
 public interface I_InstrumentComponent {
 	
-	//Naming
+	//Identification
 	void setName(String name);
 	String getName();
-	
-	//Versioning
-	void setVersion(int version);
-	int getVersion();
+	void setId(long id);
+	long getId();
 	
 	//Search aids
 	void addDescriptiveTag(String tag) throws Exception;
@@ -37,7 +35,11 @@ public interface I_InstrumentComponent {
 	void deleteInstrumentComponent(String name) throws Exception;
 	I_InstrumentComponent getInstrumentComponent(String name) throws Exception;
 	ArrayList<I_InstrumentComponent> getAllComponents() throws Exception;
-	
-	
+
+	//state
+	void enable(boolean enable) throws Exception;
+	boolean isEnable() throws Exception;
+	void selected(boolean selected) throws Exception;
+	boolean isSelected() throws Exception;
 	
 }

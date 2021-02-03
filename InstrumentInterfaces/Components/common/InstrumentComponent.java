@@ -4,41 +4,48 @@
 package common;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
-import interfaces.I_InstrumentComponent;
+import java.util.Iterator;
 
 /**
  * @author david
  *
  */
-public abstract class Instrument_Component implements I_InstrumentComponent, Comparable<Instrument_Component>{
+public abstract class InstrumentComponent implements I_InstrumentComponent, Comparable<InstrumentComponent>{
 
 	protected String name;
-	protected int version;
+	protected long id;
+	protected boolean enable;
+	protected boolean selected;
 	protected ArrayList<String> descriptiveTags;
 	protected ArrayList<I_InstrumentComponent> components;
 	protected I_InstrumentComponent parent;
 	
-	public Instrument_Component(String name, int version, I_InstrumentComponent parent) {
+	public InstrumentComponent(String name, long id, I_InstrumentComponent parent) {
 		super();
 		this.name = name;
-		this.version = version;
+		this.id = id;
+		this.enable = true;
+		this.selected = false;
 		this.descriptiveTags = new ArrayList<String>();
 		this.descriptiveTags.add(name);
 		this.components = new ArrayList<I_InstrumentComponent>();
 		this.parent = parent;
 	}
 	
-	public Instrument_Component(String name, int version, ArrayList<String> descriptiveTags,
+	public InstrumentComponent(String name, long id, ArrayList<String> descriptiveTags,
 			ArrayList<I_InstrumentComponent> components, I_InstrumentComponent parent) {
 		super();
 		this.name = name;
-		this.version = version;
+		this.id = id;
+		this.enable = true;
+		this.selected = false;
 		this.descriptiveTags = descriptiveTags;
 		this.components = components;
 		this.parent = parent;
 	}
+	
+	//non-static methods
 	
 	@Override
 	public void setName(String name) {
@@ -53,14 +60,36 @@ public abstract class Instrument_Component implements I_InstrumentComponent, Com
 	}
 	
 	@Override
-	public void setVersion(int version) {
-		this.version = version;
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	@Override
-	public int getVersion() {
+	public long getId() {
 		// TODO Auto-generated method stub
-		return version;
+		return id;
+	}
+
+	
+	@Override
+	public void enable(boolean enable) throws Exception {
+		this.enable = enable;
+	}
+
+	@Override
+	public boolean isEnable() throws Exception {
+		return enable;
+	}
+
+	
+	@Override
+	public void selected(boolean selected) throws Exception {
+		this.selected = selected;
+	}
+
+	@Override
+	public boolean isSelected() throws Exception {
+		return this.selected;
 	}
 
 	@Override
@@ -152,15 +181,15 @@ public abstract class Instrument_Component implements I_InstrumentComponent, Com
 	}
 
 	@Override
-	public int compareTo(Instrument_Component component) {
-		if (this.name.equals(component.getName()) && this.version==component.getVersion()) return 0;
+	public int compareTo(InstrumentComponent component) {
+		if (this.name.equals(component.getName()) && this.id==component.getId()) return 0;
 		else return -1;
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("Instrument_Component [name=").append(name).append(", version=").append(version)
+		builder.append("Instrument_Component [name=").append(name).append(", id=").append(id)
 				.append(", descriptiveTags=").append(descriptiveTags).append(", components=").append(components)
 				.append(", parent=").append(parent).append("]");
 		return builder.toString();
