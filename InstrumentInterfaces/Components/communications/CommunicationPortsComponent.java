@@ -15,6 +15,8 @@ import common.InstrumentComponent;
  */
 public class CommunicationPortsComponent extends InstrumentComponent implements I_ComponentButtonGroup{
 
+	//TODO rehacer por completo adaptandola a OnlyOneSelected_InstrumentComponentList
+	
 	public static String[] protocols = {"GPIB","RS232","LAN"};
 	private static int classVersion = 0;
 	

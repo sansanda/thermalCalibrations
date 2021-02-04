@@ -3,6 +3,8 @@
  */
 package common;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 
 import java.util.Iterator;
@@ -20,7 +22,8 @@ public abstract class InstrumentComponent implements I_InstrumentComponent, Comp
 	protected ArrayList<String> descriptiveTags;
 	protected ArrayList<I_InstrumentComponent> subcomponents;
 	protected I_InstrumentComponent parent;
-	
+	private PropertyChangeSupport support;
+
 	public InstrumentComponent(String name, long id, I_InstrumentComponent parent) {
 		super();
 		this.name = name;
@@ -31,6 +34,7 @@ public abstract class InstrumentComponent implements I_InstrumentComponent, Comp
 		this.descriptiveTags.add(name);
 		this.subcomponents = new ArrayList<I_InstrumentComponent>();
 		this.parent = parent;
+		this.support = new PropertyChangeSupport(this);
 	}
 	
 	public InstrumentComponent(String name, long id, ArrayList<String> descriptiveTags,
@@ -84,6 +88,7 @@ public abstract class InstrumentComponent implements I_InstrumentComponent, Comp
 	
 	@Override
 	public void select(boolean select) throws Exception {
+		support.firePropertyChange("selected", this.selected, select);
 		this.selected = select;
 	}
 
@@ -186,12 +191,21 @@ public abstract class InstrumentComponent implements I_InstrumentComponent, Comp
 		else return -1;
 	}
 
+	public void addPropertyChangeListener(PropertyChangeListener pcl) {
+        support.addPropertyChangeListener(pcl);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener pcl) {
+        support.removePropertyChangeListener(pcl);
+    }
+    
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("Instrument_Component [name=").append(name).append(", id=").append(id)
-				.append(", descriptiveTags=").append(descriptiveTags).append(", components=").append(subcomponents)
-				.append(", parent=").append(parent).append("]");
+		builder.append("InstrumentComponent [name=").append(name).append(", id=").append(id).append(", enable=")
+				.append(enable).append(", selected=").append(selected).append(", descriptiveTags=")
+				.append(descriptiveTags).append(", subcomponents=").append(subcomponents).append(", parent=")
+				.append(parent).append("]");
 		return builder.toString();
 	}
 

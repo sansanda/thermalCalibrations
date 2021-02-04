@@ -3,15 +3,16 @@
  */
 package common;
 
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
 /**
- * @author david
  * Clase que modela el concepto de componente de un instrumento cualquiera que pueda usarse en cualquier laboratorio.
  * Un componente a su vez puede estar formado por otros componetes (hijos) pero solo ser hijo de un único componente (parent).
+ * @author david
  */
 
-public interface I_InstrumentComponent {
+public interface I_InstrumentComponent{
 	
 	//Identification
 	void setName(String name);
@@ -41,4 +42,8 @@ public interface I_InstrumentComponent {
 	boolean isEnable() throws Exception;
 	void select(boolean select) throws Exception;
 	boolean isSelected() throws Exception;
+	
+	void addPropertyChangeListener(PropertyChangeListener pcl);
+    void removePropertyChangeListener(PropertyChangeListener pcl);
+    
 }

@@ -115,18 +115,13 @@ public class GeneralInformation_Component extends InstrumentComponent {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		try {
-			builder.append("GeneralInformation_Component class version = ").append(GeneralInformation_Component.getVersion()).append("\n");
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		builder.append("GeneralInformation_Component [serialNumber=").append(serialNumber).append(", model=")
 				.append(model).append(", manufacturer=").append(manufacturer).append(", observations=")
 				.append(observations).append(", firmwareVersion=").append(firmwareVersion).append(", otherAttributes=")
-				.append(otherAttributes).append(", name=").append(name).append(", id=").append(id)
-				.append(", descriptiveTags=").append(descriptiveTags).append(", components=").append(subcomponents)
-				.append(", parent=").append(parent).append("]");
+				.append(otherAttributes).append(", name=").append(name).append(", id=").append(id).append(", enable=")
+				.append(enable).append(", selected=").append(selected).append(", descriptiveTags=")
+				.append(descriptiveTags).append(", subcomponents=").append(subcomponents).append(", parent=")
+				.append(parent).append("]");
 		return builder.toString();
 	}	
 }
