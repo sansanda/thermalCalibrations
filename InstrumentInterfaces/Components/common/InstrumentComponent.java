@@ -11,14 +11,14 @@ import java.util.Iterator;
  * @author david
  *
  */
-public abstract class InstrumentComponent implements I_InstrumentComponent, Comparable<InstrumentComponent>{
+public abstract class InstrumentComponent implements I_InstrumentComponent, Comparable<I_InstrumentComponent>{
 
 	protected String name;
 	protected long id;
 	protected boolean enable;
 	protected boolean selected;
 	protected ArrayList<String> descriptiveTags;
-	protected ArrayList<I_InstrumentComponent> components;
+	protected ArrayList<I_InstrumentComponent> subcomponents;
 	protected I_InstrumentComponent parent;
 	
 	public InstrumentComponent(String name, long id, I_InstrumentComponent parent) {
@@ -29,7 +29,7 @@ public abstract class InstrumentComponent implements I_InstrumentComponent, Comp
 		this.selected = false;
 		this.descriptiveTags = new ArrayList<String>();
 		this.descriptiveTags.add(name);
-		this.components = new ArrayList<I_InstrumentComponent>();
+		this.subcomponents = new ArrayList<I_InstrumentComponent>();
 		this.parent = parent;
 	}
 	
@@ -41,7 +41,7 @@ public abstract class InstrumentComponent implements I_InstrumentComponent, Comp
 		this.enable = true;
 		this.selected = false;
 		this.descriptiveTags = descriptiveTags;
-		this.components = components;
+		this.subcomponents = components;
 		this.parent = parent;
 	}
 	
@@ -83,8 +83,8 @@ public abstract class InstrumentComponent implements I_InstrumentComponent, Comp
 
 	
 	@Override
-	public void selected(boolean selected) throws Exception {
-		this.selected = selected;
+	public void select(boolean select) throws Exception {
+		this.selected = select;
 	}
 
 	@Override
@@ -135,38 +135,38 @@ public abstract class InstrumentComponent implements I_InstrumentComponent, Comp
 
 	@Override
 	public void addInstrumentComponent(I_InstrumentComponent iC) throws Exception {
-		if (this.components == null) 
+		if (this.subcomponents == null) 
 		{
-			this.components = new ArrayList<I_InstrumentComponent>();
+			this.subcomponents = new ArrayList<I_InstrumentComponent>();
 		}
-		this.components.add(iC);
+		this.subcomponents.add(iC);
 	}
 
 	@Override
 	public void deleteInstrumentComponent(I_InstrumentComponent iC) throws Exception {
-		if (this.components != null) 
+		if (this.subcomponents != null) 
 		{
-			this.components.remove(iC);
+			this.subcomponents.remove(iC);
 		}		
 	}
 	
 	@Override
 	public void deleteInstrumentComponent(String name) throws Exception {
-		if (this.components != null) 
+		if (this.subcomponents != null) 
 		{
-			Iterator<I_InstrumentComponent> it = this.components.iterator();
+			Iterator<I_InstrumentComponent> it = this.subcomponents.iterator();
 			while (it.hasNext()) {
 				I_InstrumentComponent c = it.next();
-				if (c.getName().contentEquals(name)) this.components.remove(c);
+				if (c.getName().contentEquals(name)) this.subcomponents.remove(c);
 			}
 		}	
 	}
 	
 	@Override
 	public I_InstrumentComponent getInstrumentComponent(String name) throws Exception {
-		if (this.components != null) 
+		if (this.subcomponents != null) 
 		{
-			Iterator<I_InstrumentComponent> it = this.components.iterator();
+			Iterator<I_InstrumentComponent> it = this.subcomponents.iterator();
 			while (it.hasNext()) {
 				I_InstrumentComponent c = it.next();
 				if (c.getName().contentEquals(name)) return c;
@@ -177,11 +177,11 @@ public abstract class InstrumentComponent implements I_InstrumentComponent, Comp
 
 	@Override
 	public ArrayList<I_InstrumentComponent> getAllComponents() throws Exception {
-		return this.components;
+		return this.subcomponents;
 	}
 
 	@Override
-	public int compareTo(InstrumentComponent component) {
+	public int compareTo(I_InstrumentComponent component) {
 		if (this.name.equals(component.getName()) && this.id==component.getId()) return 0;
 		else return -1;
 	}
@@ -190,7 +190,7 @@ public abstract class InstrumentComponent implements I_InstrumentComponent, Comp
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Instrument_Component [name=").append(name).append(", id=").append(id)
-				.append(", descriptiveTags=").append(descriptiveTags).append(", components=").append(components)
+				.append(", descriptiveTags=").append(descriptiveTags).append(", components=").append(subcomponents)
 				.append(", parent=").append(parent).append("]");
 		return builder.toString();
 	}

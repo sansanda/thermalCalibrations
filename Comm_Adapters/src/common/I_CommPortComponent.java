@@ -1,6 +1,6 @@
 package common;
 
-public interface CommPort_I {
+public interface I_CommPortComponent {
 	public void open() throws Exception;
 	public void close() throws Exception;
 	public byte[] read() throws Exception;

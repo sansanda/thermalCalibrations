@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.*;
 import javax.comm.*;
 
-import common.CommPort_I;
+import common.I_CommPortComponent;
 
 /**
  * Clase que implementa un puerto serie tipo RS232 haciendo uso de la libreria javacomm-20-win32 
@@ -13,7 +13,7 @@ import common.CommPort_I;
  *
  */
 
-public class JavaComm_S_Port implements CommPort_I, SerialPortEventListener{
+public class JavaComm_S_Port implements I_CommPortComponent, SerialPortEventListener{
 
 	 //**************************************************************************
 	 //****************************CONSTANTES************************************

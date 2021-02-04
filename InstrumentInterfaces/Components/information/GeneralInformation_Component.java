@@ -125,7 +125,7 @@ public class GeneralInformation_Component extends InstrumentComponent {
 				.append(model).append(", manufacturer=").append(manufacturer).append(", observations=")
 				.append(observations).append(", firmwareVersion=").append(firmwareVersion).append(", otherAttributes=")
 				.append(otherAttributes).append(", name=").append(name).append(", id=").append(id)
-				.append(", descriptiveTags=").append(descriptiveTags).append(", components=").append(components)
+				.append(", descriptiveTags=").append(descriptiveTags).append(", components=").append(subcomponents)
 				.append(", parent=").append(parent).append("]");
 		return builder.toString();
 	}	

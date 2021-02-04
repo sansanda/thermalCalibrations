@@ -39,7 +39,6 @@ public interface I_InstrumentComponent {
 	//state
 	void enable(boolean enable) throws Exception;
 	boolean isEnable() throws Exception;
-	void selected(boolean selected) throws Exception;
+	void select(boolean select) throws Exception;
 	boolean isSelected() throws Exception;
-	
 }

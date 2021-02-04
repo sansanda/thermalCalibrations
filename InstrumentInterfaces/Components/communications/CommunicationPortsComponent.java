@@ -13,7 +13,7 @@ import common.InstrumentComponent;
  * @author david
  *
  */
-public class CommunicationsComponent extends InstrumentComponent implements I_ComponentButtonGroup{
+public class CommunicationPortsComponent extends InstrumentComponent implements I_ComponentButtonGroup{
 
 	public static String[] protocols = {"GPIB","RS232","LAN"};
 	private static int classVersion = 0;
@@ -23,7 +23,7 @@ public class CommunicationsComponent extends InstrumentComponent implements I_Co
 	 * @param id
 	 * @param parent
 	 */
-	public CommunicationsComponent(String name, long id, I_InstrumentComponent parent) {
+	public CommunicationPortsComponent(String name, long id, I_InstrumentComponent parent) {
 		super(name, id, parent);
 		// TODO Auto-generated constructor stub
 	}
@@ -35,7 +35,7 @@ public class CommunicationsComponent extends InstrumentComponent implements I_Co
 	 * @param components
 	 * @param parent
 	 */
-	public CommunicationsComponent(String name, long id, ArrayList<String> descriptiveTags,
+	public CommunicationPortsComponent(String name, long id, ArrayList<String> descriptiveTags,
 			ArrayList<I_InstrumentComponent> components, I_InstrumentComponent parent) {
 		super(name, id, descriptiveTags, components, parent);
 		// TODO Auto-generated constructor stub

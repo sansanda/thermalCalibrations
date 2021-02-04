@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 
 
-import common.CommPort_I;
+import common.I_CommPortComponent;
 import jssc.SerialPort;
 import jssc.SerialPortEvent;
 import jssc.SerialPortEventListener;
@@ -24,7 +24,7 @@ import debug_tools.Debuggable;
  * @author DavidS
  *
  */
-public class JSSC_S_Port implements CommPort_I, SerialPortEventListener{
+public class JSSC_S_Port implements I_CommPortComponent, SerialPortEventListener{
 
 	 //**************************************************************************
 	 //****************************CONSTANTES************************************
@@ -348,7 +348,7 @@ public class JSSC_S_Port implements CommPort_I, SerialPortEventListener{
 	public static void main(String[] args) {
 		try {
 			int debug_level = 4;
-			CommPort_I commPort = new JSSC_S_Port("COM1", 19200, 8, 1, 0, "\n", 250, 0, debug_level);
+			I_CommPortComponent commPort = new JSSC_S_Port("COM1", 19200, 8, 1, 0, "\n", 250, 0, debug_level);
 			System.out.println(new String(commPort.ask("*IDN?")));
 			System.exit(0);
 			

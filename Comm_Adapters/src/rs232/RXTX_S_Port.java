@@ -4,7 +4,7 @@ import java.io.*;
 
 import java.util.*;
 
-import common.CommPort_I;
+import common.I_CommPortComponent;
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
@@ -20,7 +20,7 @@ import gnu.io.SerialPortEventListener;
  * @author DavidS
  *
  */
-public class RXTX_S_Port implements CommPort_I, SerialPortEventListener{
+public class RXTX_S_Port implements I_CommPortComponent, SerialPortEventListener{
 
 	 //**************************************************************************
 	 //****************************CONSTANTES************************************
