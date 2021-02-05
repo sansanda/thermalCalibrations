@@ -5,18 +5,20 @@ package communications;
 
 import java.util.ArrayList;
 
-import common.I_ComponentButtonGroup;
+
 import common.I_InstrumentComponent;
 import common.InstrumentComponent;
+import common.OnlyOneSelected_InstrumentComponentList;
 
 /**
  * @author david
  *
  */
-public class CommunicationsComponent extends InstrumentComponent implements I_ComponentButtonGroup{
+public class CommunicationsComponent extends InstrumentComponent implements I_CommunicationsComponent{
 
-	public static String[] protocols = {"GPIB","RS232","LAN"};
-	private static int classVersion = 0;
+	public static String[] portTypes = {"GPIB","RS232","LAN"};
+	private static final int classVersion = 0;
+	private OnlyOneSelected_InstrumentComponentList portsList = null;
 	
 	/**
 	 * @param name
@@ -25,7 +27,7 @@ public class CommunicationsComponent extends InstrumentComponent implements I_Co
 	 */
 	public CommunicationsComponent(String name, long id, I_InstrumentComponent parent) {
 		super(name, id, parent);
-		// TODO Auto-generated constructor stub
+		this.portsList = new OnlyOneSelected_InstrumentComponentList();
 	}
 
 	/**
@@ -38,36 +40,37 @@ public class CommunicationsComponent extends InstrumentComponent implements I_Co
 	public CommunicationsComponent(String name, long id, ArrayList<String> descriptiveTags,
 			ArrayList<I_InstrumentComponent> components, I_InstrumentComponent parent) {
 		super(name, id, descriptiveTags, components, parent);
-		// TODO Auto-generated constructor stub
-	}
-	
-	public static int getVersion() throws Exception {
-		return classVersion;
-	}
-
-	public static void setVersion(int version) throws Exception {
-		classVersion = version;
+		this.portsList = new OnlyOneSelected_InstrumentComponentList();
 	}
 
 	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("Communications_Component []");
-		return builder.toString();
+	public void addPort(I_InstrumentComponent ic) {
+		// TODO Auto-generated method stub
 	}
 
 	@Override
-	public void setSelected(I_InstrumentComponent ic) {
+	public void deletePort(String type) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public I_InstrumentComponent getSelected() {
+	public void updatePort(I_InstrumentComponent ic) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public I_InstrumentComponent getPort(String type) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	
 
+	@Override
+	public I_InstrumentComponent getSelectedPort() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
 }

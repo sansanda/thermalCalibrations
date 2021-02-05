@@ -1,7 +1,9 @@
 /**
  * 
  */
-package common;
+package communications;
+
+import common.I_InstrumentComponent;
 
 /**
  * @author david
@@ -13,9 +15,11 @@ package common;
  * que tiene varios componentes para la comunicacion con una computadora: RS232, GPIB, LAN y donde
  * solo uno de ellos es habilitado para dicha comunicacion.
  */
-public interface I_ComponentButtonGroup{
+public interface I_CommunicationsComponent{
 	
-	void setSelected(I_InstrumentComponent ic);
-	I_InstrumentComponent getSelected();
-	
+	void addPort(I_InstrumentComponent ic);
+	void deletePort(String type);
+	void updatePort(I_InstrumentComponent ic);
+	I_InstrumentComponent getPort(String type);
+	I_InstrumentComponent getSelectedPort();
 }
