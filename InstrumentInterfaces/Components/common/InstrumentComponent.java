@@ -88,8 +88,10 @@ public abstract class InstrumentComponent implements I_InstrumentComponent, Comp
 	
 	@Override
 	public void select(boolean select) throws Exception {
-		support.firePropertyChange("selected", this.selected, select);
+		boolean oldValue = this.selected;
 		this.selected = select;
+		support.firePropertyChange("selected", oldValue, this.selected);
+		
 	}
 
 	@Override

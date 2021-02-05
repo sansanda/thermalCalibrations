@@ -8,7 +8,7 @@ import common.InstrumentComponent;
 
 public class GeneralInformation_Component extends InstrumentComponent {
 	
-	private static int classVersion = 0;
+	public static final int classVersion = 0;
 	protected String serialNumber = null;
 	protected String model = null;
 	protected String manufacturer = null;
@@ -51,15 +51,7 @@ public class GeneralInformation_Component extends InstrumentComponent {
 		this.firmwareVersion = firmwareVersion;
 		this.otherAttributes = otherAttributes;
 	}
-	
-	public static int getVersion() throws Exception {
-		return classVersion;
-	}
 
-	public static void setVersion(int version) throws Exception {
-		classVersion = version;
-	}
-	
 	public String getSerialNumber() throws Exception {
 		return serialNumber;
 	}

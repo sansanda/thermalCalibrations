@@ -15,23 +15,23 @@ import java.util.function.UnaryOperator;
  *
  */
 public class OnlyOneSelected_InstrumentComponentList extends AbstractInstrumentComponentList implements PropertyChangeListener{
-
-	//TODO controlar el cambio "externo" del estado de cualquiera de los elementos de la lista
-	// y reaccionar según el cambio
 	
-	/**
-	 * 
-	 */
+
+	public static final int classVersion = 1;
 	private static final long serialVersionUID = 1L;
+	private I_InstrumentComponent selectedComponent = null;
+
 
 	public OnlyOneSelected_InstrumentComponentList() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
+	/**
+	 * Añade un componente a la lista. Previamente cambia su estado a select = false
+	 */
 	public boolean add(I_InstrumentComponent c) {
-		c.addPropertyChangeListener(this);
+		this.setSelected(c, false);
 		boolean result = super.add(c);
 		this.updateListState();
 		return result;
@@ -39,14 +39,14 @@ public class OnlyOneSelected_InstrumentComponentList extends AbstractInstrumentC
 
 	@Override
 	public void add(int index, I_InstrumentComponent c) {
-		c.addPropertyChangeListener(this);
+		this.setSelected(c, false);
 		super.add(index, c);
 		this.updateListState();
 	}
 
 	@Override
 	public boolean addAll(Collection<? extends I_InstrumentComponent> list) {
-		list.forEach((c) -> {c.addPropertyChangeListener(this);});
+		list.forEach((c) -> {this.setSelected(c, false);});
 		boolean result = super.addAll(list);
 		this.updateListState();
 		return result;
@@ -54,7 +54,7 @@ public class OnlyOneSelected_InstrumentComponentList extends AbstractInstrumentC
 
 	@Override
 	public boolean addAll(int index, Collection<? extends I_InstrumentComponent> list) {
-		list.forEach((c) -> {c.addPropertyChangeListener(this);});
+		list.forEach((c) -> {this.setSelected(c, false);});
 		boolean result = super.addAll(index,list);
 		this.updateListState();
 		return result;
@@ -111,27 +111,58 @@ public class OnlyOneSelected_InstrumentComponentList extends AbstractInstrumentC
 	}
 
 	@Override
-	public I_InstrumentComponent set(int index, I_InstrumentComponent element) {
-		I_InstrumentComponent c = super.set(index, element);
+	public I_InstrumentComponent set(int index, I_InstrumentComponent newComponent) {
+		this.setSelected(newComponent, false);
+		I_InstrumentComponent replacedComponent = super.set(index, newComponent);
 		this.updateListState();
-		return c;
+		return replacedComponent;
 	}
 
+	/**
+	 * Retorna el elemento de la lista que actualmente esta en estado selected.
+	 * Solo un elemento de la lista puede estar en dicho estado
+	 * @return el elemento de tipo I_InstrumentComponent que tiene su atributo select = true
+	 */
+	public I_InstrumentComponent getSelectedComponent() {
+		return selectedComponent;
+	}
+
+	/**
+	 * Asigna al atributo selectedComponent el parametro de entrada.
+	 * @param selectedComponent the selectedComponent to set
+	 */
+	private void setSelectedComponent(I_InstrumentComponent selectedComponent) {
+		if (this.selectedComponent != null & selectedComponent.equals(this.selectedComponent)) return;
+		if (this.selectedComponent != null) this.setSelected(this.selectedComponent, false); //Solo en caso lista no vacia
+																												
+		this.selectedComponent = selectedComponent;
+	}
 	
 	/**
-	 * Actualiza el estado de la lista para evitar que haya uno y solo un componente en estado selected.
+	 * Cambia, de manera controlada, el atributo select de un componente.
+	 * @param c es el objeto de tipo I_InstrumentComponent objeto del cambio 
+	 * @param selected es el nuevo valor del atributo select
+	 */
+	private void setSelected(I_InstrumentComponent c, boolean selected)
+	{
+		try {
+			//hacemos esto para evitar caer en un bucle sin fin 
+			c.removePropertyChangeListener(this);
+			c.select(selected);
+			c.addPropertyChangeListener(this);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	/**
+	 * Actualiza el estado de la lista para asegurar que haya uno y solo un componente en estado selected, si la lista no está vacia.
 	 * @param e
 	 * @throws Exception
 	 */
 	private void updateListState()
 	{
-		this.forEach((c) -> {try {
-			System.out.println(c.isSelected());
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}});
-		
+		//System.out.println("Ajustando la lista....... ");
 		
 		try {
 			if (this.isEmpty()) 
@@ -142,10 +173,11 @@ public class OnlyOneSelected_InstrumentComponentList extends AbstractInstrumentC
 			else if (!hasOneComponentSelected(this)) 
 			{
 				System.out.println("La lista no tiene un componente en estado selected. Procediendo a ajustar la lista. ");
-				//hacemos esto para evitar caer en un bucle sin fin 
-				this.get(0).removePropertyChangeListener(this);
-				this.get(0).select(true);
-				this.get(0).addPropertyChangeListener(this);
+				//Aqui el orden de las operaciones es importante especialmente en el caso que el 
+				//actual componente y el nuevo componente a seleccionar sean el mismo
+				this.setSelectedComponent(this.get(0));
+				this.setSelected(this.get(0), true);
+				
 			}
 			else if (hasOnlyOneComponentSelected(this)) 
 			{
@@ -166,6 +198,14 @@ public class OnlyOneSelected_InstrumentComponentList extends AbstractInstrumentC
 		}
 	}
 	
+	/**
+	 * Método que repasa todos los componentes de la lista y asegura que, después de ejecutar dicho método la lista solo contendrá un unico componente en
+	 * estado selected.
+	 * Para ello recorre por completo la lista y conserva en estado selected (select = true) el primer elemento que encuentra que cumple dicha condición.
+	 * Una vez hecho esto, el resto de componentes que quedan por visitar en la lista serán cambiados a estado select = false en caso que se encontraran como select = true.
+	 * Si no hay nigún elemento en la lista en estado select = true entonces, por defecto, se pone a dicho estado el primer elemento de la lista.
+	 * @throws Exception
+	 */
 	private void setOnlyOneComponentSelectedInList() throws Exception
 	{
 		
@@ -179,19 +219,14 @@ public class OnlyOneSelected_InstrumentComponentList extends AbstractInstrumentC
 			if (c.isSelected() & !alreadyOneComponentFoundAsSelected) alreadyOneComponentFoundAsSelected = true;
 			else if (c.isSelected() & alreadyOneComponentFoundAsSelected) 
 			{
-				//hacemos esto para evitar caer en un bucle sin fin
-				c.removePropertyChangeListener(this);
-				c.select(false);
-				c.addPropertyChangeListener(this);
+				this.setSelected(c, false);
 			}
 		}
 		//si hemos llegado aqui y se cumple la condicion es porque no hay ningún compoenente en estado selected y la lista no está vacia
 		if (!alreadyOneComponentFoundAsSelected)
 		{
-			//hacemos esto para evitar caer en un bucle sin fin 
-			this.get(0).removePropertyChangeListener(this);
-			this.get(0).select(true);
-			this.get(0).addPropertyChangeListener(this);
+			this.setSelected(this.get(0), true);
+			this.setSelectedComponent(this.get(0));
 		}
 	}
 	
@@ -231,9 +266,26 @@ public class OnlyOneSelected_InstrumentComponentList extends AbstractInstrumentC
 	}
 
 	@Override
+	/**
+	 * Callback function que se ejecuta siempre que el estado de uno de los componentes de la lista cambia la propiedad select
+	 */
 	public void propertyChange(PropertyChangeEvent e) {
-		System.out.println("El estado de un componente ha cambiado. Procedemos a ajustar la lista si es necesario");
-		this.updateListState();
+		try {
+			System.out.println("El estado de un componente de la lista ha cambiado. Procedemos a ajustar la lista si es necesario");
+			//System.out.println("Causante ----->" + e.getSource().toString());
+			I_InstrumentComponent source = (I_InstrumentComponent)e.getSource();
+			if (source.isSelected()==true)
+			{
+				//Si se cumple esta condición entonces el objeto causante ha cambiado a estado select = true
+				this.setSelectedComponent(source);
+				
+			}
+			//Si el componente ha pasado a esado select = false no hacemos nada, solo actualizar el estado de la lista
+			this.updateListState();
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 	}
 
 	@Override

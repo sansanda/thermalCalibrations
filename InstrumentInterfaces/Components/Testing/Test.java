@@ -24,9 +24,8 @@ public class Test {
 			
 			System.out.println("TESTNG INDIVIDUAL COMPONENTS");
 			//*************************************************Individual components***************************************************************
-			GeneralInformation_Component.setVersion(0);
 			GeneralInformation_Component gic = new GeneralInformation_Component("gic",0,null,"010203","model","davidCO","obs","firmware version 0");
-			GeneralInformation_Component gic2 = new GeneralInformation_Component("gic",0,null,"010203","model","davidCO","obs","firmware version 0");
+			GeneralInformation_Component gic2 = new GeneralInformation_Component("gic2",0,null,"------","model","davidCO","obs","firmware version 0");
 			
 			CommunicationsComponent.setVersion(1);
 			CommunicationsComponent cc = new CommunicationsComponent("myname",0,null);
@@ -43,7 +42,12 @@ public class Test {
 			System.out.println(l);
 			gic.select(false);
 			System.out.println(l);
-			
+			gic2.select(true);
+			System.out.println(l);
+			l.remove(gic);
+			System.out.println(l);
+			l.remove(gic2);
+			System.out.println(l);
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
