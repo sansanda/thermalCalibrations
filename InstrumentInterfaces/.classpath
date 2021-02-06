@@ -17,5 +17,10 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="/java_development_libraries/tratamiento de unidades de medida/jscience-4.3.1.jar"/>
+	<classpathentry kind="lib" path="C:/repos/java_development_libraries/logging/apache-log4j-2.14.0-bin/log4j-1.2-api-2.14.0.jar" sourcepath="C:/repos/java_development_libraries/logging/apache-log4j-2.14.0-bin/log4j-1.2-api-2.14.0-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/repos/java_development_libraries/logging/apache-log4j-2.14.0-bin/log4j-1.2-api-2.14.0-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

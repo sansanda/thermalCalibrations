@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
+import org.apache.log4j.*;
+
 /**
  * Clase que extiende basicamente de AbstractInstrumentComponentList (ArrayList) creada expresamente como contenedor de InstrumentComponents
  * donde solo un componente de la colección puede estar en estado selected = true.
@@ -20,6 +22,9 @@ public class OnlyOneSelected_InstrumentComponentList extends AbstractInstrumentC
 	public static final int classVersion = 1;
 	private static final long serialVersionUID = 1L;
 	private I_InstrumentComponent selectedComponent = null;
+	
+	private static org.apache.log4j.Logger log = null;
+	log = Logger.
 
 
 	public OnlyOneSelected_InstrumentComponentList() {
