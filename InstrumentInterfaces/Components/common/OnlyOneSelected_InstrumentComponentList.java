@@ -1,13 +1,15 @@
 package common;
 
 import java.beans.PropertyChangeEvent;
+
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
-import org.apache.log4j.*;
+import org.apache.logging.log4j.*;
+import org.apache.logging.log4j.core.config.Configurator;
 
 /**
  * Clase que extiende basicamente de AbstractInstrumentComponentList (ArrayList) creada expresamente como contenedor de InstrumentComponents
@@ -23,12 +25,28 @@ public class OnlyOneSelected_InstrumentComponentList extends AbstractInstrumentC
 	private static final long serialVersionUID = 1L;
 	private I_InstrumentComponent selectedComponent = null;
 	
-	private static org.apache.log4j.Logger log = null;
-	log = Logger.
-
+	final static Logger logger = LogManager.getLogger(OnlyOneSelected_InstrumentComponentList.class);
+	
+	
 
 	public OnlyOneSelected_InstrumentComponentList() {
 		super();
+		
+		//System.setProperty("log4j.configurationFile","log4j2.properties");
+		Configurator.initialize(LogManager.ROOT_LOGGER_NAME, "log4j2.properties");
+		//logs a debug message
+		
+	    if(logger.isDebugEnabled()){
+	        logger.debug("This is debug");
+	    }
+	    
+	    //logs an error message with parameter
+	    logger.error("This is error : " + "error1");
+	    
+	    //logs an exception thrown from somewhere
+	    logger.error("This is error", "fdgfdgd");
+	    
+	    
 	}
 
 	@Override
