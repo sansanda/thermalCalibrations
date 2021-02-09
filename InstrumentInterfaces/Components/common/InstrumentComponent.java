@@ -15,6 +15,8 @@ import java.util.Iterator;
  */
 public abstract class InstrumentComponent implements I_InstrumentComponent, Comparable<I_InstrumentComponent>{
 
+	private static final int classVersion = 100;
+	
 	protected String name;
 	protected long id;
 	protected boolean enable;

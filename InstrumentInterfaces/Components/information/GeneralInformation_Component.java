@@ -8,7 +8,8 @@ import common.InstrumentComponent;
 
 public class GeneralInformation_Component extends InstrumentComponent {
 	
-	public static final int classVersion = 0;
+	private static final int classVersion = 100;
+	
 	protected String serialNumber = null;
 	protected String model = null;
 	protected String manufacturer = null;

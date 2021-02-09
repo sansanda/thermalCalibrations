@@ -14,6 +14,9 @@ public abstract class AbstractInstrumentComponentList extends ArrayList<I_Instru
 	/**
 	 * 
 	 */
+	
+	private static final int classVersion = 100;
+	
 	private static final long serialVersionUID = 1L;
 
 }

@@ -16,8 +16,10 @@ import common.OnlyOneSelected_InstrumentComponentList;
  */
 public class CommunicationsComponent extends InstrumentComponent implements I_CommunicationsComponent{
 
+	private static final int classVersion = 100;
+	
 	public static String[] portTypes = {"GPIB","RS232","LAN"};
-	private static final int classVersion = 0;
+	
 	private OnlyOneSelected_InstrumentComponentList portsList = null;
 	
 	/**

@@ -8,8 +8,10 @@ import java.util.Iterator;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
-import org.apache.logging.log4j.*;
-import org.apache.logging.log4j.core.config.Configurator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import testing.Test;
 
 /**
  * Clase que extiende basicamente de AbstractInstrumentComponentList (ArrayList) creada expresamente como contenedor de InstrumentComponents
@@ -21,32 +23,13 @@ import org.apache.logging.log4j.core.config.Configurator;
 public class OnlyOneSelected_InstrumentComponentList extends AbstractInstrumentComponentList implements PropertyChangeListener{
 	
 
-	public static final int classVersion = 1;
+	final static Logger logger = LogManager.getLogger(OnlyOneSelected_InstrumentComponentList.class);
+	public static final int classVersion = 102;
 	private static final long serialVersionUID = 1L;
 	private I_InstrumentComponent selectedComponent = null;
-	
-	final static Logger logger = LogManager.getLogger(OnlyOneSelected_InstrumentComponentList.class);
-	
-	
 
 	public OnlyOneSelected_InstrumentComponentList() {
 		super();
-		
-		//System.setProperty("log4j.configurationFile","log4j2.properties");
-		Configurator.initialize(LogManager.ROOT_LOGGER_NAME, "log4j2.properties");
-		//logs a debug message
-		
-	    if(logger.isDebugEnabled()){
-	        logger.debug("This is debug");
-	    }
-	    
-	    //logs an error message with parameter
-	    logger.error("This is error : " + "error1");
-	    
-	    //logs an exception thrown from somewhere
-	    logger.error("This is error", "fdgfdgd");
-	    
-	    
 	}
 
 	@Override
@@ -185,17 +168,17 @@ public class OnlyOneSelected_InstrumentComponentList extends AbstractInstrumentC
 	 */
 	private void updateListState()
 	{
-		//System.out.println("Ajustando la lista....... ");
+		//logger.info("Ajustando la lista....... ");
 		
 		try {
 			if (this.isEmpty()) 
 			{
-				System.out.println("La lista está vacia. No es necesario ajustar la lista. ");
+				logger.info("La lista está vacia. No es necesario ajustar la lista.");
 				return;
 			}
 			else if (!hasOneComponentSelected(this)) 
 			{
-				System.out.println("La lista no tiene un componente en estado selected. Procediendo a ajustar la lista. ");
+				logger.info("La lista no tiene un componente en estado selected. Procediendo a ajustar la lista. ");
 				//Aqui el orden de las operaciones es importante especialmente en el caso que el 
 				//actual componente y el nuevo componente a seleccionar sean el mismo
 				this.setSelectedComponent(this.get(0));
@@ -204,12 +187,12 @@ public class OnlyOneSelected_InstrumentComponentList extends AbstractInstrumentC
 			}
 			else if (hasOnlyOneComponentSelected(this)) 
 			{
-				System.out.println("La lista solo tiene un componente en estado selected. No es necesario ajustar la lista. ");
+				logger.info("La lista solo tiene un componente en estado selected. No es necesario ajustar la lista. ");
 				return;
 			}
 			else 
 			{
-				System.out.println("La lista tiene más de un componente en estado selected. Procediendo a ajustar la lista. ");
+				logger.info("La lista tiene más de un componente en estado selected. Procediendo a ajustar la lista. ");
 				//En este caso hay más de un componente en estado selected lo que deja la lista en estado inconsistente.
 				//La solución es dejar la lista con un solo componente en estado selected
 				this.setOnlyOneComponentSelectedInList();	
@@ -294,8 +277,8 @@ public class OnlyOneSelected_InstrumentComponentList extends AbstractInstrumentC
 	 */
 	public void propertyChange(PropertyChangeEvent e) {
 		try {
-			System.out.println("El estado de un componente de la lista ha cambiado. Procedemos a ajustar la lista si es necesario");
-			//System.out.println("Causante ----->" + e.getSource().toString());
+			logger.info("El estado de un componente de la lista ha cambiado. Procedemos a ajustar la lista si es necesario");
+			//logger.info("Causante ----->" + e.getSource().toString());
 			I_InstrumentComponent source = (I_InstrumentComponent)e.getSource();
 			if (source.isSelected()==true)
 			{

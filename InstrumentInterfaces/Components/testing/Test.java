@@ -1,9 +1,13 @@
-package Testing;
+package testing;
 /**
 
  * 
  */
 
+
+import org.apache.logging.log4j.LogManager;
+
+import org.apache.logging.log4j.Logger;
 
 import common.OnlyOneSelected_InstrumentComponentList;
 import communications.CommunicationsComponent;
@@ -14,6 +18,11 @@ import information.GeneralInformation_Component;
  *
  */
 public class Test {
+	
+	private static final int classVersion = 100;
+	
+	final static Logger logger = LogManager.getLogger(Test.class);
+	
 
 	/**
 	 * @param args
@@ -21,8 +30,8 @@ public class Test {
 	public static void main(String[] args)
 	{
 		try {
-			
-			System.out.println("TESTNG INDIVIDUAL COMPONENTS");
+						
+			logger.info("TESTNG INDIVIDUAL COMPONENTS");
 			//*************************************************Individual components***************************************************************
 			GeneralInformation_Component gic = new GeneralInformation_Component("gic",0,null,"010203","model","davidCO","obs","firmware version 0");
 			GeneralInformation_Component gic2 = new GeneralInformation_Component("gic2",0,null,"------","model","davidCO","obs","firmware version 0");
@@ -32,7 +41,7 @@ public class Test {
 			System.out.println(cc.toString());
 			
 			//************************************************Collections**************************************************************************
-			System.out.println("TESTNG COLLECTIONS");
+			logger.info("TESTNG COLLECTIONS");
 			OnlyOneSelected_InstrumentComponentList l = new OnlyOneSelected_InstrumentComponentList();
 			l.add(gic);
 			System.out.println(l);
