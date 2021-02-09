@@ -5,6 +5,9 @@ import java.io.*;
 
 import java.util.*;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
@@ -26,7 +29,9 @@ public class RXTX_SerialPort_Component implements I_CommPortComponent, SerialPor
 	 //****************************CONSTANTES************************************
 	 //**************************************************************************
 
-	final static String VERSION = "1.0.0";
+	private static final int classVersion = 101;
+	
+	final static Logger logger = LogManager.getLogger(JSSC_SerialPort_Component.class);
 
 	 //**************************************************************************
 	 //****************************VARIABLES*************************************
@@ -91,8 +96,8 @@ public class RXTX_SerialPort_Component implements I_CommPortComponent, SerialPor
 			 this.serialPort.notifyOnDataAvailable(true);
 		 }
 		 catch (Exception e) {
-			System.out.println("Error setting event notification");
-			System.out.println(e.toString());
+			logger.error("Error setting event notification");
+			logger.error(e.toString());
 			System.exit(-1);
 		 }
 		 try
@@ -100,8 +105,8 @@ public class RXTX_SerialPort_Component implements I_CommPortComponent, SerialPor
 			 this.serialPort.notifyOnOutputEmpty(true);
 		 }
 		 catch (Exception e) {
-			System.out.println("Error setting event notification");
-			System.out.println(e.toString());
+			logger.error("Error setting event notification");
+			logger.error(e.toString());
 			System.exit(-1);
 		 }
 	 }
@@ -118,13 +123,13 @@ public class RXTX_SerialPort_Component implements I_CommPortComponent, SerialPor
 		 
 		//Preguntamos a todos los puertos de la lista
 		//si nuestro puerto se encuentra en el equipo
-		System.out.println("Buscando puertos del sistema....\n");
+		logger.info("Buscando puertos del sistema....\n");
 		Thread.sleep(1000);
 		portList = CommPortIdentifier.getPortIdentifiers();
 		
 		while (portList.hasMoreElements() && !portFound) {
 			portId = portList.nextElement();
-			System.out.print(portId.getName()+ " ");
+			logger.debug(portId.getName()+ " ");
 			Thread.sleep(500);
 			if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
 				if (portId.getName().equals(wantedPortName)) {
@@ -134,11 +139,11 @@ public class RXTX_SerialPort_Component implements I_CommPortComponent, SerialPor
 		}
 		
 		if (!portFound) {
-		    System.out.println("port " + wantedPortName + " not found.");
+		    logger.info("port " + wantedPortName + " not found.");
 		    return null;
 		}
 		
-		System.out.println(" ............ Found port: "+wantedPortName);
+		logger.info(" ............ Found port: "+wantedPortName);
 		//portId es el identificador del puerto que buscamos
 		return portId;
 	 }
@@ -151,23 +156,23 @@ public class RXTX_SerialPort_Component implements I_CommPortComponent, SerialPor
 		switch (event.getEventType()) {
 
 		case SerialPortEvent.BI:
-			//System.out.println("Break interrupt.");
+			//logger.debug("Break interrupt.");
 		case SerialPortEvent.OE:
-			//System.out.println("Overrun error.");
+			//logger.debug("Overrun error.");
 		case SerialPortEvent.FE:
-			//System.out.println("Framing error.");
+			//logger.debug("Framing error.");
 		case SerialPortEvent.PE:
-			//System.out.println("Parity error.");
+			//logger.debug("Parity error.");
 		case SerialPortEvent.CD:
-			System.out.println("Carrier detect.");
+			logger.debug("Carrier detect.");
 		case SerialPortEvent.CTS:
-			//System.out.println("Clear to send.");
+			//logger.debug("Clear to send.");
 		case SerialPortEvent.DSR:
-			//System.out.println("Data set ready.");
+			//logger.debug("Data set ready.");
 		case SerialPortEvent.RI:
-			//System.out.println("Ring indicator.");
+			//logger.debug("Ring indicator.");
 		case SerialPortEvent.OUTPUT_BUFFER_EMPTY:
-			//System.out.println("Output buffer is empty.");
+			//logger.debug("Output buffer is empty.");
 		case SerialPortEvent.DATA_AVAILABLE:
 			this.txOK = false;
 			this.readBuffer = new StringBuffer();
@@ -191,23 +196,23 @@ public class RXTX_SerialPort_Component implements I_CommPortComponent, SerialPor
 			switch (event.getEventType()) {
 
 			case SerialPortEvent.BI:
-				//System.out.println("Break interrupt.");
+				//logger.debug("Break interrupt.");
 			case SerialPortEvent.OE:
-				//System.out.println("Overrun error.");
+				//logger.debug("Overrun error.");
 			case SerialPortEvent.FE:
-				//System.out.println("Framing error.");
+				//logger.debug("Framing error.");
 			case SerialPortEvent.PE:
-				//System.out.println("Parity error.");
+				//logger.debug("Parity error.");
 			case SerialPortEvent.CD:
-				System.out.println("Carrier detect.");
+				logger.debug("Carrier detect.");
 			case SerialPortEvent.CTS:
-				//System.out.println("Clear to send.");
+				//logger.debug("Clear to send.");
 			case SerialPortEvent.DSR:
-				//System.out.println("Data set ready.");
+				//logger.debug("Data set ready.");
 			case SerialPortEvent.RI:
-				//System.out.println("Ring indicator.");
+				//logger.debug("Ring indicator.");
 			case SerialPortEvent.OUTPUT_BUFFER_EMPTY:
-				//System.out.println("Output buffer is empty.");
+				//logger.debug("Output buffer is empty.");
 			case SerialPortEvent.DATA_AVAILABLE:
 				this.txOK = false;
 				byte[] readBuffer = new byte[256];
@@ -302,8 +307,8 @@ public class RXTX_SerialPort_Component implements I_CommPortComponent, SerialPor
 	 public void open() throws Exception {		 
 		if (portId.isCurrentlyOwned())
 		{
-			System.out.println("Port "+portId.getName() + " currently owned"+" by"+portId.getCurrentOwner());
-			System.out.println("Going to close the port....");
+			logger.info("Port "+portId.getName() + " currently owned"+" by"+portId.getCurrentOwner());
+			logger.info("Going to close the port....");
 			this.serialPort.close();
 		}else
 		{
@@ -346,8 +351,8 @@ public class RXTX_SerialPort_Component implements I_CommPortComponent, SerialPor
 	 */
 	@Override
 	public void write(String data) throws Exception{
-		//System.out.println("\n"+"Writing \""+message+"\" to "+serialPort.getPortName());
-		//System.out.println("\n"+"Writing \""+message+"\" to "+serialPort.getName());
+		//logger.debug("\n"+"Writing \""+message+"\" to "+serialPort.getPortName());
+		//logger.debug("\n"+"Writing \""+message+"\" to "+serialPort.getName());
 		Thread.sleep(this.writeWaitTime);
 		outputStream.write((data + this.terminator).getBytes());
 	}
@@ -371,8 +376,8 @@ public class RXTX_SerialPort_Component implements I_CommPortComponent, SerialPor
 	//****************************VERSION***************************************
 	//**************************************************************************
 		
-	public static String getVersion() {
-		return VERSION;
+	public static int getVersion() {
+		return classVersion;
 	}
 
 	 //**************************************************************************
