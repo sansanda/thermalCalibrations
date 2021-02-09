@@ -9,7 +9,7 @@ import org.apache.logging.log4j.LogManager;
 
 import org.apache.logging.log4j.Logger;
 
-import common.OnlyOneSelected_InstrumentComponentList;
+import collections.OnlyOneSelected_InstrumentComponentList;
 import communications.CommunicationsComponent;
 import information.GeneralInformation_Component;
 
@@ -17,11 +17,11 @@ import information.GeneralInformation_Component;
  * @author david
  *
  */
-public class Test {
+public class Components_Test {
 	
 	private static final int classVersion = 100;
 	
-	final static Logger logger = LogManager.getLogger(Test.class);
+	final static Logger logger = LogManager.getLogger(Components_Test.class);
 	
 
 	/**

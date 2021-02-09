@@ -1,6 +1,9 @@
-package rs232;
+package communications;
 
 import static jssc.SerialPort.BAUDRATE_9600;
+
+
+
 import static jssc.SerialPort.DATABITS_8;
 import static jssc.SerialPort.PARITY_NONE;
 import static jssc.SerialPort.STOPBITS_1;
@@ -9,14 +12,13 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedList;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import common.I_CommPortComponent;
 import jssc.SerialPort;
 import jssc.SerialPortEvent;
 import jssc.SerialPortEventListener;
 import jssc.SerialPortException;
-
-import debug_tools.Debuggable;
 
 /**
  * Clase que implementa un puerto serie tipo RS232 haciendo uso de la libreria jssc_2.9.2 
@@ -24,13 +26,15 @@ import debug_tools.Debuggable;
  * @author DavidS
  *
  */
-public class JSSC_S_Port implements I_CommPortComponent, SerialPortEventListener{
+public class JSSC_SerialPort_Component implements I_CommPortComponent, SerialPortEventListener{
 
 	 //**************************************************************************
 	 //****************************CONSTANTES************************************
 	 //**************************************************************************
 
-	final static String VERSION = "1.0.0";
+	private static final int classVersion = 101;
+	
+	final static Logger logger = LogManager.getLogger(JSSC_SerialPort_Component.class);
 	
 	 //**************************************************************************
 	 //****************************VARIABLES*************************************
@@ -51,8 +55,6 @@ public class JSSC_S_Port implements I_CommPortComponent, SerialPortEventListener
 	 private int 						writeWaitTime = 100;
 	 private int 						readWaitTime = 100;
 	 
-	 private int 						debug_level = 0;
-	 
 	 //**************************************************************************
 	 //****************************CONSTRUCTORES*********************************
 	 //**************************************************************************
@@ -62,20 +64,18 @@ public class JSSC_S_Port implements I_CommPortComponent, SerialPortEventListener
 	  *
 	  *
 	  */
-	 public JSSC_S_Port(String wantedPortName, 
+	 public JSSC_SerialPort_Component(String wantedPortName, 
 			 			int baudRate, 
 			 			int nDataBits, 
 			 			int nStopBits, 
 			 			int parityType, 
 			 			String terminator, 
 			 			int writeWaitTime,
-			 			int readWaitTime,
-			 			int debug_level) throws Exception{
+			 			int readWaitTime) throws Exception{
 		 
 		 this.buffer = new byte[BUFFER_LENGTH];
 		 this.bufferPointer = 0;
 		 this.terminator = terminator;
-		 this.debug_level = debug_level;
 		 
 		 this.writeWaitTime = writeWaitTime;
 		 this.readWaitTime = readWaitTime;
@@ -126,35 +126,35 @@ public class JSSC_S_Port implements I_CommPortComponent, SerialPortEventListener
 		 switch (event.getEventType()) {
 
 			case SerialPortEvent.BREAK:
-				//System.out.println("Break interrupt.");
+				//logger.debug("Break interrupt.");
 				break;
 				
 			case SerialPortEvent.ERR:
-				//System.out.println("Error.");
+				//logger.debug("Error.");
 				break;
 				
 			case SerialPortEvent.CTS:
-				//System.out.println("Clear to send.");
+				//logger.debug("Clear to send.");
 				break;
 				
 			case SerialPortEvent.DSR:
-				//System.out.println("Data set ready.");
+				//logger.debug("Data set ready.");
 				break;
 				
 			case SerialPortEvent.RING:
-				//System.out.println("Ring indicator.");				
+				//logger.debug("Ring indicator.");				
 				break;
 				
 				
 			case SerialPortEvent.TXEMPTY:
-				//System.out.println("Output buffer is empty.");
+				//logger.debug("Output buffer is empty.");
 				break;
 				
 			
 			case SerialPortEvent.RXCHAR:
 				
 				int nBytesToRead = event.getEventValue();
-				//System.out.println(nBytesToRead);
+				//logger.debug(nBytesToRead);
 		    	
 				if (nBytesToRead==0) break; //nothing to retrieve
 				
@@ -168,17 +168,17 @@ public class JSSC_S_Port implements I_CommPortComponent, SerialPortEventListener
 			    	if (nBytesToRead==1 && this.bufferPointer==0 && tempReadingBuffer[0]==10)
 			    	{
 			    		//the buffer is empty. Only contains the terminator
-			    		//System.out.println("Empty buffer");
+			    		//logger.debug("Empty buffer");
 			    		
 			    	}
 			    	else
 			    	{
-			    		//System.out.println(Arrays.toString(tempReadingBuffer));
+			    		//logger.debug(Arrays.toString(tempReadingBuffer));
 				    	
 				    	System.arraycopy(tempReadingBuffer, 0, this.buffer, this.bufferPointer, nBytesToRead);
 				    	
 				    	this.bufferPointer = this.bufferPointer + nBytesToRead;
-				    	//System.out.println(Arrays.toString(readBuffer));
+				    	//logger.debug(Arrays.toString(readBuffer));
 				    	if (this.bufferPointer>0 && this.buffer[this.bufferPointer-1]==10) 
 						{
 				    		this.readBuffer = new byte[this.bufferPointer];
@@ -204,14 +204,14 @@ public class JSSC_S_Port implements I_CommPortComponent, SerialPortEventListener
 //			    {
 //			    	
 //			    	tempReadingBuffer = this.serialPort.readBytes(nBytesToRead);
-//			    	System.out.println(nBytesToRead);
+//			    	logger.debug(nBytesToRead);
 //			    	
-//			    	System.out.println(Arrays.toString(tempReadingBuffer));
+//			    	logger.debug(Arrays.toString(tempReadingBuffer));
 //			    	
 //			    	System.arraycopy(tempReadingBuffer, 0, this.buffer, this.bufferPointer, nBytesToRead);
 //			    	
 //			    	this.bufferPointer = this.bufferPointer + nBytesToRead;
-//			    	//System.out.println(Arrays.toString(readBuffer));
+//			    	//logger.debug(Arrays.toString(readBuffer));
 //			    	if (this.bufferPointer>0 && this.buffer[this.bufferPointer-1]==10) 
 //					{
 //			    		this.readBuffer = new byte[this.bufferPointer];
@@ -232,9 +232,9 @@ public class JSSC_S_Port implements I_CommPortComponent, SerialPortEventListener
 //			    {
 //			    	
 //			    	tempReadingBuffer = this.serialPort.readBytes(nBytesToRead);
-//			    	//System.out.println(nBytesToRead);
+//			    	//logger.debug(nBytesToRead);
 //			    	
-//			    	System.out.println(Arrays.toString(tempReadingBuffer));
+//			    	logger.debug(Arrays.toString(tempReadingBuffer));
 //			    	
 //			    } catch (SerialPortException e) {}
 //			    break;
@@ -251,8 +251,8 @@ public class JSSC_S_Port implements I_CommPortComponent, SerialPortEventListener
 	 public void open() throws Exception {
 		 if (this.serialPort.isOpened())
 		 {
-			 System.out.println("Port "+this.serialPort.getPortName() + " is opened");
-			 System.out.println("Going to close the port....");
+			 logger.info("Port "+this.serialPort.getPortName() + " is opened");
+			 logger.info("Going to close the port....");
 			 
 			 //JOptionPane.showMessageDialog(null,"Port "+this.serialPort.getPortName() + " currently owned");
 			 this.serialPort.closePort();
@@ -289,8 +289,7 @@ public class JSSC_S_Port implements I_CommPortComponent, SerialPortEventListener
 		System.arraycopy(this.readBuffer, 0, returnBuffer, 0, this.readBuffer.length);
 		this.readBuffer = null;
 		
-		StackTraceElement[] st = Thread.currentThread().getStackTrace();
-		if (this.debug_level<4) System.out.println(st[1].getClassName()+":"+st[1].getMethodName()+"("+new String(returnBuffer)+")");
+		logger.trace(returnBuffer);
 		
 		return returnBuffer;
 	}
@@ -304,9 +303,8 @@ public class JSSC_S_Port implements I_CommPortComponent, SerialPortEventListener
 	 */
 	@Override
 	public void write(String data) throws Exception{
-		StackTraceElement[] st = Thread.currentThread().getStackTrace();
-		if (this.debug_level<4) System.out.println(st[1].getClassName()+":"+st[1].getMethodName()+"("+data+")");
-		st = null;
+		
+		logger.trace(data);
 		Thread.sleep(this.writeWaitTime);
 		this.serialPort.writeBytes((data + terminator).getBytes());
 	}
@@ -331,8 +329,8 @@ public class JSSC_S_Port implements I_CommPortComponent, SerialPortEventListener
 	//****************************VERSION***************************************
 	//**************************************************************************
 		
-	public static String getVersion() {
-		return VERSION;
+	public static int getVersion() {
+		return classVersion;
 	}
 		
 	//**************************************************************************
@@ -347,9 +345,8 @@ public class JSSC_S_Port implements I_CommPortComponent, SerialPortEventListener
 	//**************************************************************************	
 	public static void main(String[] args) {
 		try {
-			int debug_level = 4;
-			I_CommPortComponent commPort = new JSSC_S_Port("COM1", 19200, 8, 1, 0, "\n", 250, 0, debug_level);
-			System.out.println(new String(commPort.ask("*IDN?")));
+			I_CommPortComponent commPort = new JSSC_SerialPort_Component("COM1", 19200, 8, 1, 0, "\n", 250, 0);
+			logger.info(new String(commPort.ask("*IDN?")));
 			System.exit(0);
 			
 		} catch (Exception e) {

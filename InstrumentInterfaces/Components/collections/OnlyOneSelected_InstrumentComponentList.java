@@ -1,4 +1,4 @@
-package common;
+package collections;
 
 import java.beans.PropertyChangeEvent;
 
@@ -11,7 +11,9 @@ import java.util.function.UnaryOperator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import testing.Test;
+import common.AbstractInstrumentComponentList;
+import common.I_InstrumentComponent;
+import testing.Components_Test;
 
 /**
  * Clase que extiende basicamente de AbstractInstrumentComponentList (ArrayList) creada expresamente como contenedor de InstrumentComponents

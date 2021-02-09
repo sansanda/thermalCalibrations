@@ -5,10 +5,9 @@ package communications;
 
 import java.util.ArrayList;
 
-
+import collections.OnlyOneSelected_InstrumentComponentList;
 import common.I_InstrumentComponent;
 import common.InstrumentComponent;
-import common.OnlyOneSelected_InstrumentComponentList;
 
 /**
  * @author david

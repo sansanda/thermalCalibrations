@@ -1,4 +1,4 @@
-package common;
+package communications;
 
 public interface I_CommPortComponent {
 	public void open() throws Exception;

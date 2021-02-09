@@ -22,6 +22,7 @@ import com.intelligt.modbus.jlibmodbus.serial.SerialPort.BaudRate;
 
 import calibrationSetUp.CalibrationSetUp;
 import common.CommPort_I;
+import communications.JSSC_SerialPort_Component;
 import controller.*;
 import devices.Device;
 import devices.Diode;
@@ -33,7 +34,6 @@ import views.CalibrationSetUp_ProgressScreen_JFrame;
 import Main.Calibration_MainController;
 import Main.MainController;
 import Ovens.Eurotherm2404;
-import rs232.JSSC_S_Port;
 import fileUtilities.*;
 
 public class RunCalibrationSetUp_Action implements Action{
@@ -544,7 +544,7 @@ public class RunCalibrationSetUp_Action implements Action{
 		printActionMessage("Creando la instancia de Keithley2700.");
 		
 		
-		CommPort_I commPort = new JSSC_S_Port(instrumentsData.getMultimeterData().getComPort(), 19200, 8, 1, 0, "\n", 250, 0);
+		CommPort_I commPort = new JSSC_SerialPort_Component(instrumentsData.getMultimeterData().getComPort(), 19200, 8, 1, 0, "\n", 250, 0);
 		
 		k2700 = new Keithley2700(commPort);
 		k2700.enableBeeper(false);

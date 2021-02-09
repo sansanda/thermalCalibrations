@@ -1,10 +1,10 @@
-package rs232;
+package communications;
 import java.io.*;
+
+
 
 import java.util.*;
 import javax.comm.*;
-
-import common.I_CommPortComponent;
 
 /**
  * Clase que implementa un puerto serie tipo RS232 haciendo uso de la libreria javacomm-20-win32 
@@ -13,7 +13,7 @@ import common.I_CommPortComponent;
  *
  */
 
-public class JavaComm_S_Port implements I_CommPortComponent, SerialPortEventListener{
+public class JavaComm_SerialPort_Component implements I_CommPortComponent, SerialPortEventListener{
 
 	 //**************************************************************************
 	 //****************************CONSTANTES************************************
@@ -50,7 +50,7 @@ public class JavaComm_S_Port implements I_CommPortComponent, SerialPortEventList
 	  *
 	  *
 	  */
-	 public JavaComm_S_Port(String wantedPortName, int baudRate, int nDataBits, int nStopBits, int parityType, String terminator, int writeWaitTime, int readWaitTime) throws Exception{
+	 public JavaComm_SerialPort_Component(String wantedPortName, int baudRate, int nDataBits, int nStopBits, int parityType, String terminator, int writeWaitTime, int readWaitTime) throws Exception{
 		 this.wantedPortName = wantedPortName;
 		 this.terminator = terminator;
 		 this.buffer = new byte[256];

@@ -1,10 +1,10 @@
-package rs232;
+package communications;
 import java.io.*;
+
 
 
 import java.util.*;
 
-import common.I_CommPortComponent;
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
@@ -20,7 +20,7 @@ import gnu.io.SerialPortEventListener;
  * @author DavidS
  *
  */
-public class RXTX_S_Port implements I_CommPortComponent, SerialPortEventListener{
+public class RXTX_SerialPort_Component implements I_CommPortComponent, SerialPortEventListener{
 
 	 //**************************************************************************
 	 //****************************CONSTANTES************************************
@@ -54,7 +54,7 @@ public class RXTX_S_Port implements I_CommPortComponent, SerialPortEventListener
 	  *
 	  *
 	  */
-	 public RXTX_S_Port(String wantedPortName, int baudRate, int nDataBits, int nStopBits, int parityType, String terminator, int writeWaitTime, int readWaitTime) throws Exception{
+	 public RXTX_SerialPort_Component(String wantedPortName, int baudRate, int nDataBits, int nStopBits, int parityType, String terminator, int writeWaitTime, int readWaitTime) throws Exception{
 		 this.receivedData = "";
 		 this.terminator = terminator;
 		 readBuffer = new StringBuffer();

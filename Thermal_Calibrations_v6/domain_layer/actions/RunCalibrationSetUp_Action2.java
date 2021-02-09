@@ -22,6 +22,7 @@ import com.intelligt.modbus.jlibmodbus.serial.SerialPort.BaudRate;
 
 import calibrationSetUp.CalibrationSetUp;
 import common.CommPort_I;
+import communications.JSSC_SerialPort_Component;
 import controller.*;
 import devices.Device;
 import devices.Diode;
@@ -33,7 +34,6 @@ import views.CalibrationSetUp_ProgressScreen_JFrame;
 import Main.Calibration_MainController;
 import Main.MainController;
 import Ovens.Eurotherm2404;
-import rs232.JSSC_S_Port;
 import fileUtilities.*;
 
 public class RunCalibrationSetUp_Action2 implements Action{
@@ -558,7 +558,7 @@ public class RunCalibrationSetUp_Action2 implements Action{
 		boolean check_errors = false;
 		int debug_level = 4;
 		
-		CommPort_I rs232_commPort = new JSSC_S_Port(instrumentsData.getMultimeterData().getComPort(), 19200, numberOfDataBits, numberOfStopBits, parityType, terminator, writePort_waitTime, readPort_waitTime, debug_level);
+		CommPort_I rs232_commPort = new JSSC_SerialPort_Component(instrumentsData.getMultimeterData().getComPort(), 19200, numberOfDataBits, numberOfStopBits, parityType, terminator, writePort_waitTime, readPort_waitTime, debug_level);
 
 		
 		
