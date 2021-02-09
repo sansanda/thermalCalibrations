@@ -24,7 +24,7 @@ public class JavaComm_SerialPort_Component implements I_CommPortComponent, Seria
 	
 	private static final int classVersion = 101;
 	
-	final static Logger logger = LogManager.getLogger(JSSC_SerialPort_Component.class);
+	final static Logger logger = LogManager.getLogger(JavaComm_SerialPort_Component.class);
 
 	 //**************************************************************************
 	 //****************************VARIABLES*************************************

@@ -31,7 +31,7 @@ public class RXTX_SerialPort_Component implements I_CommPortComponent, SerialPor
 
 	private static final int classVersion = 101;
 	
-	final static Logger logger = LogManager.getLogger(JSSC_SerialPort_Component.class);
+	final static Logger logger = LogManager.getLogger(RXTX_SerialPort_Component.class);
 
 	 //**************************************************************************
 	 //****************************VARIABLES*************************************
