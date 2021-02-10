@@ -17,8 +17,6 @@ public class CommunicationsComponent extends InstrumentComponent implements I_Co
 
 	private static final int classVersion = 100;
 	
-	public static String[] portTypes = {"GPIB","RS232","LAN"};
-	
 	private OnlyOneSelected_InstrumentComponentList portsList = null;
 	
 	/**
@@ -45,18 +43,12 @@ public class CommunicationsComponent extends InstrumentComponent implements I_Co
 	}
 
 	@Override
-	public void addPort(I_InstrumentComponent ic) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void deletePort(String type) {
-		// TODO Auto-generated method stub
+	public void addPort(String type) {
 		
 	}
 
 	@Override
-	public void updatePort(I_InstrumentComponent ic) {
+	public void deletePort(String type) {
 		// TODO Auto-generated method stub
 		
 	}

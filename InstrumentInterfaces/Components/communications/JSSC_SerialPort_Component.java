@@ -1,9 +1,6 @@
 package communications;
 
 import static jssc.SerialPort.BAUDRATE_9600;
-
-
-
 import static jssc.SerialPort.DATABITS_8;
 import static jssc.SerialPort.PARITY_NONE;
 import static jssc.SerialPort.STOPBITS_1;
