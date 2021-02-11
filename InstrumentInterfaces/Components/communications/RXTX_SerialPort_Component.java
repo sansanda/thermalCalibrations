@@ -1,12 +1,14 @@
 package communications;
+
 import java.io.*;
-
-
 
 import java.util.*;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import common.I_InstrumentComponent;
+import common.InstrumentComponent;
 
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
@@ -23,7 +25,7 @@ import gnu.io.SerialPortEventListener;
  * @author DavidS
  *
  */
-public class RXTX_SerialPort_Component implements I_CommPortComponent, SerialPortEventListener{
+public class RXTX_SerialPort_Component extends InstrumentComponent implements I_CommPortComponent, SerialPortEventListener{
 
 	 //**************************************************************************
 	 //****************************CONSTANTES************************************
@@ -59,7 +61,24 @@ public class RXTX_SerialPort_Component implements I_CommPortComponent, SerialPor
 	  *
 	  *
 	  */
-	 public RXTX_SerialPort_Component(String wantedPortName, int baudRate, int nDataBits, int nStopBits, int parityType, String terminator, int writeWaitTime, int readWaitTime) throws Exception{
+	 
+	 
+	 
+	 public RXTX_SerialPort_Component(
+			 String name, 
+			 long id, 
+			 I_InstrumentComponent parent,
+			 String wantedPortName, 
+			 int baudRate, 
+			 int nDataBits, 
+			 int nStopBits, 
+			 int parityType, 
+			 String terminator, 
+			 int writeWaitTime, 
+			 int readWaitTime) throws Exception {
+		
+		 super(name, id, parent);
+		 
 		 this.receivedData = "";
 		 this.terminator = terminator;
 		 readBuffer = new StringBuffer();

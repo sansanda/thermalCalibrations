@@ -1,14 +1,14 @@
 package communications;
 import java.io.*;
 
-
-
-
 import java.util.*;
 import javax.comm.*;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import common.I_InstrumentComponent;
+import common.InstrumentComponent;
 
 /**
  * Clase que implementa un puerto serie tipo RS232 haciendo uso de la libreria javacomm-20-win32 
@@ -17,7 +17,7 @@ import org.apache.logging.log4j.Logger;
  *
  */
 
-public class JavaComm_SerialPort_Component implements I_CommPortComponent, SerialPortEventListener{
+public class JavaComm_SerialPort_Component extends InstrumentComponent implements I_CommPortComponent, SerialPortEventListener{
 
 	 //**************************************************************************
 	 //****************************CONSTANTES************************************
@@ -56,7 +56,21 @@ public class JavaComm_SerialPort_Component implements I_CommPortComponent, Seria
 	  *
 	  *
 	  */
-	 public JavaComm_SerialPort_Component(String wantedPortName, int baudRate, int nDataBits, int nStopBits, int parityType, String terminator, int writeWaitTime, int readWaitTime) throws Exception{
+	 public JavaComm_SerialPort_Component(
+			 String name, 
+			 long id, 
+			 I_InstrumentComponent parent,
+			 String wantedPortName, 
+			 int baudRate, 
+			 int nDataBits, 
+			 int nStopBits, 
+			 int parityType, 
+			 String terminator, 
+			 int writeWaitTime, 
+			 int readWaitTime) throws Exception{
+		 
+		 super(name, id, parent);
+		 
 		 this.wantedPortName = wantedPortName;
 		 this.terminator = terminator;
 		 this.buffer = new byte[256];

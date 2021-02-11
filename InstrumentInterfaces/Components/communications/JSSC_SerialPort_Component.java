@@ -1,17 +1,10 @@
 package communications;
 
-import static jssc.SerialPort.BAUDRATE_9600;
-import static jssc.SerialPort.DATABITS_8;
-import static jssc.SerialPort.PARITY_NONE;
-import static jssc.SerialPort.STOPBITS_1;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.LinkedList;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import common.I_InstrumentComponent;
+import common.InstrumentComponent;
 import jssc.SerialPort;
 import jssc.SerialPortEvent;
 import jssc.SerialPortEventListener;
@@ -23,7 +16,7 @@ import jssc.SerialPortException;
  * @author DavidS
  *
  */
-public class JSSC_SerialPort_Component implements I_CommPortComponent, SerialPortEventListener{
+public class JSSC_SerialPort_Component extends InstrumentComponent implements I_CommPortComponent, SerialPortEventListener{
 
 	 //**************************************************************************
 	 //****************************CONSTANTES************************************
@@ -61,14 +54,21 @@ public class JSSC_SerialPort_Component implements I_CommPortComponent, SerialPor
 	  *
 	  *
 	  */
-	 public JSSC_SerialPort_Component(String wantedPortName, 
-			 			int baudRate, 
-			 			int nDataBits, 
-			 			int nStopBits, 
-			 			int parityType, 
-			 			String terminator, 
-			 			int writeWaitTime,
-			 			int readWaitTime) throws Exception{
+		 
+	 public JSSC_SerialPort_Component(
+			 String name, 
+			 long id, 
+			 I_InstrumentComponent parent,
+			 String wantedPortName, 
+			 int baudRate, 
+			 int nDataBits, 
+			 int nStopBits, 
+			 int parityType, 
+			 String terminator, 
+			 int writeWaitTime, 
+			 int readWaitTime) throws Exception{
+			 
+		 super(name, id, parent);
 		 
 		 this.buffer = new byte[BUFFER_LENGTH];
 		 this.bufferPointer = 0;
@@ -329,28 +329,7 @@ public class JSSC_SerialPort_Component implements I_CommPortComponent, SerialPor
 	public static int getVersion() {
 		return classVersion;
 	}
-		
-	//**************************************************************************
-	//****************************DEBUGGING*************************************
-	//**************************************************************************
 
-	
-	
 
-	//**************************************************************************
-	//****************************TESTING***************************************
-	//**************************************************************************	
-	public static void main(String[] args) {
-		try {
-			I_CommPortComponent commPort = new JSSC_SerialPort_Component("COM1", 19200, 8, 1, 0, "\n", 250, 0);
-			logger.info(new String(commPort.ask("*IDN?")));
-			System.exit(0);
-			
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
 	
 }
