@@ -17,8 +17,8 @@ import common.I_InstrumentComponent;
  */
 public interface I_CommunicationsComponent{
 	
-	void addPort(String type);
-	void deletePort(String type);
-	I_InstrumentComponent getPort(String type);
-	I_InstrumentComponent getSelectedPort();
+	void addPort(I_InstrumentComponent port);
+	void deletePort(I_InstrumentComponent port);
+	I_CommPortComponent getPort(String type);
+	I_CommPortComponent getSelectedPort();
 }

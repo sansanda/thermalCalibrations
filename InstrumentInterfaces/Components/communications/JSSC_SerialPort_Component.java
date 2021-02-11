@@ -30,7 +30,7 @@ public class JSSC_SerialPort_Component extends InstrumentComponent implements I_
 	 //****************************VARIABLES*************************************
 	 //**************************************************************************
 
-
+	 private String 					address;
 	 private SerialPort		      		serialPort;
 	 private final int					BUFFER_LENGTH = 4096;
 	 //The buffer for receiving all the possible input data of the RS232 interface 
@@ -59,7 +59,7 @@ public class JSSC_SerialPort_Component extends InstrumentComponent implements I_
 			 String name, 
 			 long id, 
 			 I_InstrumentComponent parent,
-			 String wantedPortName, 
+			 String address, 
 			 int baudRate, 
 			 int nDataBits, 
 			 int nStopBits, 
@@ -70,6 +70,8 @@ public class JSSC_SerialPort_Component extends InstrumentComponent implements I_
 			 
 		 super(name, id, parent);
 		 
+		 this.address = address;
+		 
 		 this.buffer = new byte[BUFFER_LENGTH];
 		 this.bufferPointer = 0;
 		 this.terminator = terminator;
@@ -77,19 +79,24 @@ public class JSSC_SerialPort_Component extends InstrumentComponent implements I_
 		 this.writeWaitTime = writeWaitTime;
 		 this.readWaitTime = readWaitTime;
 		 
-		 this.initialize(wantedPortName, baudRate, nDataBits, nStopBits, parityType);
+		 this.initialize(address, baudRate, nDataBits, nStopBits, parityType);
 	 }
 
 	 //**************************************************************************
 	 //****************************METODOS***************************************
 	 //**************************************************************************
-	 
+
+	@Override
+	public String getAddress() {
+		return address;
+	}
+		
 	 /**
 	  *
 	  */
-	 private void initialize(String wantedPortName, int baudRate, int nDataBits, int nStopBits, int parityType)throws Exception{
+	 private void initialize(String address, int baudRate, int nDataBits, int nStopBits, int parityType)throws Exception{
 
-		this.serialPort = new SerialPort(wantedPortName); 
+		this.serialPort = new SerialPort(address); 
 		this.open();
 		//this.pr = new PortReader(this.serialPort);
 		this.serialPort.addEventListener(this);/* defined below */
@@ -329,7 +336,5 @@ public class JSSC_SerialPort_Component extends InstrumentComponent implements I_
 	public static int getVersion() {
 		return classVersion;
 	}
-
-
 	
 }

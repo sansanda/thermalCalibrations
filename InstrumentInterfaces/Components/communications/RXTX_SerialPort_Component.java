@@ -40,16 +40,17 @@ public class RXTX_SerialPort_Component extends InstrumentComponent implements I_
 	 //**************************************************************************
 
 
-	 private CommPortIdentifier 		portId = null;
-	 private InputStream		      	inputStream;
-	 private OutputStream       		outputStream;
-	 private SerialPort		      		serialPort;
-	 private boolean 					txOK = false;
-	 private StringBuffer 				readBuffer = null;
-	 private String 					receivedData = null;
-	 private String 					terminator = null;
-	 private int 						writeWaitTime = 100;
-	 private int 						readWaitTime = 100; 
+	private String 					address;
+	private CommPortIdentifier 		portId = null;
+	private InputStream		      	inputStream;
+	private OutputStream       		outputStream;
+	private SerialPort		      		serialPort;
+	private boolean 					txOK = false;
+	private StringBuffer 				readBuffer = null;
+	private String 					receivedData = null;
+	private String 					terminator = null;
+	private int 						writeWaitTime = 100;
+	private int 						readWaitTime = 100; 
 	 
 
 	 
@@ -68,7 +69,7 @@ public class RXTX_SerialPort_Component extends InstrumentComponent implements I_
 			 String name, 
 			 long id, 
 			 I_InstrumentComponent parent,
-			 String wantedPortName, 
+			 String address, 
 			 int baudRate, 
 			 int nDataBits, 
 			 int nStopBits, 
@@ -79,6 +80,8 @@ public class RXTX_SerialPort_Component extends InstrumentComponent implements I_
 		
 		 super(name, id, parent);
 		 
+		 this.address = address;
+		 
 		 this.receivedData = "";
 		 this.terminator = terminator;
 		 readBuffer = new StringBuffer();
@@ -86,7 +89,7 @@ public class RXTX_SerialPort_Component extends InstrumentComponent implements I_
 		 this.writeWaitTime = writeWaitTime;
 		 this.readWaitTime = readWaitTime;
 		 
-		 initialize(wantedPortName, baudRate, nDataBits, nStopBits, parityType);
+		 initialize(address, baudRate, nDataBits, nStopBits, parityType);
 	 }
 
 	 //**************************************************************************
@@ -94,12 +97,18 @@ public class RXTX_SerialPort_Component extends InstrumentComponent implements I_
 	 //**************************************************************************
 	 
 
+	@Override
+	public String getAddress() {
+		// TODO Auto-generated method stub
+		return this.address;
+	}
+		
 	 /**
 	  *
 	  */
-	 private void initialize(String wantedPortName, int baudRate, int nDataBits, int nStopBits, int parityType ) throws Exception{
+	 private void initialize(String address, int baudRate, int nDataBits, int nStopBits, int parityType ) throws Exception{
 
-		 portId = searchForSerialCommPort(wantedPortName);
+		 portId = searchForSerialCommPort(address);
 		 this.open();
 		 this.inputStream = this.getPortInputStream();
 		 this.outputStream = this.getPortOutputStream();
@@ -134,7 +143,7 @@ public class RXTX_SerialPort_Component extends InstrumentComponent implements I_
 	  *
 	  */
 	 
-	private CommPortIdentifier searchForSerialCommPort(String wantedPortName) throws Exception{
+	private CommPortIdentifier searchForSerialCommPort(String address) throws Exception{
 
 		boolean								portFound 		= false;
 		CommPortIdentifier 					portId 	= null;
@@ -151,18 +160,19 @@ public class RXTX_SerialPort_Component extends InstrumentComponent implements I_
 			logger.debug(portId.getName()+ " ");
 			Thread.sleep(500);
 			if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
-				if (portId.getName().equals(wantedPortName)) {
+				if (portId.getName().equals(address)) {
+					//TODO: mirar si podemos salir del bucle con un continue
 					portFound = true;	
 				}
 			}
 		}
 		
 		if (!portFound) {
-		    logger.info("port " + wantedPortName + " not found.");
+		    logger.info("port " + address + " not found.");
 		    return null;
 		}
 		
-		logger.info(" ............ Found port: "+wantedPortName);
+		logger.info(" ............ Found port: "+address);
 		//portId es el identificador del puerto que buscamos
 		return portId;
 	 }
@@ -398,6 +408,7 @@ public class RXTX_SerialPort_Component extends InstrumentComponent implements I_
 	public static int getVersion() {
 		return classVersion;
 	}
+
 
 	 //**************************************************************************
 	 //****************************TESTING***************************************

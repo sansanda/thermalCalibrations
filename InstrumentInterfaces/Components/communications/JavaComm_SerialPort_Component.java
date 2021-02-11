@@ -35,7 +35,7 @@ public class JavaComm_SerialPort_Component extends InstrumentComponent implement
 
 	 static CommPortIdentifier 					portId = null;
 	 static Enumeration<CommPortIdentifier>	   	portList = null;
-	 static String 						wantedPortName = null;
+	 private String 					address = null;
 	 private InputStream		      	inputStream;
 	 private OutputStream       		outputStream;
 	 private SerialPort		      		serialPort;
@@ -60,7 +60,7 @@ public class JavaComm_SerialPort_Component extends InstrumentComponent implement
 			 String name, 
 			 long id, 
 			 I_InstrumentComponent parent,
-			 String wantedPortName, 
+			 String address, 
 			 int baudRate, 
 			 int nDataBits, 
 			 int nStopBits, 
@@ -71,7 +71,7 @@ public class JavaComm_SerialPort_Component extends InstrumentComponent implement
 		 
 		 super(name, id, parent);
 		 
-		 this.wantedPortName = wantedPortName;
+		 this.address = address;
 		 this.terminator = terminator;
 		 this.buffer = new byte[256];
 		 this.bufferPointer = 0;
@@ -79,7 +79,7 @@ public class JavaComm_SerialPort_Component extends InstrumentComponent implement
 		 this.writeWaitTime = writeWaitTime;
 		 this.readWaitTime = readWaitTime;
 		 
-		 initialize(wantedPortName, baudRate, nDataBits, nStopBits, parityType);
+		 initialize(address, baudRate, nDataBits, nStopBits, parityType);
 	 }
 
 	 //**************************************************************************
@@ -90,9 +90,9 @@ public class JavaComm_SerialPort_Component extends InstrumentComponent implement
 	 /**
 	  *
 	  */
-	 private void initialize(String wantedPortName, int baudRate, int nDataBits, int nStopBits, int parityType )throws Exception{
+	 private void initialize(String address, int baudRate, int nDataBits, int nStopBits, int parityType )throws Exception{
 
-		 this.searchForSerialCommPort(wantedPortName);
+		 this.searchForSerialCommPort(address);
 		 this.open();
 		 this.inputStream = this.getPortInputStream();
 		 this.outputStream = this.getPortOutputStream();
@@ -127,10 +127,9 @@ public class JavaComm_SerialPort_Component extends InstrumentComponent implement
 	 /**
 	  *
 	  */
-	 private CommPortIdentifier searchForSerialCommPort(String wantedPortName) throws Exception{
+	 private CommPortIdentifier searchForSerialCommPort(String address) throws Exception{
 
 		boolean				portFound 		= false;
-		CommPortIdentifier 	WantedPortId 	= null;
 
 		//Preguntamos a todos los puertos de la lista
 		//si nuestro puerto se encuentra en el equipo
@@ -142,20 +141,19 @@ public class JavaComm_SerialPort_Component extends InstrumentComponent implement
 			logger.debug(portId.getName()+ " ");
 			Thread.sleep(500);
 			if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
-				if (portId.getName().equals(wantedPortName)) {
+				if (portId.getName().equals(address)) {
+					//TODO: mirar si aqui podriamos salir del bucle con un continue
 					portFound = true;
-					//Memorizamos el identificador del puerto que buscamos
-					WantedPortId = portId;
 				}
 			}
 		}
 		
 		if (!portFound) {
-		    logger.info("port " + wantedPortName + " not found.");
+		    logger.info("port " + address + " not found.");
 		    return null;
 		}
 		
-		logger.info(" ............ Found port: "+wantedPortName);
+		logger.info(" ............ Found port: "+address);
 		//portId es el identificador del puerto que buscamos
 		return portId;
 		
@@ -232,6 +230,7 @@ public class JavaComm_SerialPort_Component extends InstrumentComponent implement
 		 //serialPort.setRTS(false);
 	 }
 	 
+	 
 
 	 //**************************************************************************
 	 //****************************GETTERS***************************************
@@ -261,6 +260,12 @@ public class JavaComm_SerialPort_Component extends InstrumentComponent implement
 		 } catch (IOException e) {}
 		 return os;
 	 }
+
+	@Override
+	public String getAddress() {
+		// TODO Auto-generated method stub
+		return this.address;
+	}
 
 
 	 //**************************************************************************

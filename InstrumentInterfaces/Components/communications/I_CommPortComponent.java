@@ -1,6 +1,7 @@
 package communications;
 
 public interface I_CommPortComponent {
+	public String 	getAddress();
 	public void open() throws Exception;
 	public void close() throws Exception;
 	public byte[] read() throws Exception;

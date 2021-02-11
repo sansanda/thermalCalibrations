@@ -14,27 +14,28 @@ public class CommPort_Factory {
 	
 	private static final int classVersion = 102;
 	
+	//Port names
 	public static final String GPIB 			= "gpib";
 	public static final String JSSC_RS232 		= "jssc_rs232";
 	public static final String RXTX_RS232 		= "rxtx_rs232";
 	public static final String JAVACOMM_RS232 	= "javacomm_rs232";
 	public static final String LAN 				= "lan";
 	
-	public static ArrayList<String> portTypes = new ArrayList<String>(Arrays.asList(GPIB,JSSC_RS232,RXTX_RS232,JAVACOMM_RS232,LAN));
+	public static ArrayList<String> registeredPortNames = new ArrayList<String>(Arrays.asList(GPIB,JSSC_RS232,RXTX_RS232,JAVACOMM_RS232,LAN));
 	
 	
-	public static I_CommPortComponent getPort(String portType) throws Exception
+	public static I_CommPortComponent getPort(String portName) throws Exception
 	{
-		String portTypeLC = portType.toLowerCase();
-		if (!portTypes.contains(portTypeLC)) return null;
+		String portNameLC = portName.toLowerCase();
+		if (!registeredPortNames.contains(portNameLC)) return null;
 		else
 		{
-			if (portTypeLC.equals(GPIB)) 	return null;
-			if (portTypeLC.equals(LAN)) 	return null;
-			if (portTypeLC.equals(JSSC_RS232))
+			if (portNameLC.equals(GPIB)) 	return null;
+			if (portNameLC.equals(LAN)) 	return null;
+			if (portNameLC.equals(JSSC_RS232))
 			{
 				return new JSSC_SerialPort_Component(
-						portTypeLC,
+						portNameLC,
 						System.currentTimeMillis(),
 						null,
 						"COM1", 
@@ -47,10 +48,10 @@ public class CommPort_Factory {
 						0);
 			}
 				
-			if (portTypeLC.equals(RXTX_RS232))
+			if (portNameLC.equals(RXTX_RS232))
 			{
 				return new RXTX_SerialPort_Component(
-						portTypeLC,
+						portNameLC,
 						System.currentTimeMillis(),
 						null,
 						"COM1", 
@@ -63,10 +64,10 @@ public class CommPort_Factory {
 						0);
 			}
 			
-			if (portTypeLC.equals(JAVACOMM_RS232))
+			if (portNameLC.equals(JAVACOMM_RS232))
 			{
 				return new JavaComm_SerialPort_Component(
-						portTypeLC,
+						portNameLC,
 						System.currentTimeMillis(),
 						null,
 						"COM1", 
