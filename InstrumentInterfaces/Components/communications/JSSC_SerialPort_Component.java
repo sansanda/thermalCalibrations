@@ -95,6 +95,11 @@ public class JSSC_SerialPort_Component extends InstrumentComponent implements I_
 	}
 	
 	@Override
+	public void setAddress(String address) throws Exception {
+		this.address = address;
+	}
+	
+	@Override
 	public String getInterface() throws Exception {
 		return this.inteface;
 	}

@@ -270,6 +270,11 @@ public class JavaComm_SerialPort_Component extends InstrumentComponent implement
 	}
 
 	@Override
+	public void setAddress(String address) throws Exception {
+		this.address = address;
+	}
+	
+	@Override
 	public String getInterface() throws Exception {
 		return this.inteface;
 	}

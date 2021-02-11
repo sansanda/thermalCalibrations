@@ -14,7 +14,7 @@ import common.InstrumentComponent;
  * @author david
  *
  */
-public class CommunicationsComponent extends InstrumentComponent implements I_CommPortComponent, I_CommunicationsComponent{
+public class CommunicationsComponent extends InstrumentComponent implements I_CommunicationsComponent{
 
 	private static final int classVersion = 100;
 	
@@ -44,15 +44,15 @@ public class CommunicationsComponent extends InstrumentComponent implements I_Co
 	}
 
 	@Override
-	public void addPort(I_InstrumentComponent port) {
-		Object c = this.containsInstanceOf(JavaComm_SerialPort_Component);
+	public void addPort(I_CommPortComponent port) {
+		Object c = this.(JavaComm_SerialPort_Component);
 		
 		if (port instanceof JavaComm_SerimdalPort_Component) this.deletePort(port);
 		this.portsList.add(port);
 	}
 
 	@Override
-	public void deletePort(I_InstrumentComponent port) {
+	public void deletePort(I_CommPortComponent port) {
 		this.portsList.remove(port);
 		
 	}
@@ -69,41 +69,11 @@ public class CommunicationsComponent extends InstrumentComponent implements I_Co
 		return null;
 	}
 
-	@Override
-	public void open() throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void close() throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public byte[] read() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void write(String data) throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public byte[] ask(String query) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	public static int getClassversion() {
 		return classVersion;
 	}
 	
-	private I_CommPortComponent containsInstanceOf(Class<?> cls)
+	private I_CommPortComponent (String _interface)
 	{
 		Iterator<I_InstrumentComponent> i = this.portsList.iterator();
 		while(i.hasNext())
