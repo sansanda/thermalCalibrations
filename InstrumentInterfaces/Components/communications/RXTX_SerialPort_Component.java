@@ -2,6 +2,7 @@ package communications;
 
 import java.io.*;
 
+
 import java.util.*;
 
 import org.apache.logging.log4j.LogManager;
@@ -31,7 +32,7 @@ public class RXTX_SerialPort_Component extends InstrumentComponent implements I_
 	 //****************************CONSTANTES************************************
 	 //**************************************************************************
 
-	private static final int classVersion = 101;
+	private static final int classVersion = 102;
 	
 	final static Logger logger = LogManager.getLogger(RXTX_SerialPort_Component.class);
 
@@ -39,18 +40,18 @@ public class RXTX_SerialPort_Component extends InstrumentComponent implements I_
 	 //****************************VARIABLES*************************************
 	 //**************************************************************************
 
-
-	private String 					address;
+	private String 					inteface = null;
+	private String 					address = null;
 	private CommPortIdentifier 		portId = null;
 	private InputStream		      	inputStream;
 	private OutputStream       		outputStream;
-	private SerialPort		      		serialPort;
-	private boolean 					txOK = false;
-	private StringBuffer 				readBuffer = null;
+	private SerialPort		      	serialPort;
+	private boolean 				txOK = false;
+	private StringBuffer 			readBuffer = null;
 	private String 					receivedData = null;
 	private String 					terminator = null;
-	private int 						writeWaitTime = 100;
-	private int 						readWaitTime = 100; 
+	private int 					writeWaitTime = 100;
+	private int 					readWaitTime = 100; 
 	 
 
 	 
@@ -69,6 +70,7 @@ public class RXTX_SerialPort_Component extends InstrumentComponent implements I_
 			 String name, 
 			 long id, 
 			 I_InstrumentComponent parent,
+			 String inteface,
 			 String address, 
 			 int baudRate, 
 			 int nDataBits, 
@@ -80,6 +82,7 @@ public class RXTX_SerialPort_Component extends InstrumentComponent implements I_
 		
 		 super(name, id, parent);
 		 
+		 this.inteface = inteface;
 		 this.address = address;
 		 
 		 this.receivedData = "";
@@ -102,7 +105,12 @@ public class RXTX_SerialPort_Component extends InstrumentComponent implements I_
 		// TODO Auto-generated method stub
 		return this.address;
 	}
-		
+	
+	@Override
+	public String getInterface() throws Exception {
+		return this.inteface;
+	}
+	
 	 /**
 	  *
 	  */

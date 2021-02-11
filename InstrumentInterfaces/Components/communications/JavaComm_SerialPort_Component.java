@@ -23,7 +23,7 @@ public class JavaComm_SerialPort_Component extends InstrumentComponent implement
 	 //****************************CONSTANTES************************************
 	 //**************************************************************************
 	
-	private static final int classVersion = 101;
+	private static final int classVersion = 102;
 	
 	final static Logger logger = LogManager.getLogger(JavaComm_SerialPort_Component.class);
 
@@ -35,6 +35,7 @@ public class JavaComm_SerialPort_Component extends InstrumentComponent implement
 
 	 static CommPortIdentifier 					portId = null;
 	 static Enumeration<CommPortIdentifier>	   	portList = null;
+	 private String 					inteface = null;
 	 private String 					address = null;
 	 private InputStream		      	inputStream;
 	 private OutputStream       		outputStream;
@@ -60,6 +61,7 @@ public class JavaComm_SerialPort_Component extends InstrumentComponent implement
 			 String name, 
 			 long id, 
 			 I_InstrumentComponent parent,
+			 String inteface,
 			 String address, 
 			 int baudRate, 
 			 int nDataBits, 
@@ -71,6 +73,7 @@ public class JavaComm_SerialPort_Component extends InstrumentComponent implement
 		 
 		 super(name, id, parent);
 		 
+		 this.inteface = inteface;
 		 this.address = address;
 		 this.terminator = terminator;
 		 this.buffer = new byte[256];
@@ -263,11 +266,15 @@ public class JavaComm_SerialPort_Component extends InstrumentComponent implement
 
 	@Override
 	public String getAddress() {
-		// TODO Auto-generated method stub
 		return this.address;
 	}
 
-
+	@Override
+	public String getInterface() throws Exception {
+		return this.inteface;
+	}
+	
+	
 	 //**************************************************************************
 	 //*********************COMM_PORT_I INTERFACE METHODS************************
 	 //**************************************************************************
@@ -352,6 +359,7 @@ public class JavaComm_SerialPort_Component extends InstrumentComponent implement
 	public static int getVersion() {
 		return classVersion;
 	}
+
 	 
 	 //**************************************************************************
 	 //****************************TESTING***************************************

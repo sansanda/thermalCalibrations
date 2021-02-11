@@ -21,6 +21,6 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="E:/repos/java_development_libraries/comms/serial/javacomm20-win32/commapi/comm.jar"/>
+	<classpathentry kind="lib" path="/java_development_libraries/comms/javacomm20-win32/commapi/comm.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

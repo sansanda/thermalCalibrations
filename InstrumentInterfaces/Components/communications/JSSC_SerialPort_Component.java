@@ -22,7 +22,7 @@ public class JSSC_SerialPort_Component extends InstrumentComponent implements I_
 	 //****************************CONSTANTES************************************
 	 //**************************************************************************
 
-	private static final int classVersion = 101;
+	private static final int classVersion = 102;
 	
 	final static Logger logger = LogManager.getLogger(JSSC_SerialPort_Component.class);
 	
@@ -30,7 +30,8 @@ public class JSSC_SerialPort_Component extends InstrumentComponent implements I_
 	 //****************************VARIABLES*************************************
 	 //**************************************************************************
 
-	 private String 					address;
+	 private String						inteface = null;
+	 private String 					address = null;
 	 private SerialPort		      		serialPort;
 	 private final int					BUFFER_LENGTH = 4096;
 	 //The buffer for receiving all the possible input data of the RS232 interface 
@@ -59,6 +60,7 @@ public class JSSC_SerialPort_Component extends InstrumentComponent implements I_
 			 String name, 
 			 long id, 
 			 I_InstrumentComponent parent,
+			 String inteface,
 			 String address, 
 			 int baudRate, 
 			 int nDataBits, 
@@ -70,6 +72,7 @@ public class JSSC_SerialPort_Component extends InstrumentComponent implements I_
 			 
 		 super(name, id, parent);
 		 
+		 this.inteface = inteface;
 		 this.address = address;
 		 
 		 this.buffer = new byte[BUFFER_LENGTH];
@@ -90,7 +93,12 @@ public class JSSC_SerialPort_Component extends InstrumentComponent implements I_
 	public String getAddress() {
 		return address;
 	}
-		
+	
+	@Override
+	public String getInterface() throws Exception {
+		return this.inteface;
+	}
+	
 	 /**
 	  *
 	  */

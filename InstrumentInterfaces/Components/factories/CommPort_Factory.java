@@ -12,17 +12,22 @@ import jssc.SerialPort;
 
 public class CommPort_Factory {
 	
-	private static final int classVersion = 102;
+	private static final int classVersion = 103;
 	
-	//Port names
-	public static final String GPIB 			= "gpib";
+	//Comm port names
 	public static final String JSSC_RS232 		= "jssc_rs232";
 	public static final String RXTX_RS232 		= "rxtx_rs232";
 	public static final String JAVACOMM_RS232 	= "javacomm_rs232";
-	public static final String LAN 				= "lan";
+		
+	//Comm interfaces
+	public static final String GPIB_INTERFACE	= "gpib_interface";
+	public static final String LAN_INTERFACE	= "lan_interface";
+	public static final String RS232_INTERFACE	= "rs232_interface";
 	
-	public static ArrayList<String> registeredPortNames = new ArrayList<String>(Arrays.asList(GPIB,JSSC_RS232,RXTX_RS232,JAVACOMM_RS232,LAN));
 	
+	public static ArrayList<String> registeredPortNames = new ArrayList<String>(Arrays.asList(JSSC_RS232,RXTX_RS232,JAVACOMM_RS232));
+	public static ArrayList<String> registeredCommInterfaces = new ArrayList<String>(Arrays.asList(GPIB_INTERFACE,RS232_INTERFACE,LAN_INTERFACE));
+
 	
 	public static I_CommPortComponent getPort(String portName) throws Exception
 	{
@@ -30,14 +35,13 @@ public class CommPort_Factory {
 		if (!registeredPortNames.contains(portNameLC)) return null;
 		else
 		{
-			if (portNameLC.equals(GPIB)) 	return null;
-			if (portNameLC.equals(LAN)) 	return null;
 			if (portNameLC.equals(JSSC_RS232))
 			{
 				return new JSSC_SerialPort_Component(
 						portNameLC,
 						System.currentTimeMillis(),
 						null,
+						RS232_INTERFACE,
 						"COM1", 
 						SerialPort.BAUDRATE_9600, 
 						SerialPort.DATABITS_8,
@@ -54,6 +58,7 @@ public class CommPort_Factory {
 						portNameLC,
 						System.currentTimeMillis(),
 						null,
+						RS232_INTERFACE,
 						"COM1", 
 						SerialPort.BAUDRATE_9600, 
 						SerialPort.DATABITS_8,
@@ -70,6 +75,7 @@ public class CommPort_Factory {
 						portNameLC,
 						System.currentTimeMillis(),
 						null,
+						RS232_INTERFACE,
 						"COM1", 
 						SerialPort.BAUDRATE_9600, 
 						SerialPort.DATABITS_8,
