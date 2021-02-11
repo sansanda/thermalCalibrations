@@ -12,7 +12,7 @@ import jssc.SerialPort;
 
 public class CommPort_Factory {
 	
-	private static final int classVersion = 101;
+	private static final int classVersion = 102;
 	
 	public static final String GPIB 			= "gpib";
 	public static final String JSSC_RS232 		= "jssc_rs232";
@@ -31,38 +31,61 @@ public class CommPort_Factory {
 		{
 			if (portTypeLC.equals(GPIB)) 	return null;
 			if (portTypeLC.equals(LAN)) 	return null;
-			if (portTypeLC.equals(JSSC_RS232)) 	return new JSSC_SerialPort_Component("COM1", 
-																					SerialPort.BAUDRATE_9600, 
-																					SerialPort.DATABITS_8,
-																					SerialPort.STOPBITS_1, 
-																					SerialPort.PARITY_NONE, 
-																					"\n", 
-																					250, 
-																					0);
+			if (portTypeLC.equals(JSSC_RS232))
+			{
+				return new JSSC_SerialPort_Component(
+						portTypeLC,
+						System.currentTimeMillis(),
+						null,
+						"COM1", 
+						SerialPort.BAUDRATE_9600, 
+						SerialPort.DATABITS_8,
+						SerialPort.STOPBITS_1, 
+						SerialPort.PARITY_NONE, 
+						"\n", 
+						250, 
+						0);
+			}
+				
+			if (portTypeLC.equals(RXTX_RS232))
+			{
+				return new RXTX_SerialPort_Component(
+						portTypeLC,
+						System.currentTimeMillis(),
+						null,
+						"COM1", 
+						SerialPort.BAUDRATE_9600, 
+						SerialPort.DATABITS_8,
+						SerialPort.STOPBITS_1, 
+						SerialPort.PARITY_NONE, 
+						"\n", 
+						250, 
+						0);
+			}
 			
-			if (portTypeLC.equals(RXTX_RS232)) 	return new RXTX_SerialPort_Component("COM1", 
-																					SerialPort.BAUDRATE_9600, 
-																					SerialPort.DATABITS_8,
-																					SerialPort.STOPBITS_1, 
-																					SerialPort.PARITY_NONE, 
-																					"\n", 
-																					250, 
-																					0);
+			if (portTypeLC.equals(JAVACOMM_RS232))
+			{
+				return new JavaComm_SerialPort_Component(
+						portTypeLC,
+						System.currentTimeMillis(),
+						null,
+						"COM1", 
+						SerialPort.BAUDRATE_9600, 
+						SerialPort.DATABITS_8,
+						SerialPort.STOPBITS_1, 
+						SerialPort.PARITY_NONE, 
+						"\n", 
+						250, 
+						0);
+			}
 			
-			if (portTypeLC.equals(RXTX_RS232)) 	return new JavaComm_SerialPort_Component("COM1", 
-																						SerialPort.BAUDRATE_9600, 
-																						SerialPort.DATABITS_8,
-																						SerialPort.STOPBITS_1, 
-																						SerialPort.PARITY_NONE, 
-																						"\n", 
-																						250, 
-																						0);
-			
-			
-			if (portTypeLC.equals(LAN)) 	return null;
-			if (portTypeLC.equals(LAN)) 	return null;
-			
+			return null;
 		}
+	}
+
+
+	public static int getClassversion() {
+		return classVersion;
 	}
 	
 }
