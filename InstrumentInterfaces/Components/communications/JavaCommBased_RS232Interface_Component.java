@@ -17,7 +17,7 @@ import common.InstrumentComponent;
  *
  */
 
-public class JavaComm_SerialPort_Component extends InstrumentComponent implements I_CommPortComponent, SerialPortEventListener{
+public class JavaCommBased_RS232Interface_Component extends InstrumentComponent implements I_CommunicationsInterface, SerialPortEventListener{
 
 	 //**************************************************************************
 	 //****************************CONSTANTES************************************
@@ -25,7 +25,7 @@ public class JavaComm_SerialPort_Component extends InstrumentComponent implement
 	
 	private static final int classVersion = 102;
 	
-	final static Logger logger = LogManager.getLogger(JavaComm_SerialPort_Component.class);
+	final static Logger logger = LogManager.getLogger(JavaCommBased_RS232Interface_Component.class);
 
 	 //**************************************************************************
 	 //****************************VARIABLES*************************************
@@ -35,7 +35,7 @@ public class JavaComm_SerialPort_Component extends InstrumentComponent implement
 
 	 static CommPortIdentifier 					portId = null;
 	 static Enumeration<CommPortIdentifier>	   	portList = null;
-	 private String 					inteface = null;
+	 private String 					standard = null;
 	 private String 					address = null;
 	 private InputStream		      	inputStream;
 	 private OutputStream       		outputStream;
@@ -57,11 +57,11 @@ public class JavaComm_SerialPort_Component extends InstrumentComponent implement
 	  *
 	  *
 	  */
-	 public JavaComm_SerialPort_Component(
+	 public JavaCommBased_RS232Interface_Component(
 			 String name, 
 			 long id, 
 			 I_InstrumentComponent parent,
-			 String inteface,
+			 String standard,
 			 String address, 
 			 int baudRate, 
 			 int nDataBits, 
@@ -73,7 +73,7 @@ public class JavaComm_SerialPort_Component extends InstrumentComponent implement
 		 
 		 super(name, id, parent);
 		 
-		 this.inteface = inteface;
+		 this.standard = standard;
 		 this.address = address;
 		 this.terminator = terminator;
 		 this.buffer = new byte[256];
@@ -275,13 +275,13 @@ public class JavaComm_SerialPort_Component extends InstrumentComponent implement
 	}
 	
 	@Override
-	public String getInterface() throws Exception {
-		return this.inteface;
+	public String getStandard() throws Exception {
+		return this.standard;
 	}
 	
 	
 	 //**************************************************************************
-	 //*********************COMM_PORT_I INTERFACE METHODS************************
+	 //***************************INTERFACES METHODS*****************************
 	 //**************************************************************************
 	 
 	 /**

@@ -31,11 +31,11 @@ public interface I_InstrumentComponent{
 	I_InstrumentComponent getParentInstrument() throws Exception;
 	 
 	//Components
-	void addInstrumentComponent(I_InstrumentComponent iC) throws Exception;
+	void addInstrumentSubComponent(I_InstrumentComponent iC) throws Exception;
 	void deleteInstrumentComponent(I_InstrumentComponent iC) throws Exception;
 	void deleteInstrumentComponent(String name) throws Exception;
 	I_InstrumentComponent getInstrumentComponent(String name) throws Exception;
-	ArrayList<I_InstrumentComponent> getAllComponents() throws Exception;
+	ArrayList<I_InstrumentComponent> getAllSubComponents() throws Exception;
 
 	//state
 	void enable(boolean enable) throws Exception;

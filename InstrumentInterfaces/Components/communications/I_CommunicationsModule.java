@@ -15,10 +15,10 @@ import common.I_InstrumentComponent;
  * que tiene varios componentes para la comunicacion con una computadora: RS232, GPIB, LAN y donde
  * solo uno de ellos es habilitado para dicha comunicacion.
  */
-public interface I_CommunicationsComponent{
+public interface I_CommunicationsModule{
 	
-	void addPort(I_CommPortComponent port);
-	void deletePort(I_CommPortComponent port);
-	I_CommPortComponent getPort(String type);
-	I_CommPortComponent getSelectedPort();
+	void addInterface(I_InstrumentComponent commInterface) throws Exception;
+	void removeInterface(I_CommunicationsInterface commInterface) throws Exception;
+	I_CommunicationsInterface getInterface(String standard) throws Exception;
+	I_CommunicationsInterface getActiveInterface() throws Exception;
 }

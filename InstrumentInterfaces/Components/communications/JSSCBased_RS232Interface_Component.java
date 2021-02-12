@@ -16,7 +16,7 @@ import jssc.SerialPortException;
  * @author DavidS
  *
  */
-public class JSSC_SerialPort_Component extends InstrumentComponent implements I_CommPortComponent, SerialPortEventListener{
+public class JSSCBased_RS232Interface_Component extends InstrumentComponent implements I_CommunicationsInterface, SerialPortEventListener{
 
 	 //**************************************************************************
 	 //****************************CONSTANTES************************************
@@ -24,13 +24,13 @@ public class JSSC_SerialPort_Component extends InstrumentComponent implements I_
 
 	private static final int classVersion = 102;
 	
-	final static Logger logger = LogManager.getLogger(JSSC_SerialPort_Component.class);
+	final static Logger logger = LogManager.getLogger(JSSCBased_RS232Interface_Component.class);
 	
 	 //**************************************************************************
 	 //****************************VARIABLES*************************************
 	 //**************************************************************************
 
-	 private String						inteface = null;
+	 private String						standard = null;
 	 private String 					address = null;
 	 private SerialPort		      		serialPort;
 	 private final int					BUFFER_LENGTH = 4096;
@@ -56,11 +56,11 @@ public class JSSC_SerialPort_Component extends InstrumentComponent implements I_
 	  *
 	  */
 		 
-	 public JSSC_SerialPort_Component(
+	 public JSSCBased_RS232Interface_Component(
 			 String name, 
 			 long id, 
 			 I_InstrumentComponent parent,
-			 String inteface,
+			 String standard,
 			 String address, 
 			 int baudRate, 
 			 int nDataBits, 
@@ -72,7 +72,7 @@ public class JSSC_SerialPort_Component extends InstrumentComponent implements I_
 			 
 		 super(name, id, parent);
 		 
-		 this.inteface = inteface;
+		 this.standard = standard;
 		 this.address = address;
 		 
 		 this.buffer = new byte[BUFFER_LENGTH];
@@ -100,8 +100,8 @@ public class JSSC_SerialPort_Component extends InstrumentComponent implements I_
 	}
 	
 	@Override
-	public String getInterface() throws Exception {
-		return this.inteface;
+	public String getStandard() throws Exception {
+		return this.standard;
 	}
 	
 	 /**

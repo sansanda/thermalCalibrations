@@ -1,8 +1,8 @@
 package communications;
 
-public interface I_CommPortComponent {
+public interface I_CommunicationsInterface {
 	
-	public String 	getInterface() throws Exception;
+	public String 	getStandard() throws Exception;
 	public String 	getAddress() throws Exception;
 	public void 	setAddress(String address) throws Exception;
 	public void 	open() throws Exception;

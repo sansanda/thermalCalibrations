@@ -10,7 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import collections.OnlyOneSelected_InstrumentComponentList;
-import communications.CommunicationsComponent;
+import communications.CommunicationsModuleComponent;
 import information.GeneralInformation_Component;
 
 /**
@@ -36,7 +36,7 @@ public class Components_Test {
 			GeneralInformation_Component gic = new GeneralInformation_Component("gic",0,null,"010203","model","davidCO","obs","firmware version 0");
 			GeneralInformation_Component gic2 = new GeneralInformation_Component("gic2",0,null,"------","model","davidCO","obs","firmware version 0");
 			
-			CommunicationsComponent cc = new CommunicationsComponent("myname",0,null);
+			CommunicationsModuleComponent cc = new CommunicationsModuleComponent("myname",0,null);
 			System.out.println(gic.toString());
 			System.out.println(cc.toString());
 			

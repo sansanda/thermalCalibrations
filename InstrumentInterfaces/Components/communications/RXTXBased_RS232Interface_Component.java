@@ -26,7 +26,7 @@ import gnu.io.SerialPortEventListener;
  * @author DavidS
  *
  */
-public class RXTX_SerialPort_Component extends InstrumentComponent implements I_CommPortComponent, SerialPortEventListener{
+public class RXTXBased_RS232Interface_Component extends InstrumentComponent implements I_CommunicationsInterface, SerialPortEventListener{
 
 	 //**************************************************************************
 	 //****************************CONSTANTES************************************
@@ -34,13 +34,13 @@ public class RXTX_SerialPort_Component extends InstrumentComponent implements I_
 
 	private static final int classVersion = 102;
 	
-	final static Logger logger = LogManager.getLogger(RXTX_SerialPort_Component.class);
+	final static Logger logger = LogManager.getLogger(RXTXBased_RS232Interface_Component.class);
 
 	 //**************************************************************************
 	 //****************************VARIABLES*************************************
 	 //**************************************************************************
 
-	private String 					inteface = null;
+	private String 					standard = null;
 	private String 					address = null;
 	private CommPortIdentifier 		portId = null;
 	private InputStream		      	inputStream;
@@ -66,11 +66,11 @@ public class RXTX_SerialPort_Component extends InstrumentComponent implements I_
 	 
 	 
 	 
-	 public RXTX_SerialPort_Component(
+	 public RXTXBased_RS232Interface_Component(
 			 String name, 
 			 long id, 
 			 I_InstrumentComponent parent,
-			 String inteface,
+			 String standard,
 			 String address, 
 			 int baudRate, 
 			 int nDataBits, 
@@ -82,7 +82,7 @@ public class RXTX_SerialPort_Component extends InstrumentComponent implements I_
 		
 		 super(name, id, parent);
 		 
-		 this.inteface = inteface;
+		 this.standard = standard;
 		 this.address = address;
 		 
 		 this.receivedData = "";
@@ -112,8 +112,8 @@ public class RXTX_SerialPort_Component extends InstrumentComponent implements I_
 	}
 	
 	@Override
-	public String getInterface() throws Exception {
-		return this.inteface;
+	public String getStandard() throws Exception {
+		return this.standard;
 	}
 	
 	 /**

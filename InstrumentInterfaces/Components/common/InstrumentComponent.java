@@ -40,14 +40,14 @@ public abstract class InstrumentComponent implements I_InstrumentComponent, Comp
 	}
 	
 	public InstrumentComponent(String name, long id, ArrayList<String> descriptiveTags,
-			ArrayList<I_InstrumentComponent> components, I_InstrumentComponent parent) {
+			ArrayList<I_InstrumentComponent> subcomponents, I_InstrumentComponent parent) {
 		super();
 		this.name = name;
 		this.id = id;
 		this.enable = true;
 		this.selected = false;
 		this.descriptiveTags = descriptiveTags;
-		this.subcomponents = components;
+		this.subcomponents = subcomponents;
 		this.parent = parent;
 	}
 	
@@ -143,7 +143,7 @@ public abstract class InstrumentComponent implements I_InstrumentComponent, Comp
 	}
 
 	@Override
-	public void addInstrumentComponent(I_InstrumentComponent iC) throws Exception {
+	public void addInstrumentSubComponent(I_InstrumentComponent iC) throws Exception {
 		if (this.subcomponents == null) 
 		{
 			this.subcomponents = new ArrayList<I_InstrumentComponent>();
@@ -185,7 +185,7 @@ public abstract class InstrumentComponent implements I_InstrumentComponent, Comp
 	}
 
 	@Override
-	public ArrayList<I_InstrumentComponent> getAllComponents() throws Exception {
+	public ArrayList<I_InstrumentComponent> getAllSubComponents() throws Exception {
 		return this.subcomponents;
 	}
 
