@@ -1,6 +1,8 @@
 package communications;
 import java.io.*;
 
+
+
 import java.util.*;
 import javax.comm.*;
 
@@ -19,6 +21,7 @@ import common.InstrumentComponent;
 
 public class JavaCommBased_RS232Interface_Component extends InstrumentComponent implements I_CommunicationsInterface, SerialPortEventListener{
 
+	
 	 //**************************************************************************
 	 //****************************CONSTANTES************************************
 	 //**************************************************************************

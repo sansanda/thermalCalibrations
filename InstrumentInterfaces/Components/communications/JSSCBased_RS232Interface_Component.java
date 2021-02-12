@@ -1,10 +1,12 @@
 package communications;
 
 import org.apache.logging.log4j.LogManager;
+
 import org.apache.logging.log4j.Logger;
 
 import common.I_InstrumentComponent;
 import common.InstrumentComponent;
+
 import jssc.SerialPort;
 import jssc.SerialPortEvent;
 import jssc.SerialPortEventListener;
