@@ -17,7 +17,7 @@ import common.InstrumentComponent;
  */
 public class CommunicationsModuleComponent extends InstrumentComponent implements I_CommunicationsModule, I_CommunicationsInterface{
 
-	private static final int classVersion = 102;
+	private static final int classVersion = 103;
 	
 	private OnlyOneSelected_InstrumentComponentList communicationInterfaces = null;
 	
@@ -83,6 +83,7 @@ public class CommunicationsModuleComponent extends InstrumentComponent implement
 	 * Devuelve el standard de la interface activa en el momento de hacer la llamada
 	 */
 	public String getStandard() throws Exception {
+		this.checkActiveInterface();
 		return this.getActiveInterface().getStandard();
 	}
 
@@ -91,6 +92,7 @@ public class CommunicationsModuleComponent extends InstrumentComponent implement
 	 * Devuelve la dirección de la interface activa en el momento de hacer la llamada
 	 */
 	public String getAddress() throws Exception {
+		this.checkActiveInterface();
 		return this.getActiveInterface().getAddress();
 	}
 
@@ -100,6 +102,7 @@ public class CommunicationsModuleComponent extends InstrumentComponent implement
 	 * @param address String con la nueva direccion
 	 */
 	public void setAddress(String address) throws Exception {
+		this.checkActiveInterface();
 		this.getActiveInterface().setAddress(address);
 		
 	}
@@ -109,6 +112,7 @@ public class CommunicationsModuleComponent extends InstrumentComponent implement
 	 * Abre la interface activa 
 	 */
 	public void open() throws Exception {
+		this.checkActiveInterface();
 		this.getActiveInterface().open();
 		
 	}
@@ -118,6 +122,7 @@ public class CommunicationsModuleComponent extends InstrumentComponent implement
 	 * Cierra la interface activa
 	 */
 	public void close() throws Exception {
+		this.checkActiveInterface();
 		this.getActiveInterface().close();
 		
 	}
@@ -132,6 +137,7 @@ public class CommunicationsModuleComponent extends InstrumentComponent implement
 	 * @mail dsanchezsanc@uoc.edu
 	 */
 	public byte[] read() throws Exception {
+		this.checkActiveInterface();
 		return this.getActiveInterface().read();
 	}
 
@@ -144,6 +150,7 @@ public class CommunicationsModuleComponent extends InstrumentComponent implement
 	 * @trhows 	Exception if something goes wrong
 	 */
 	public void write(String data) throws Exception {
+		this.checkActiveInterface();
 		this.getActiveInterface().write(data);
 		
 	}
@@ -159,6 +166,7 @@ public class CommunicationsModuleComponent extends InstrumentComponent implement
 	 * @trhows 	Exception if something goes wrong
 	 */
 	public byte[] ask(String query) throws Exception {
+		this.checkActiveInterface();
 		return this.getActiveInterface().ask(query);
 	}
 	
@@ -172,6 +180,11 @@ public class CommunicationsModuleComponent extends InstrumentComponent implement
 		return builder.toString();
 	}
 	
+	private void checkActiveInterface() throws Exception
+	{
+		if (this.communicationInterfaces.isEmpty()) throw new Exception ("No any inteface added in communications module component");
+	}
 	//version 102: CommunicationsModuleComponent implements I_CommunicationsInterface so it will act as a CommunicationsInterface bypassing
-	//version 102: all the I_CommunicationsInterface calls to the respective active interface (subcomponents)              
+	//version 102: all the I_CommunicationsInterface calls to the respective active interface (subcomponents)
+	//version 103: prevent the calls on communications module component with any interface added (new private method checkActiveInterface)
 }

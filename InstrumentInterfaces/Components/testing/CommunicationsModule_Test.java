@@ -32,12 +32,7 @@ public class CommunicationsModule_Test {
 			//I_InstrumentComponent rxtx_interface = CommunicationInterface_Factory.getInterfaceDriver(CommunicationInterface_Factory.RXTX_RS232);
 			//I_InstrumentComponent javacomm_interface = CommunicationInterface_Factory.getInterfaceDriver(CommunicationInterface_Factory.JAVACOMM_RS232);
 
-			
-			logger.info(new String(((I_CommunicationsInterface) jssc_interface).ask("*IDN?"), StandardCharsets.UTF_8));
-			((I_CommunicationsInterface) jssc_interface).close();
-			
-			
-			
+						
 			CommunicationsModuleComponent cmc = new CommunicationsModuleComponent(
 					"cmc", 
 					System.currentTimeMillis(), 
@@ -45,9 +40,12 @@ public class CommunicationsModule_Test {
 					null, 
 					null);
 			
-			cmc.addInterface(jssc_interface);
-			cmc.addInterface(jssc_interface);
+			//cmc.addInterface(jssc_interface);
+			//cmc.addInterface(jssc_interface);
 			logger.info(cmc.toString());
+			
+			logger.info(new String(cmc.ask("*IDN?"), StandardCharsets.UTF_8));
+			((I_CommunicationsInterface) jssc_interface).close();
 			
 			
 			System.exit(0);
