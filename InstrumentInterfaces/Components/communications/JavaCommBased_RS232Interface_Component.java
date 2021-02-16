@@ -56,9 +56,20 @@ public class JavaCommBased_RS232Interface_Component extends InstrumentComponent 
 	 //**************************************************************************
 
 	 /**
-	 * @param readWaitTime 
-	  *
-	  *
+	  * 
+	  * @param name
+	  * @param id
+	  * @param parent
+	  * @param standard
+	  * @param address
+	  * @param baudRate
+	  * @param nDataBits
+	  * @param nStopBits
+	  * @param parityType
+	  * @param terminator
+	  * @param writeWaitTime
+	  * @param readWaitTime
+	  * @throws Exception
 	  */
 	 public JavaCommBased_RS232Interface_Component(
 			 String name, 

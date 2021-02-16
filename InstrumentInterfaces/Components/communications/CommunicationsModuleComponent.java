@@ -15,9 +15,9 @@ import common.InstrumentComponent;
  * @author david
  *
  */
-public class CommunicationsModuleComponent extends InstrumentComponent implements I_CommunicationsModule{
+public class CommunicationsModuleComponent extends InstrumentComponent implements I_CommunicationsModule, I_CommunicationsInterface{
 
-	private static final int classVersion = 101;
+	private static final int classVersion = 102;
 	
 	private OnlyOneSelected_InstrumentComponentList communicationInterfaces = null;
 	
@@ -79,6 +79,90 @@ public class CommunicationsModuleComponent extends InstrumentComponent implement
 	}
 
 	@Override
+	/**
+	 * Devuelve el standard de la interface activa en el momento de hacer la llamada
+	 */
+	public String getStandard() throws Exception {
+		return this.getActiveInterface().getStandard();
+	}
+
+	@Override
+	/**
+	 * Devuelve la dirección de la interface activa en el momento de hacer la llamada
+	 */
+	public String getAddress() throws Exception {
+		return this.getActiveInterface().getAddress();
+	}
+
+	@Override
+	/**
+	 * Actualiza la dirección de la interface activa en el momento de hacer la llamada
+	 * @param address String con la nueva direccion
+	 */
+	public void setAddress(String address) throws Exception {
+		this.getActiveInterface().setAddress(address);
+		
+	}
+
+	@Override
+	/**
+	 * Abre la interface activa 
+	 */
+	public void open() throws Exception {
+		this.getActiveInterface().open();
+		
+	}
+
+	@Override
+	/**
+	 * Cierra la interface activa
+	 */
+	public void close() throws Exception {
+		this.getActiveInterface().close();
+		
+	}
+
+	@Override
+	/**
+	 * Lee los datos actualizados (los más nuevos llegados por la interface de comunicaciones activa)
+	 * Get last income data (the newest arrived data)
+	 * @return the data readed as byte array.
+	 * @trhows Exception if something goes wrong
+	 * @author David Sanchez Sanchez
+	 * @mail dsanchezsanc@uoc.edu
+	 */
+	public byte[] read() throws Exception {
+		return this.getActiveInterface().read();
+	}
+
+	@Override
+	/**
+	 * Envia los datos a la interface de comunicaciones activa
+	 * @author 	David Sanchez Sanchez
+	 * @mail 	dsanchezsanc@uoc.edu
+	 * @param 	data is the String to send to the output
+	 * @trhows 	Exception if something goes wrong
+	 */
+	public void write(String data) throws Exception {
+		this.getActiveInterface().write(data);
+		
+	}
+
+	@Override
+	/**
+	 * Envía una consulta (un comando) por la interface de comunicaciones activa y espera a la respuesta por el mismo canal de comunicaciones
+	 * En la practica se traduce en un write seguido de un read (este suele ser sincrono pero depende de la interface cosa que puede llegar a complicar el código).
+	 * @author 	David Sanchez Sanchez
+	 * @mail 	dsanchezsanc@uoc.edu
+	 * @param 	query is the String to send to the output as query
+	 * @return 	the response readed as byte array.
+	 * @trhows 	Exception if something goes wrong
+	 */
+	public byte[] ask(String query) throws Exception {
+		return this.getActiveInterface().ask(query);
+	}
+	
+	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("CommunicationsModuleComponent [name=").append(name).append(", id=").append(id).append(", enable=").append(enable)
@@ -88,5 +172,6 @@ public class CommunicationsModuleComponent extends InstrumentComponent implement
 		return builder.toString();
 	}
 	
-	
+	//version 102: CommunicationsModuleComponent implements I_CommunicationsInterface so it will act as a CommunicationsInterface bypassing
+	//version 102: all the I_CommunicationsInterface calls to the respective active interface (subcomponents)              
 }
