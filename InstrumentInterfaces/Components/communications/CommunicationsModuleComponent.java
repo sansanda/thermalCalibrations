@@ -13,7 +13,14 @@ import common.InstrumentComponent;
 
 /**
  * @author david
- *
+ * Clase que modela el modulo de comunicaciones de un instrumento de laboratorio.
+ * Esta implementa las Interfaces CommunicationsModule y CommunicationsInterface.
+ * La clase gestiona las posibles interfaces de comunicaciones que puede tener un instrumento de comunicaciones como, por ejemplo,
+ * de tipo RS232, de tipo GPIB, de tipo LAN, etc... 
+ * Por lo tanto, la clase debe permitir añadir y eliminar instancias de tipo de CommunicationsInterface que el usuario desee pero solo
+ * una de ellas puede ser la interface de comunicaciones activa en un momento dado. 
+ * Hemos dicho que CommunicationsModuleComponent implementa la Interface I_CommunicationsInterface pero en realidad lo que hace es
+ * bypasear todas las llamadas o métodos de dicha Interface a la interface de comunicaciones activa en un momento dado.       
  */
 public class CommunicationsModuleComponent extends InstrumentComponent implements I_CommunicationsModule, I_CommunicationsInterface{
 
@@ -80,7 +87,7 @@ public class CommunicationsModuleComponent extends InstrumentComponent implement
 
 	@Override
 	/**
-	 * Devuelve el standard de la interface activa en el momento de hacer la llamada
+	 * Devuelve el standard de la interface de comunicaciones activa en el momento de hacer la llamada
 	 */
 	public String getStandard() throws Exception {
 		this.checkActiveInterface();
@@ -89,7 +96,7 @@ public class CommunicationsModuleComponent extends InstrumentComponent implement
 
 	@Override
 	/**
-	 * Devuelve la dirección de la interface activa en el momento de hacer la llamada
+	 * Devuelve la dirección de la interface de comunicaciones activa en el momento de hacer la llamada
 	 */
 	public String getAddress() throws Exception {
 		this.checkActiveInterface();
@@ -98,7 +105,7 @@ public class CommunicationsModuleComponent extends InstrumentComponent implement
 
 	@Override
 	/**
-	 * Actualiza la dirección de la interface activa en el momento de hacer la llamada
+	 * Actualiza la dirección de la interface de comunicaciones activa en el momento de hacer la llamada
 	 * @param address String con la nueva direccion
 	 */
 	public void setAddress(String address) throws Exception {
@@ -109,7 +116,7 @@ public class CommunicationsModuleComponent extends InstrumentComponent implement
 
 	@Override
 	/**
-	 * Abre la interface activa 
+	 * Abre la interface de comunicaciones activa 
 	 */
 	public void open() throws Exception {
 		this.checkActiveInterface();
@@ -119,7 +126,7 @@ public class CommunicationsModuleComponent extends InstrumentComponent implement
 
 	@Override
 	/**
-	 * Cierra la interface activa
+	 * Cierra la interface de comunicaciones activa
 	 */
 	public void close() throws Exception {
 		this.checkActiveInterface();
@@ -170,6 +177,7 @@ public class CommunicationsModuleComponent extends InstrumentComponent implement
 		return this.getActiveInterface().ask(query);
 	}
 	
+	
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -184,7 +192,13 @@ public class CommunicationsModuleComponent extends InstrumentComponent implement
 	{
 		if (this.communicationInterfaces.isEmpty()) throw new Exception ("No any inteface added in communications module component");
 	}
+	
+	public static int getClassversion() {
+		return classVersion;
+	}
+	
 	//version 102: CommunicationsModuleComponent implements I_CommunicationsInterface so it will act as a CommunicationsInterface bypassing
 	//version 102: all the I_CommunicationsInterface calls to the respective active interface (subcomponents)
-	//version 103: prevent the calls on communications module component with any interface added (new private method checkActiveInterface)
+	//version 103: prevent the calls on communications module component with any interface added (new private method checkActiveInterface())
+
 }

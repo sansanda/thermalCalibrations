@@ -13,7 +13,7 @@ import common.I_InstrumentComponent;
 import common.InstrumentComponent;
 
 /**
- * Clase que implementa un puerto serie tipo RS232 haciendo uso de la libreria javacomm-20-win32 
+ * Clase que modela una interface de comunicaciones serie tipo RS232 haciendo uso de la libreria javacomm-20-win32 
  * compilada para maquinas de 32 bits en windows
  * @author DavidS
  *

@@ -13,7 +13,7 @@ import jssc.SerialPortEventListener;
 import jssc.SerialPortException;
 
 /**
- * Clase que implementa un puerto serie tipo RS232 haciendo uso de la libreria jssc_2.9.2 
+ * Clase que modela una interface de comunicaciones serie tipo RS232 haciendo uso de la libreria jssc_2.9.2 
  * compatible con maquinas de 32 y 64 bits en windows.
  * @author DavidS
  *

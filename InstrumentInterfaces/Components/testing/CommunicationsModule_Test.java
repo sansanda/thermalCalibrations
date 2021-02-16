@@ -14,6 +14,7 @@ import communications.I_CommunicationsInterface;
 import factories.CommunicationInterface_Factory;
 
 
+
 public class CommunicationsModule_Test {
 
 	private static final int classVersion = 101;
@@ -29,7 +30,7 @@ public class CommunicationsModule_Test {
 			 
 			
 			I_InstrumentComponent jssc_interface = CommunicationInterface_Factory.getInterfaceDriver(CommunicationInterface_Factory.JSSC_RS232);
-			//I_InstrumentComponent rxtx_interface = CommunicationInterface_Factory.getInterfaceDriver(CommunicationInterface_Factory.RXTX_RS232);
+			I_InstrumentComponent rxtx_interface = CommunicationInterface_Factory.getInterfaceDriver(CommunicationInterface_Factory.RXTX_RS232);
 			//I_InstrumentComponent javacomm_interface = CommunicationInterface_Factory.getInterfaceDriver(CommunicationInterface_Factory.JAVACOMM_RS232);
 
 						

@@ -213,6 +213,10 @@ public abstract class InstrumentComponent implements I_InstrumentComponent, Comp
 		return builder.toString();
 	}
 
+	public static int getClassversion() {
+		return classVersion;
+	}
+
 	
 	
 	

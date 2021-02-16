@@ -18,7 +18,7 @@ import gnu.io.SerialPortEventListener;
 
 
 /**
- * Clase que implementa un puerto serie tipo RS232 haciendo uso de la libreria rxtx.
+ * Clase que modela una interface de comunicaciones serie tipo RS232 haciendo uso de la libreria rxtx.
  * De dicha libreria se dispone de dos versiones: la compilada para maquinas de 32
  * bits o para maquinas de 64 bits, todas en windows.
  * for 32 bits use: rxtx-2.1-7r2-win-32 or   
