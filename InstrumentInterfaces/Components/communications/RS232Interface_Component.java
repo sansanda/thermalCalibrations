@@ -17,16 +17,16 @@ import jssc.SerialPortException;
  * @author DavidS
  *
  */
-public class JSSCBased_RS232Interface_Component extends InstrumentComponent implements I_CommunicationsInterface, SerialPortEventListener{
+public class RS232Interface_Component extends InstrumentComponent implements I_CommunicationsInterface, SerialPortEventListener{
 
 	 //**************************************************************************
 	 //****************************CONSTANTES************************************
 	 //**************************************************************************
 
-	private static final int classVersion = 102;
+	private static final int classVersion = 100;
 	
 	
-	final static Logger logger = LogManager.getLogger(JSSCBased_RS232Interface_Component.class);
+	final static Logger logger = LogManager.getLogger(RS232Interface_Component.class);
 	
 	 //**************************************************************************
 	 //****************************VARIABLES*************************************
@@ -58,7 +58,7 @@ public class JSSCBased_RS232Interface_Component extends InstrumentComponent impl
 	  *
 	  */
 		 
-	 public JSSCBased_RS232Interface_Component(
+	 public RS232Interface_Component(
 			 String name, 
 			 long id, 
 			 I_InstrumentComponent parent,

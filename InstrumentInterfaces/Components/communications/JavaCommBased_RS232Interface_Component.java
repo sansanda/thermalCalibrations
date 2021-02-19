@@ -138,6 +138,7 @@ public class JavaCommBased_RS232Interface_Component extends InstrumentComponent 
 			logger.error(e.toString());
 			System.exit(-1);
 		 }
+		 this.close();
 	 }
 
 	 
@@ -153,6 +154,7 @@ public class JavaCommBased_RS232Interface_Component extends InstrumentComponent 
 		logger.info("Buscando puertos del sistema....\n");
 		Thread.sleep(1000);
 		portList = CommPortIdentifier.getPortIdentifiers();
+		
 		while (portList.hasMoreElements()) {
 			portId = portList.nextElement();
 			logger.debug(portId.getName()+ " ");

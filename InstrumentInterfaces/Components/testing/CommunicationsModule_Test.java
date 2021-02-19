@@ -29,8 +29,9 @@ public class CommunicationsModule_Test {
 			logger.info("TESTNG COMMUNICATION PORT COMPONENTS");
 			 
 			
-			I_InstrumentComponent jssc_interface = CommunicationInterface_Factory.getInterfaceDriver(CommunicationInterface_Factory.JSSC_RS232);
-			I_InstrumentComponent rxtx_interface = CommunicationInterface_Factory.getInterfaceDriver(CommunicationInterface_Factory.RXTX_RS232);
+			//I_InstrumentComponent jssc_interface = CommunicationInterface_Factory.getInterfaceDriver(CommunicationInterface_Factory.JSSC_RS232);
+			I_InstrumentComponent rs232_interface = CommunicationInterface_Factory.getCommInterface(CommunicationInterface_Factory.RS232_INTERFACE);
+			//Si estas en una maquina no de 32bits no podrás utilizar esta interface  
 			//I_InstrumentComponent javacomm_interface = CommunicationInterface_Factory.getInterfaceDriver(CommunicationInterface_Factory.JAVACOMM_RS232);
 
 						
@@ -42,11 +43,11 @@ public class CommunicationsModule_Test {
 					null);
 			
 			//cmc.addInterface(jssc_interface);
-			//cmc.addInterface(jssc_interface);
+			cmc.addInterface(rs232_interface);
 			logger.info(cmc.toString());
 			
 			logger.info(new String(cmc.ask("*IDN?"), StandardCharsets.UTF_8));
-			((I_CommunicationsInterface) jssc_interface).close();
+			cmc.close();
 			
 			
 			System.exit(0);

@@ -188,11 +188,19 @@ public class CommunicationsModuleComponent extends InstrumentComponent implement
 		return builder.toString();
 	}
 	
+	/**
+	 * Método privado que resuelve si el modulo de comunicaciones dispone de alguna interface.
+	 * @throws Exception en caso de que el módulo no presente ninguna interface de comunicaciones
+	 */
 	private void checkActiveInterface() throws Exception
 	{
 		if (this.communicationInterfaces.isEmpty()) throw new Exception ("No any inteface added in communications module component");
 	}
 	
+	/**
+	 * Método de clase que devuelve la version de esta
+	 * @return la version de la clase
+	 */
 	public static int getClassversion() {
 		return classVersion;
 	}

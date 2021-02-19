@@ -150,6 +150,7 @@ public class RXTXBased_RS232Interface_Component extends InstrumentComponent impl
 			logger.error(e.toString());
 			System.exit(-1);
 		 }
+		 //this.close();
 	 }
 
 	 /**
@@ -167,6 +168,7 @@ public class RXTXBased_RS232Interface_Component extends InstrumentComponent impl
 		logger.info("Buscando puertos del sistema....\n");
 		Thread.sleep(1000);
 		portList = CommPortIdentifier.getPortIdentifiers();
+		
 		
 		while (portList.hasMoreElements() && !portFound) {
 			portId = portList.nextElement();
@@ -346,12 +348,10 @@ public class RXTXBased_RS232Interface_Component extends InstrumentComponent impl
 	  * @throws Exception 
 	  */
 	 @Override
-	 public void open() throws Exception {		 
+	 public void open() throws Exception {	
 		if (portId.isCurrentlyOwned())
 		{
 			logger.info("Port "+portId.getName() + " currently owned"+" by"+portId.getCurrentOwner());
-			logger.info("Going to close the port....");
-			this.serialPort.close();
 		}else
 		{
 			this.serialPort = (SerialPort) portId.open("RS232_PortApp", 2000); //SimpleReadApp
@@ -365,6 +365,7 @@ public class RXTXBased_RS232Interface_Component extends InstrumentComponent impl
 	 @Override
 	 public void close() throws Exception {
 		 Thread.sleep(2000);  // Be sure data is xferred before closing
+		 logger.info("Closing the port ");
 		 serialPort.close();
 	 }
 	 
@@ -379,6 +380,7 @@ public class RXTXBased_RS232Interface_Component extends InstrumentComponent impl
 	 */
 	@Override
 	public byte[] read() throws Exception{
+		this.open();
 		Thread.sleep(this.readWaitTime);
 		this.waitForIncomingData();
 		return this.readDataAsString().getBytes();
@@ -393,6 +395,7 @@ public class RXTXBased_RS232Interface_Component extends InstrumentComponent impl
 	 */
 	@Override
 	public void write(String data) throws Exception{
+		this.open();
 		//logger.debug("\n"+"Writing \""+message+"\" to "+serialPort.getPortName());
 		//logger.debug("\n"+"Writing \""+message+"\" to "+serialPort.getName());
 		Thread.sleep(this.writeWaitTime);
