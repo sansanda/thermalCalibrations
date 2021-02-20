@@ -22,11 +22,14 @@ import jssc.SerialPortException;
  */
 public class RS232Interface_Component extends InstrumentComponent implements I_CommunicationsInterface, SerialPortEventListener{
 
+	 //version 102: updated to fllow the new I_CommunicationsInterface Interface
+	 //version 101: Implemented static method parseFromJSON (String filename)
+	
 	 //**************************************************************************
 	 //****************************CONSTANTES************************************
 	 //**************************************************************************
 
-	private static final int classVersion = 101;
+	private static final int classVersion = 102;
 	
 	
 	final static Logger logger = LogManager.getLogger(RS232Interface_Component.class);
@@ -35,6 +38,7 @@ public class RS232Interface_Component extends InstrumentComponent implements I_C
 	 //****************************VARIABLES*************************************
 	 //**************************************************************************
 
+	 private String						type = null;
 	 private String						standard = null;
 	 private String 					address = null;
 	 private SerialPort		      		serialPort;
@@ -65,6 +69,7 @@ public class RS232Interface_Component extends InstrumentComponent implements I_C
 			 String name, 
 			 long id, 
 			 I_InstrumentComponent parent,
+			 String type,
 			 String standard,
 			 String address, 
 			 int baudRate, 
@@ -77,6 +82,7 @@ public class RS232Interface_Component extends InstrumentComponent implements I_C
 			 
 		 super(name, id, parent);
 		 
+		 this.type = type;
 		 this.standard = standard;
 		 this.address = address;
 		 
@@ -111,6 +117,7 @@ public class RS232Interface_Component extends InstrumentComponent implements I_C
 				 (String)jObj.get("name"), 
 				 (Long)jObj.get("id"), 
 				 (InstrumentComponent)jObj.get("parent"), 
+				 (String)jObj.get("type"),
 				 (String)jObj.get("standard"), 
 				 (String)jObj.get("address"), 
 				 ((Long)jObj.get("baudrate")).intValue(), 
@@ -123,13 +130,25 @@ public class RS232Interface_Component extends InstrumentComponent implements I_C
 		 
 	 }
 	 
+	//****************************VERSION***************************************
+			
+	public static int getVersion() {
+		return classVersion;
+	}
+	 
 	 //**************************************************************************
 	 //****************************METODOS***************************************
 	 //**************************************************************************
 
 	@Override
+	public String getType() throws Exception {
+		// TODO Auto-generated method stub
+		return this.type;
+	}
+		
+	@Override
 	public String getAddress() {
-		return address;
+		return this.address;
 	}
 	
 	@Override
@@ -389,16 +408,5 @@ public class RS232Interface_Component extends InstrumentComponent implements I_C
 		this.write(query);
 		return this.read();
 	}
-	
-	
-	//**************************************************************************
-	//****************************VERSION***************************************
-	//**************************************************************************
-		
-	public static int getVersion() {
-		return classVersion;
-	}
-	
-	//version 101: Implemented static method parseFromJSON (String filename)
 	
 }

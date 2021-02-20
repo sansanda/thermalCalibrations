@@ -2,6 +2,7 @@ package communications;
 
 public interface I_CommunicationsInterface {
 	
+	public String 	getType() throws Exception;
 	public String 	getStandard() throws Exception;
 	public String 	getAddress() throws Exception;
 	public void 	setAddress(String address) throws Exception;

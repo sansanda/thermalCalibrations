@@ -1,13 +1,6 @@
 package factories;
 
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
- 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,7 +15,12 @@ import testing.CommunicationsModule_Test;
 
 public class CommunicationInterface_Factory {
 	
+	//version 104: change to use only rs232_component_interface
+	
 	private static final int classVersion = 104;
+		
+	//Comm interfaces types
+	public static final String SERIAL_TYPE	= "serial";
 		
 	//Comm interfaces
 	public static final String GPIB_INTERFACE	= "gpib_interface";
@@ -47,6 +45,7 @@ public class CommunicationInterface_Factory {
 						commInterfaceTypeLC,
 						System.currentTimeMillis(),
 						null,
+						SERIAL_TYPE,
 						RS232_INTERFACE,
 						"COM1", 
 						SerialPort.BAUDRATE_9600, 
@@ -64,11 +63,8 @@ public class CommunicationInterface_Factory {
 		
 	}
 
-
 	public static int getClassversion() {
 		return classVersion;
 	}
-	
-	//version 104: change to use only rs232_component_interface
 	
 }
