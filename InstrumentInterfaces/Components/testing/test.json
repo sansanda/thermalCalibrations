@@ -1,0 +1,14 @@
+{
+	"name":"rs232_interface_1",
+	"id":1234567890,
+	"parent":null,
+	"standard":"rs232_interface",
+	"address":"COM1",
+	"baudrate":9600,
+	"databits":8,
+	"stopbits":1,
+	"parity":0,
+	"terminator":"\n",
+	"writeWaitTime":250,
+	"readWaitTime":0
+}

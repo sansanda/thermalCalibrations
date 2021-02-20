@@ -1,7 +1,10 @@
 package communications;
 
+import java.io.FileReader;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.simple.parser.JSONParser;
 
 import common.I_InstrumentComponent;
 import common.InstrumentComponent;
@@ -23,7 +26,7 @@ public class RS232Interface_Component extends InstrumentComponent implements I_C
 	 //****************************CONSTANTES************************************
 	 //**************************************************************************
 
-	private static final int classVersion = 100;
+	private static final int classVersion = 101;
 	
 	
 	final static Logger logger = LogManager.getLogger(RS232Interface_Component.class);
@@ -87,7 +90,39 @@ public class RS232Interface_Component extends InstrumentComponent implements I_C
 		 this.initialize(address, baudRate, nDataBits, nStopBits, parityType);
 		 
 	 }
-
+	 
+	 //**************************************************************************
+	 //****************************METODOS ESTATICOS*****************************
+	 //**************************************************************************
+	 
+	 public static I_InstrumentComponent parseFromJSON(String filename) throws Exception
+	 {
+		 //JSON parser object to parse read file
+		 JSONParser jsonParser = new JSONParser();
+		 FileReader reader = new FileReader(filename);
+		
+		 //Read JSON file
+		 Object obj = jsonParser.parse(reader);
+		 jsonParser = null;
+		 
+		 org.json.simple.JSONObject jObj = (org.json.simple.JSONObject) obj;
+		 
+		 return new RS232Interface_Component(
+				 (String)jObj.get("name"), 
+				 (Long)jObj.get("id"), 
+				 (InstrumentComponent)jObj.get("parent"), 
+				 (String)jObj.get("standard"), 
+				 (String)jObj.get("address"), 
+				 ((Long)jObj.get("baudrate")).intValue(), 
+				 ((Long)jObj.get("databits")).intValue(), 
+				 ((Long)jObj.get("stopbits")).intValue(), 
+				 ((Long)jObj.get("parity")).intValue(), 
+				 (String)jObj.get("terminator"), 
+				 ((Long)jObj.get("writeWaitTime")).intValue(), 
+				 ((Long)jObj.get("readWaitTime")).intValue());
+		 
+	 }
+	 
 	 //**************************************************************************
 	 //****************************METODOS***************************************
 	 //**************************************************************************
@@ -363,5 +398,7 @@ public class RS232Interface_Component extends InstrumentComponent implements I_C
 	public static int getVersion() {
 		return classVersion;
 	}
+	
+	//version 101: Implemented static method parseFromJSON (String filename)
 	
 }
