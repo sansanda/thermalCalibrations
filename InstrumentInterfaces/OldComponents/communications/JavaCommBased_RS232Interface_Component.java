@@ -1,9 +1,10 @@
 package communications;
-
 import java.io.*;
 
 
+
 import java.util.*;
+import javax.comm.*;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,65 +12,72 @@ import org.apache.logging.log4j.Logger;
 import common.I_InstrumentComponent;
 import common.InstrumentComponent;
 
-import gnu.io.CommPortIdentifier;
-import gnu.io.SerialPort;
-import gnu.io.SerialPortEvent;
-import gnu.io.SerialPortEventListener;
-
-
 /**
- * Clase que modela una interface de comunicaciones serie tipo RS232 haciendo uso de la libreria rxtx.
- * De dicha libreria se dispone de dos versiones: la compilada para maquinas de 32
- * bits o para maquinas de 64 bits, todas en windows.
- * for 32 bits use: rxtx-2.1-7r2-win-32 or   
- * for 64 bits use: mfz-rxtx-2.2-20081207-win-x64 
+ * Clase que modela una interface de comunicaciones serie tipo RS232 haciendo uso de la libreria javacomm-20-win32 
+ * compilada para maquinas de 32 bits en windows
  * @author DavidS
  *
  */
-public class RXTXBased_RS232Interface_Component extends InstrumentComponent implements I_CommunicationsInterface, SerialPortEventListener{
 
+public class JavaCommBased_RS232Interface_Component extends InstrumentComponent implements I_CommunicationsInterface, SerialPortEventListener{
+
+	
 	 //**************************************************************************
 	 //****************************CONSTANTES************************************
 	 //**************************************************************************
-
+	
 	private static final int classVersion = 102;
 	
-	final static Logger logger = LogManager.getLogger(RXTXBased_RS232Interface_Component.class);
+	final static Logger logger = LogManager.getLogger(JavaCommBased_RS232Interface_Component.class);
 
 	 //**************************************************************************
 	 //****************************VARIABLES*************************************
 	 //**************************************************************************
 
-	private String 					standard = null;
-	private String 					address = null;
-	private CommPortIdentifier 		portId = null;
-	private InputStream		      	inputStream;
-	private OutputStream       		outputStream;
-	private SerialPort		      	serialPort;
-	private boolean 				txOK = false;
-	private StringBuffer 			readBuffer = null;
-	private String 					receivedData = null;
-	private String 					terminator = null;
-	private int 					writeWaitTime = 100;
-	private int 					readWaitTime = 100; 
+
+
+	 static CommPortIdentifier 					portId = null;
+	 static Enumeration<CommPortIdentifier>	   	portList = null;
+	 private String 					type = null;
+	 private String 					standard = null;
+	 private String 					address = null;
+	 private InputStream		      	inputStream;
+	 private OutputStream       		outputStream;
+	 private SerialPort		      		serialPort;
+	 private byte[] 					buffer = null;
+	 private int 						bufferPointer = 0;
+	 private boolean 					txOK = false;
+	 private String 					terminator = null;
+	 private int 						writeWaitTime = 100;
+	 private int 						readWaitTime = 100;
 	 
 
-	 
 	 //**************************************************************************
 	 //****************************CONSTRUCTORES*********************************
 	 //**************************************************************************
 
 	 /**
-	  *
-	  *
+	  * 
+	  * @param name
+	  * @param id
+	  * @param parent
+	  * @param standard
+	  * @param address
+	  * @param baudRate
+	  * @param nDataBits
+	  * @param nStopBits
+	  * @param parityType
+	  * @param terminator
+	  * @param writeWaitTime
+	  * @param readWaitTime
+	  * @throws Exception
 	  */
-	 
-	 
-	 
-	 public RXTXBased_RS232Interface_Component(
+
+	 public JavaCommBased_RS232Interface_Component(
 			 String name, 
 			 long id, 
 			 I_InstrumentComponent parent,
+			 String type,
 			 String standard,
 			 String address, 
 			 int baudRate, 
@@ -78,16 +86,16 @@ public class RXTXBased_RS232Interface_Component extends InstrumentComponent impl
 			 int parityType, 
 			 String terminator, 
 			 int writeWaitTime, 
-			 int readWaitTime) throws Exception {
-		
+			 int readWaitTime) throws Exception{
+			 
 		 super(name, id, parent);
 		 
+		 this.type = type;
 		 this.standard = standard;
 		 this.address = address;
-		 
-		 this.receivedData = "";
 		 this.terminator = terminator;
-		 readBuffer = new StringBuffer();
+		 this.buffer = new byte[256];
+		 this.bufferPointer = 0;
 		 
 		 this.writeWaitTime = writeWaitTime;
 		 this.readWaitTime = readWaitTime;
@@ -98,30 +106,14 @@ public class RXTXBased_RS232Interface_Component extends InstrumentComponent impl
 	 //**************************************************************************
 	 //****************************METODOS***************************************
 	 //**************************************************************************
-	 
 
-	@Override
-	public String getAddress() {
-		// TODO Auto-generated method stub
-		return this.address;
-	}
-	
-	@Override
-	public void setAddress(String address) throws Exception {
-		this.address = address;
-	}
-	
-	@Override
-	public String getStandard() throws Exception {
-		return this.standard;
-	}
-	
+
 	 /**
 	  *
 	  */
-	 private void initialize(String address, int baudRate, int nDataBits, int nStopBits, int parityType ) throws Exception{
+	 private void initialize(String address, int baudRate, int nDataBits, int nStopBits, int parityType )throws Exception{
 
-		 portId = searchForSerialCommPort(address);
+		 this.searchForSerialCommPort(address);
 		 this.open();
 		 this.inputStream = this.getPortInputStream();
 		 this.outputStream = this.getPortOutputStream();
@@ -150,34 +142,31 @@ public class RXTXBased_RS232Interface_Component extends InstrumentComponent impl
 			logger.error(e.toString());
 			System.exit(-1);
 		 }
-		 //this.close();
+		 this.close();
 	 }
 
+	 
 	 /**
 	  *
 	  */
-	 
-	private CommPortIdentifier searchForSerialCommPort(String address) throws Exception{
+	 private CommPortIdentifier searchForSerialCommPort(String address) throws Exception{
 
-		boolean								portFound 		= false;
-		CommPortIdentifier 					portId 	= null;
-		Enumeration<CommPortIdentifier>	   	portList = null;
-		 
+		boolean				portFound 		= false;
+
 		//Preguntamos a todos los puertos de la lista
 		//si nuestro puerto se encuentra en el equipo
 		logger.info("Buscando puertos del sistema....\n");
 		Thread.sleep(1000);
 		portList = CommPortIdentifier.getPortIdentifiers();
 		
-		
-		while (portList.hasMoreElements() && !portFound) {
+		while (portList.hasMoreElements()) {
 			portId = portList.nextElement();
 			logger.debug(portId.getName()+ " ");
 			Thread.sleep(500);
 			if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
 				if (portId.getName().equals(address)) {
-					//TODO: mirar si podemos salir del bucle con un continue
-					portFound = true;	
+					//TODO: mirar si aqui podriamos salir del bucle con un continue
+					portFound = true;
 				}
 			}
 		}
@@ -190,11 +179,14 @@ public class RXTXBased_RS232Interface_Component extends InstrumentComponent impl
 		logger.info(" ............ Found port: "+address);
 		//portId es el identificador del puerto que buscamos
 		return portId;
+		
 	 }
-	
+	 
+	 
 	 /**
 	  *
 	  */
+	 
 	 public void serialEvent(SerialPortEvent event) {
 
 		switch (event.getEventType()) {
@@ -219,71 +211,32 @@ public class RXTXBased_RS232Interface_Component extends InstrumentComponent impl
 			//logger.debug("Output buffer is empty.");
 		case SerialPortEvent.DATA_AVAILABLE:
 			this.txOK = false;
-			this.readBuffer = new StringBuffer();
-			int c;
-            try {
-                 while ((c=this.inputStream.read()) != 10){
-                   if(c!=13)  this.readBuffer.append((char) c);
-                 }
-                 this.receivedData = this.readBuffer.toString();
-                 this.inputStream.close();
-                 this.txOK = true;
-            } catch (IOException e) {}
-
-            break;
+			byte[] readBuffer = new byte[256];
+		    try
+		    {
+				while (this.inputStream.available() > 0) {
+				    int numBytes = this.inputStream.read(readBuffer);
+				    for (int i=0;i<numBytes;i++){
+				    	byte b = readBuffer[i];
+						this.buffer[this.bufferPointer+i]=b;
+						if (b==10){
+							this.bufferPointer = 0;
+							this.txOK = true;
+						}
+					}
+				    this.bufferPointer = this.bufferPointer + numBytes;
+				}
+		    } catch (IOException e) {}
+		    break;
 		}
 	 }
-	 
-	 /*
-	 public void serialEvent(SerialPortEvent event) {
-
-			switch (event.getEventType()) {
-
-			case SerialPortEvent.BI:
-				//logger.debug("Break interrupt.");
-			case SerialPortEvent.OE:
-				//logger.debug("Overrun error.");
-			case SerialPortEvent.FE:
-				//logger.debug("Framing error.");
-			case SerialPortEvent.PE:
-				//logger.debug("Parity error.");
-			case SerialPortEvent.CD:
-				logger.debug("Carrier detect.");
-			case SerialPortEvent.CTS:
-				//logger.debug("Clear to send.");
-			case SerialPortEvent.DSR:
-				//logger.debug("Data set ready.");
-			case SerialPortEvent.RI:
-				//logger.debug("Ring indicator.");
-			case SerialPortEvent.OUTPUT_BUFFER_EMPTY:
-				//logger.debug("Output buffer is empty.");
-			case SerialPortEvent.DATA_AVAILABLE:
-				this.txOK = false;
-				byte[] readBuffer = new byte[256];
-			    try
-			    {
-					while (this.inputStream.available() > 0) {
-					    int numBytes = this.inputStream.read(readBuffer);
-					    for (int i=0;i<numBytes;i++){
-					    	byte b = readBuffer[i];
-							this.buffer[this.bufferPointer+i]=b;
-							if (b==10){
-								this.bufferPointer = 0;
-								this.txOK = true;
-							}
-						}
-					    this.bufferPointer = this.bufferPointer + numBytes;
-					}
-			    } catch (IOException e) {}
-			    break;
-			}
-		 }*/
 
 	 private void waitForIncomingData() throws Exception{
 		 while (!this.txOK){Thread.sleep(50);}
 		 this.txOK = false;
 	 }
-	 
+
+
 	 //**************************************************************************
 	 //****************************SETTERS***************************************
 	 //**************************************************************************
@@ -300,47 +253,61 @@ public class RXTXBased_RS232Interface_Component extends InstrumentComponent impl
 		 //serialPort.setRTS(false);
 	 }
 	 
+	 
 
 	 //**************************************************************************
 	 //****************************GETTERS***************************************
 	 //**************************************************************************
 
-
 	 /**
 	  * Permite obtener el flujo de datos de entrada del puerto serie
 	  * para poder leer datos provenientes de este.
 	  * @return
-	 * @throws IOException 
 	  */
-	 private InputStream getPortInputStream() throws IOException{
+	 private InputStream getPortInputStream(){
 		 InputStream is = null;
-		 is = this.serialPort.getInputStream();
+		 try {
+			is = this.serialPort.getInputStream();
+		 } catch (IOException e) {}
 		 return is;
 	 }
 	 /**
 	  * Permite obtener el flujo de datos de entrada del puerto serie
 	  * para poder leer datos provenientes de este.
 	  * @return
-	 * @throws IOException 
 	  */
-	 private OutputStream getPortOutputStream() throws IOException{
+	 private OutputStream getPortOutputStream(){
 		 OutputStream os = null;
-		 os = this.serialPort.getOutputStream();
+		 try {
+			 os = this.serialPort.getOutputStream();
+		 } catch (IOException e) {}
 		 return os;
 	 }
-
-	 //**************************************************************************
-	 //****************************OTHER METHODS*********************************
-	 //**************************************************************************
-
-	 private String readDataAsString() throws Exception{
-		 String copy = new String(receivedData);
-		 receivedData = "";
-		 return copy;
-	 }
 	 
+	@Override
+	public String getType() throws Exception {
+		// TODO Auto-generated method stub
+		return this.type;
+	}
+
+	@Override
+	public String getAddress() {
+		return this.address;
+	}
+
+	@Override
+	public void setAddress(String address) throws Exception {
+		this.address = address;
+	}
+	
+	@Override
+	public String getStandard() throws Exception {
+		return this.standard;
+	}
+	
+	
 	 //**************************************************************************
-	 //*********************COMM_PORT_I INTERFACE METHODS************************
+	 //***************************INTERFACES METHODS*****************************
 	 //**************************************************************************
 	 
 	 /**
@@ -349,13 +316,17 @@ public class RXTXBased_RS232Interface_Component extends InstrumentComponent impl
 	  */
 	 @Override
 	 public void open() throws Exception {	
+		 
 		if (portId.isCurrentlyOwned())
 		{
 			logger.info("Port "+portId.getName() + " currently owned"+" by"+portId.getCurrentOwner());
+			logger.info("Going to close the port....");
+			this.serialPort.close();
 		}else
 		{
 			this.serialPort = (SerialPort) portId.open("RS232_PortApp", 2000); //SimpleReadApp
-		}			
+		}
+					
 	 }
 	 
 	 /**
@@ -365,10 +336,8 @@ public class RXTXBased_RS232Interface_Component extends InstrumentComponent impl
 	 @Override
 	 public void close() throws Exception {
 		 Thread.sleep(2000);  // Be sure data is xferred before closing
-		 logger.info("Closing the port ");
-		 serialPort.close();
+		 this.serialPort.close();
 	 }
-	 
 	 
 	/**
 	 * Get last income data (the newest arrived data)
@@ -380,10 +349,9 @@ public class RXTXBased_RS232Interface_Component extends InstrumentComponent impl
 	 */
 	@Override
 	public byte[] read() throws Exception{
-		this.open();
 		Thread.sleep(this.readWaitTime);
 		this.waitForIncomingData();
-		return this.readDataAsString().getBytes();
+		return buffer;
 	}
 
 	/**
@@ -395,9 +363,6 @@ public class RXTXBased_RS232Interface_Component extends InstrumentComponent impl
 	 */
 	@Override
 	public void write(String data) throws Exception{
-		this.open();
-		//logger.debug("\n"+"Writing \""+message+"\" to "+serialPort.getPortName());
-		//logger.debug("\n"+"Writing \""+message+"\" to "+serialPort.getName());
 		Thread.sleep(this.writeWaitTime);
 		outputStream.write((data + this.terminator).getBytes());
 	}
@@ -416,18 +381,20 @@ public class RXTXBased_RS232Interface_Component extends InstrumentComponent impl
 		this.write(query);
 		return this.read();
 	}
+
 	
 	//**************************************************************************
 	//****************************VERSION***************************************
 	//**************************************************************************
-		
+	
 	public static int getVersion() {
 		return classVersion;
 	}
 
-
+	 
 	 //**************************************************************************
 	 //****************************TESTING***************************************
 	 //**************************************************************************
-	
+	 
+
 }

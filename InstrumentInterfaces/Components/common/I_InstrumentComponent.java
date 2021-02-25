@@ -5,6 +5,7 @@ package common;
 
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Clase que modela el concepto de componente de un instrumento cualquiera que pueda usarse en cualquier laboratorio.
@@ -31,11 +32,11 @@ public interface I_InstrumentComponent{
 	I_InstrumentComponent getParentInstrument() throws Exception;
 	 
 	//Components
-	void addInstrumentSubComponent(I_InstrumentComponent iC) throws Exception;
-	void deleteInstrumentComponent(I_InstrumentComponent iC) throws Exception;
-	void deleteInstrumentComponent(String name) throws Exception;
-	I_InstrumentComponent getInstrumentComponent(String name) throws Exception;
-	ArrayList<I_InstrumentComponent> getAllSubComponents() throws Exception;
+	void addSubComponent(I_InstrumentComponent iC) throws Exception;
+	I_InstrumentComponent removeSubComponent(String componentName) throws Exception;
+	void removeAllSubComponent() throws Exception;
+	I_InstrumentComponent getSubComponent(String componentName) throws Exception;
+	HashMap<String, I_InstrumentComponent> getAllSubComponents() throws Exception;
 
 	//state
 	void enable(boolean enable) throws Exception;

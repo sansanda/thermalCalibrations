@@ -4,7 +4,7 @@
 package communications;
 
 import java.util.ArrayList;
-
+import java.util.HashMap;
 import java.util.Iterator;
 
 import collections.OnlyOneSelected_InstrumentComponentList;
@@ -42,12 +42,12 @@ public class CommunicationsModuleComponent extends InstrumentComponent implement
 	 * @param name
 	 * @param id
 	 * @param descriptiveTags
-	 * @param components
+	 * @param subComponents
 	 * @param parent
 	 */
 	public CommunicationsModuleComponent(String name, long id, ArrayList<String> descriptiveTags,
-			ArrayList<I_InstrumentComponent> components, I_InstrumentComponent parent) {
-		super(name, id, descriptiveTags, components, parent);
+			HashMap<String,I_InstrumentComponent> subComponents, I_InstrumentComponent parent) {
+		super(name, id, descriptiveTags, subComponents, parent);
 		this.communicationInterfaces = new OnlyOneSelected_InstrumentComponentList();
 	}
 
@@ -94,6 +94,16 @@ public class CommunicationsModuleComponent extends InstrumentComponent implement
 		return this.getActiveInterface().getStandard();
 	}
 
+	@Override
+	/**
+	 * Devuelve el tipo de la interface de comunicaciones activa.
+	 * Por ejemplo, pueden ser serial, parallel, etc...
+	 */
+	public String getType() throws Exception {
+		this.checkActiveInterface();
+		return this.getActiveInterface().getType();
+	}
+	
 	@Override
 	/**
 	 * Devuelve la dirección de la interface de comunicaciones activa en el momento de hacer la llamada

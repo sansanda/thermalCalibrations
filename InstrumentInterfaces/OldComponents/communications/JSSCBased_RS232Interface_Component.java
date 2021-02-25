@@ -32,6 +32,7 @@ public class JSSCBased_RS232Interface_Component extends InstrumentComponent impl
 	 //****************************VARIABLES*************************************
 	 //**************************************************************************
 
+	 private String 					type = null;
 	 private String						standard = null;
 	 private String 					address = null;
 	 private SerialPort		      		serialPort;
@@ -62,6 +63,7 @@ public class JSSCBased_RS232Interface_Component extends InstrumentComponent impl
 			 String name, 
 			 long id, 
 			 I_InstrumentComponent parent,
+			 String type,
 			 String standard,
 			 String address, 
 			 int baudRate, 
@@ -74,6 +76,7 @@ public class JSSCBased_RS232Interface_Component extends InstrumentComponent impl
 			 
 		 super(name, id, parent);
 		 
+		 this.type = type;
 		 this.standard = standard;
 		 this.address = address;
 		 
@@ -92,6 +95,12 @@ public class JSSCBased_RS232Interface_Component extends InstrumentComponent impl
 	 //****************************METODOS***************************************
 	 //**************************************************************************
 
+	@Override
+	public String getType() throws Exception {
+		// TODO Auto-generated method stub
+		return this.type;
+	}
+	 
 	@Override
 	public String getAddress() {
 		return address;

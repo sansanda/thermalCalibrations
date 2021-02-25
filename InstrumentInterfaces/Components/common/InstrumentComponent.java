@@ -6,7 +6,7 @@ package common;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
-
+import java.util.HashMap;
 import java.util.Iterator;
 
 /**
@@ -15,18 +15,22 @@ import java.util.Iterator;
  */
 public abstract class InstrumentComponent implements I_InstrumentComponent, Comparable<I_InstrumentComponent>{
 
-	private static final int classVersion = 100;
+	//version 101:  change subcomponents container for working with a hashmap intead of an arraylist
+	//				also we have changed related methods
+	
+	private static final int classVersion = 101;
 	
 	protected String name;
 	protected long id;
 	protected boolean enable;
 	protected boolean selected;
 	protected ArrayList<String> descriptiveTags;
-	protected ArrayList<I_InstrumentComponent> subcomponents;
+	protected HashMap<String,I_InstrumentComponent> subcomponents;
 	protected I_InstrumentComponent parent;
 	private PropertyChangeSupport support;
 
 	public InstrumentComponent(String name, long id, I_InstrumentComponent parent) {
+		
 		super();
 		this.name = name;
 		this.id = id;
@@ -34,13 +38,13 @@ public abstract class InstrumentComponent implements I_InstrumentComponent, Comp
 		this.selected = false;
 		this.descriptiveTags = new ArrayList<String>();
 		this.descriptiveTags.add(name);
-		this.subcomponents = new ArrayList<I_InstrumentComponent>();
+		this.subcomponents = new HashMap<String,I_InstrumentComponent>();
 		this.parent = parent;
 		this.support = new PropertyChangeSupport(this);
 	}
 	
 	public InstrumentComponent(String name, long id, ArrayList<String> descriptiveTags,
-			ArrayList<I_InstrumentComponent> subcomponents, I_InstrumentComponent parent) {
+			HashMap<String,I_InstrumentComponent> subcomponents, I_InstrumentComponent parent) {
 		super();
 		this.name = name;
 		this.id = id;
@@ -143,55 +147,41 @@ public abstract class InstrumentComponent implements I_InstrumentComponent, Comp
 	}
 
 	@Override
-	public void addInstrumentSubComponent(I_InstrumentComponent iC) throws Exception {
+	public void addSubComponent(I_InstrumentComponent iC) throws Exception {
 		if (this.subcomponents == null) 
 		{
-			this.subcomponents = new ArrayList<I_InstrumentComponent>();
+			this.subcomponents = new HashMap<String,I_InstrumentComponent>();
 		}
-		this.subcomponents.add(iC);
-	}
-
-	@Override
-	public void deleteInstrumentComponent(I_InstrumentComponent iC) throws Exception {
-		if (this.subcomponents != null) 
-		{
-			this.subcomponents.remove(iC);
-		}		
+		this.subcomponents.put(iC.getName(), iC);
 	}
 	
 	@Override
-	public void deleteInstrumentComponent(String name) throws Exception {
-		if (this.subcomponents != null) 
-		{
-			Iterator<I_InstrumentComponent> it = this.subcomponents.iterator();
-			while (it.hasNext()) {
-				I_InstrumentComponent c = it.next();
-				if (c.getName().contentEquals(name)) this.subcomponents.remove(c);
-			}
-		}	
+	public I_InstrumentComponent removeSubComponent(String componentName) throws Exception {
+		I_InstrumentComponent removedComponent = null;
+		if (this.subcomponents != null) removedComponent = this.subcomponents.remove(componentName);
+		return removedComponent;
 	}
 	
 	@Override
-	public I_InstrumentComponent getInstrumentComponent(String name) throws Exception {
-		if (this.subcomponents != null) 
-		{
-			Iterator<I_InstrumentComponent> it = this.subcomponents.iterator();
-			while (it.hasNext()) {
-				I_InstrumentComponent c = it.next();
-				if (c.getName().contentEquals(name)) return c;
-			}
-		}	
-		return null;
+	public void removeAllSubComponent() throws Exception {
+		if (this.subcomponents != null) this.subcomponents.clear();
+	}
+	
+	@Override
+	public I_InstrumentComponent getSubComponent(String componentName) throws Exception {
+		I_InstrumentComponent obtainedComponent = null;
+		if (this.subcomponents != null) obtainedComponent = this.subcomponents.get(componentName);
+		return obtainedComponent;
 	}
 
 	@Override
-	public ArrayList<I_InstrumentComponent> getAllSubComponents() throws Exception {
+	public HashMap<String, I_InstrumentComponent> getAllSubComponents() throws Exception {
 		return this.subcomponents;
 	}
 
 	@Override
 	public int compareTo(I_InstrumentComponent component) {
-		if (this.name.equals(component.getName()) && this.id==component.getId()) return 0;
+		if (this.name.equals(component.getName())) return 0;
 		else return -1;
 	}
 
