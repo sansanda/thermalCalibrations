@@ -5,6 +5,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
@@ -13,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 
 import common.AbstractInstrumentComponentList;
 import common.I_InstrumentComponent;
+import common.InstrumentComponent;
 import testing.Components_Test;
 
 /**
@@ -22,109 +24,59 @@ import testing.Components_Test;
  * @author david
  *
  */
-public class OnlyOneSelected_InstrumentComponentList extends AbstractInstrumentComponentList implements PropertyChangeListener{
+public class OnlyOneSelected_InstrumentComponentList extends InstrumentComponent implements PropertyChangeListener{
 	
-
+	//version 103: 	Vaersion 103 donde se evita extender de ArrayList y se pasa a extender InstrumentComponent para trabajar 
+	//				según la filosofia de subcomponentes
+	
 	final static Logger logger = LogManager.getLogger(OnlyOneSelected_InstrumentComponentList.class);
-	public static final int classVersion = 102;
+	public static final int classVersion = 103;
 	private static final long serialVersionUID = 1L;
 	private I_InstrumentComponent selectedComponent = null;
+	
 
-	public OnlyOneSelected_InstrumentComponentList() {
-		super();
+	public OnlyOneSelected_InstrumentComponentList(String name, long id, I_InstrumentComponent parent) {
+		super(name, id, parent);
 	}
 
-	@Override
 	/**
 	 * Añade un componente a la lista. Previamente cambia su estado a select = false
+	 * Después de añadir el componente realiza una actualización del los componentes de la lista para 
+	 * poder mantenerla según la pólitica only one selected.
+	 * Es importante seleccionar un nombre adecuado para el componente que se va a añadir ya que 
+	 * dicho nombre será referencia a la hora de buscarlo.
 	 */
-	public boolean add(I_InstrumentComponent c) {
+	
+	public void addCompoent(I_InstrumentComponent c) throws Exception{
 		this.setSelected(c, false);
-		boolean result = super.add(c);
-		this.updateListState();
-		return result;
-	}
-
-	@Override
-	public void add(int index, I_InstrumentComponent c) {
-		this.setSelected(c, false);
-		super.add(index, c);
+		this.addSubComponent(c);
 		this.updateListState();
 	}
 
-	@Override
-	public boolean addAll(Collection<? extends I_InstrumentComponent> list) {
-		list.forEach((c) -> {this.setSelected(c, false);});
-		boolean result = super.addAll(list);
-		this.updateListState();
-		return result;
+	/**
+	 * Elimina un componente a la lista. 
+	 * Después de eliminar el componente realiza una actualización del los componentes de la lista para 
+	 * poder mantenerla según la pólitica only one selected.
+	 * @param String componentName con el nombre del componente que se desea eliminar de la lista
+	 * @return Una referencia al componente eliminado de la lista, null en caso que el componente no exista en la lista
+	 */
+	
+	public I_InstrumentComponent removeComponent(String componentName) throws Exception {
+		I_InstrumentComponent removedComponent = this.removeSubComponent(componentName);
+		if (removedComponent!= null)
+		{
+			removedComponent.removePropertyChangeListener(this);
+			this.updateListState();
+		}
+		
+		return removedComponent;
 	}
 
-	@Override
-	public boolean addAll(int index, Collection<? extends I_InstrumentComponent> list) {
-		list.forEach((c) -> {this.setSelected(c, false);});
-		boolean result = super.addAll(index,list);
-		this.updateListState();
-		return result;
-	}
-
-	@Override
-	public I_InstrumentComponent remove(int index) {
-		I_InstrumentComponent c = super.remove(index);
-		c.removePropertyChangeListener(this);
-		this.updateListState();
-		return c;
-	}
-
-	@Override
-	public boolean remove(Object o) {
-		((I_InstrumentComponent)o).removePropertyChangeListener(this);
-		boolean result = super.remove(o);
-		this.updateListState();
-		return result;
-	}
-
-	@Override
-	public boolean removeAll(Collection<?> list) {
-		list.forEach((c) -> {((I_InstrumentComponent) c).removePropertyChangeListener(this);});
-		boolean result = super.removeAll(list);
-		this.updateListState();
-		return result;
-	}
-
-	@Override
-	public boolean removeIf(Predicate<? super I_InstrumentComponent> filter) {
-		boolean result = super.removeIf(filter);
-		this.updateListState();
-		return result;
-	}
-
-	@Override
-	protected void removeRange(int fromIndex, int toIndex) {
-		super.removeRange(fromIndex, toIndex);
+	public void removeAllComponents() throws Exception {
+		this.removeAllSubComponent();
 		this.updateListState();
 	}
 
-	@Override
-	public void replaceAll(UnaryOperator<I_InstrumentComponent> operator) {
-		super.replaceAll(operator);
-		this.updateListState();
-	}
-
-	@Override
-	public boolean retainAll(Collection<?> c) {
-		boolean result = super.retainAll(c);
-		this.updateListState();
-		return result;
-	}
-
-	@Override
-	public I_InstrumentComponent set(int index, I_InstrumentComponent newComponent) {
-		this.setSelected(newComponent, false);
-		I_InstrumentComponent replacedComponent = super.set(index, newComponent);
-		this.updateListState();
-		return replacedComponent;
-	}
 
 	/**
 	 * Retorna el elemento de la lista que actualmente esta en estado selected.
@@ -173,21 +125,24 @@ public class OnlyOneSelected_InstrumentComponentList extends AbstractInstrumentC
 		//logger.info("Ajustando la lista....... ");
 		
 		try {
-			if (this.isEmpty()) 
+			if (this.subcomponents.isEmpty()) 
 			{
 				logger.info("La lista está vacia. No es necesario ajustar la lista.");
 				return;
 			}
-			else if (!hasOneComponentSelected(this)) 
+			else if (!hasOneComponentSelected()) 
 			{
 				logger.info("La lista no tiene un componente en estado selected. Procediendo a ajustar la lista. ");
 				//Aqui el orden de las operaciones es importante especialmente en el caso que el 
 				//actual componente y el nuevo componente a seleccionar sean el mismo
-				this.setSelectedComponent(this.get(0));
-				this.setSelected(this.get(0), true);
+				
+				Iterator<Entry<String, I_InstrumentComponent>> it = this.subcomponents.entrySet().iterator();
+				I_InstrumentComponent c = it.next().getValue();
+				this.setSelectedComponent(c);
+				this.setSelected(c, true);
 				
 			}
-			else if (hasOnlyOneComponentSelected(this)) 
+			else if (hasOnlyOneComponentSelected()) 
 			{
 				logger.info("La lista solo tiene un componente en estado selected. No es necesario ajustar la lista. ");
 				return;
@@ -217,24 +172,34 @@ public class OnlyOneSelected_InstrumentComponentList extends AbstractInstrumentC
 	private void setOnlyOneComponentSelectedInList() throws Exception
 	{
 		
-		if (this.isEmpty()) return;
+		if (this.subcomponents.isEmpty()) return;
 		
 		boolean alreadyOneComponentFoundAsSelected = false;
-		Iterator<? extends I_InstrumentComponent> it = this.iterator();
+		
+		Iterator<Entry<String, I_InstrumentComponent>> it = this.subcomponents.entrySet().iterator();
+		
+		
 		while (it.hasNext())
 		{
-			I_InstrumentComponent c = it.next();
+			Entry<String, I_InstrumentComponent> entryPair = it.next();
+			
+			I_InstrumentComponent c = entryPair.getValue();
+			
 			if (c.isSelected() & !alreadyOneComponentFoundAsSelected) alreadyOneComponentFoundAsSelected = true;
 			else if (c.isSelected() & alreadyOneComponentFoundAsSelected) 
 			{
 				this.setSelected(c, false);
 			}
 		}
+		
 		//si hemos llegado aqui y se cumple la condicion es porque no hay ningún compoenente en estado selected y la lista no está vacia
+		
 		if (!alreadyOneComponentFoundAsSelected)
 		{
-			this.setSelected(this.get(0), true);
-			this.setSelectedComponent(this.get(0));
+			it = this.subcomponents.entrySet().iterator();
+			I_InstrumentComponent c = it.next().getValue();
+			this.setSelected(c, true);
+			this.setSelectedComponent(c);
 		}
 	}
 	
@@ -243,13 +208,17 @@ public class OnlyOneSelected_InstrumentComponentList extends AbstractInstrumentC
 	 * @return true si uno y solo uno de todos de los componentes de la lista está esn estado selected , false otherwise. 
 	 * @throws Exception
 	 */
-	public static boolean hasOnlyOneComponentSelected(Collection<? extends I_InstrumentComponent> list) throws Exception
+	private boolean hasOnlyOneComponentSelected() throws Exception
 	{
 		boolean alreadyOneComponentFoundAsSelected = false;
-		Iterator<? extends I_InstrumentComponent> it = list.iterator();
+		
+		Iterator<Entry<String, I_InstrumentComponent>> it = this.subcomponents.entrySet().iterator();
+		
 		while (it.hasNext())
 		{
-			I_InstrumentComponent c = it.next();
+			Entry<String, I_InstrumentComponent> entryPair = it.next();
+			
+			I_InstrumentComponent c = entryPair.getValue();
 			if (c.isSelected() & !alreadyOneComponentFoundAsSelected) alreadyOneComponentFoundAsSelected = true;
 			else if (c.isSelected() & alreadyOneComponentFoundAsSelected) return false;
 		}
@@ -263,12 +232,15 @@ public class OnlyOneSelected_InstrumentComponentList extends AbstractInstrumentC
 	 * @return true if finds a component of the list that is selected, false otherwise. 
 	 * @throws Exception
 	 */
-	public static boolean hasOneComponentSelected(Collection<? extends I_InstrumentComponent> list) throws Exception
+	private boolean hasOneComponentSelected() throws Exception
 	{
-		Iterator<? extends I_InstrumentComponent> it = list.iterator();
+		Iterator<Entry<String, I_InstrumentComponent>> it = this.subcomponents.entrySet().iterator();
+		
 		while (it.hasNext())
 		{
-			if (it.next().isSelected()) return true;
+			Entry<String, I_InstrumentComponent> entryPair = it.next();
+			
+			if (entryPair.getValue().isSelected()) return true;
 		}
 		return false;
 	}
@@ -300,7 +272,7 @@ public class OnlyOneSelected_InstrumentComponentList extends AbstractInstrumentC
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("OnlyOneSelected_InstrumentComponentList:\n");
-		this.forEach((c) -> {builder.append(c.toString()).append("\n");});
+		builder.append(super.toString());
 		return builder.toString();
 	}
 	

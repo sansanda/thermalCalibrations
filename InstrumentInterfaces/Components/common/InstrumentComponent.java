@@ -16,7 +16,7 @@ import java.util.Iterator;
 public abstract class InstrumentComponent implements I_InstrumentComponent, Comparable<I_InstrumentComponent>{
 
 	//version 101:  change subcomponents container for working with a hashmap intead of an arraylist
-	//				also we have changed related methods
+	//				also we have changed related methods and I_InstrumentComponent interface
 	
 	private static final int classVersion = 101;
 	
