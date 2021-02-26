@@ -101,7 +101,7 @@ public class RS232Interface_Component extends InstrumentComponent implements I_C
 	 //****************************METODOS ESTATICOS*****************************
 	 //**************************************************************************
 	 
-	 public static I_InstrumentComponent parseFromJSON(String filename) throws Exception
+	 public static RS232Interface_Component parseFromJSON(String filename) throws Exception
 	 {
 		 //JSON parser object to parse read file
 		 JSONParser jsonParser = new JSONParser();
@@ -408,5 +408,27 @@ public class RS232Interface_Component extends InstrumentComponent implements I_C
 		this.write(query);
 		return this.read();
 	}
+
+	@Override
+	public String toString() {
+		
+		StringBuilder builder = new StringBuilder();
+		
+		builder.append("\n\n ***************** RS232Interface_Component Instance Description ****************** \n");
+		builder.append(" [type = ").append(type);
+		builder.append(", standard = ").append(standard);
+		builder.append(", address = ").append(address);
+		builder.append(", serialPort = ").append(serialPort);
+		builder.append(", BUFFER_LENGTH = ").append(BUFFER_LENGTH);
+		builder.append(", terminator ascii code = ").append((int)terminator.toCharArray()[0]);
+		builder.append(", writeWaitTime = ").append(writeWaitTime);
+		builder.append(", readWaitTime = ").append(readWaitTime);
+		builder.append(", ").append(super.toString()).append("]\n");
+		
+		return builder.toString();
+		
+	}
+	
+	
 	
 }

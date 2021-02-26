@@ -37,6 +37,7 @@ public interface I_InstrumentComponent{
 	void removeAllSubComponent() throws Exception;
 	I_InstrumentComponent getSubComponent(String componentName) throws Exception;
 	HashMap<String, I_InstrumentComponent> getAllSubComponents() throws Exception;
+	boolean hasSubcomponents() throws Exception;
 
 	//state
 	void enable(boolean enable) throws Exception;

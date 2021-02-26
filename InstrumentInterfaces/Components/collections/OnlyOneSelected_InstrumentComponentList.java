@@ -47,7 +47,7 @@ public class OnlyOneSelected_InstrumentComponentList extends InstrumentComponent
 	 * dicho nombre será referencia a la hora de buscarlo.
 	 */
 	
-	public void addCompoent(I_InstrumentComponent c) throws Exception{
+	public void addComponent(I_InstrumentComponent c) throws Exception{
 		this.setSelected(c, false);
 		this.addSubComponent(c);
 		this.updateListState();
@@ -271,10 +271,17 @@ public class OnlyOneSelected_InstrumentComponentList extends InstrumentComponent
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("OnlyOneSelected_InstrumentComponentList:\n");
-		builder.append(super.toString());
+		builder.append("OnlyOneSelected_InstrumentComponentList [selectedComponent=").append(selectedComponent)
+				.append(", name=").append(name).append(", id=").append(id).append(", enable=").append(enable)
+				.append(", selected=").append(selected).append(", descriptiveTags=").append(descriptiveTags)
+				.append(", subcomponents=").append(subcomponents).append(", parent=").append(parent).append("]");
 		return builder.toString();
 	}
+
+	
+
+	
+	
 	
 	
 	

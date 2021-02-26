@@ -18,7 +18,9 @@ import common.I_InstrumentComponent;
 public interface I_CommunicationsModule{
 	
 	void addInterface(I_InstrumentComponent commInterface) throws Exception;
-	void removeInterface(I_CommunicationsInterface commInterface) throws Exception;
+	
+	I_InstrumentComponent removeInterface(String componentName) throws Exception;
+	
 	I_CommunicationsInterface getInterface(String standard) throws Exception;
 	I_CommunicationsInterface getActiveInterface() throws Exception;
 }

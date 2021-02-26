@@ -8,6 +8,7 @@ import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * @author david
@@ -168,6 +169,10 @@ public abstract class InstrumentComponent implements I_InstrumentComponent, Comp
 	}
 	
 	@Override
+	/**
+	 * Devuelve el subComponente identificado (nombre) por el String del parámetro de entrada
+	 * @return el subcomponente con dicho nombre o null si no existe
+	 */
 	public I_InstrumentComponent getSubComponent(String componentName) throws Exception {
 		I_InstrumentComponent obtainedComponent = null;
 		if (this.subcomponents != null) obtainedComponent = this.subcomponents.get(componentName);
@@ -177,6 +182,14 @@ public abstract class InstrumentComponent implements I_InstrumentComponent, Comp
 	@Override
 	public HashMap<String, I_InstrumentComponent> getAllSubComponents() throws Exception {
 		return this.subcomponents;
+	}
+	
+	@Override
+	/**
+	 * @return true si el componente tiene subcomponentes, false en caso contrario.
+	 */
+	public boolean hasSubcomponents() throws Exception {
+		return !this.subcomponents.isEmpty();
 	}
 
 	@Override
@@ -195,11 +208,27 @@ public abstract class InstrumentComponent implements I_InstrumentComponent, Comp
     
 	@Override
 	public String toString() {
+				
 		StringBuilder builder = new StringBuilder();
-		builder.append("InstrumentComponent [name=").append(name).append(", id=").append(id).append(", enable=")
-				.append(enable).append(", selected=").append(selected).append(", descriptiveTags=")
-				.append(descriptiveTags).append(", subcomponents=").append(subcomponents).append(", parent=")
-				.append(parent).append("]");
+		
+		builder.append("\n\n ***************** InstrumentComponent Instance Description *********************** \n");
+		builder.append(" [name = ").append(name);
+		builder.append(", id = ").append(id);
+		builder.append(", enable = ").append(enable);
+		builder.append(", selected = ").append(selected);
+		builder.append(", descriptiveTags = ").append(descriptiveTags);
+		
+		builder.append("\n, subcomponents = ");
+		
+		Iterator it = subcomponents.entrySet().iterator();
+	    while (it.hasNext()) {
+	        Map.Entry entry = (Map.Entry)it.next();
+	        builder.append(((InstrumentComponent)entry.getValue()).getName() + " -- ");
+	    }
+		
+	    builder.delete(builder.length()-4, builder.length());
+		builder.append("\n, parent = ").append(parent).append("]");
+		
 		return builder.toString();
 	}
 

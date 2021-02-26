@@ -5,7 +5,9 @@ package communications;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import collections.OnlyOneSelected_InstrumentComponentList;
 import common.I_InstrumentComponent;
@@ -24,18 +26,30 @@ import common.InstrumentComponent;
  */
 public class CommunicationsModuleComponent extends InstrumentComponent implements I_CommunicationsModule, I_CommunicationsInterface{
 
-	private static final int classVersion = 103;
+	//version 102: CommunicationsModuleComponent implements I_CommunicationsInterface so it will act as a CommunicationsInterface bypassing
+	//version 102: all the I_CommunicationsInterface calls to the respective active interface (subcomponents)
+	//version 103: prevent the calls on communications module component with any interface added (new private method checkActiveInterface())
+	//version 104: remove communication_interfaces_list as attribute of CommunicationsModuleComponent and added as subcomponent
 	
-	private OnlyOneSelected_InstrumentComponentList communicationInterfaces = null;
+	private static final int classVersion = 104;
+	final static Logger logger = LogManager.getLogger(CommunicationsModuleComponent.class);
+	
+	private final String COMMUNICATION_INTERFACES_LIST_NAME = "communication_interfaces_list";
 	
 	/**
 	 * @param name
 	 * @param id
 	 * @param parent
+	 * @throws Exception 
 	 */
-	public CommunicationsModuleComponent(String name, long id, I_InstrumentComponent parent) {
+	public CommunicationsModuleComponent(String name, long id, I_InstrumentComponent parent) throws Exception {
+		
 		super(name, id, parent);
-		this.communicationInterfaces = new OnlyOneSelected_InstrumentComponentList();
+		//communication_interfaces_list es un contenedor subcomponente de this que albergará todas las communication interfaces añadidas 
+		super.addSubComponent( new OnlyOneSelected_InstrumentComponentList(COMMUNICATION_INTERFACES_LIST_NAME, 
+																					System.currentTimeMillis(), 
+																					this));
+
 	}
 
 	/**
@@ -44,46 +58,46 @@ public class CommunicationsModuleComponent extends InstrumentComponent implement
 	 * @param descriptiveTags
 	 * @param subComponents
 	 * @param parent
+	 * @throws Exception 
 	 */
 	public CommunicationsModuleComponent(String name, long id, ArrayList<String> descriptiveTags,
-			HashMap<String,I_InstrumentComponent> subComponents, I_InstrumentComponent parent) {
+			HashMap<String,I_InstrumentComponent> subComponents, I_InstrumentComponent parent) throws Exception {
+		
 		super(name, id, descriptiveTags, subComponents, parent);
-		this.communicationInterfaces = new OnlyOneSelected_InstrumentComponentList();
+		//communication_interfaces_list es un contenedor subcomponente de this que albergará todas las communication interfaces añadidas 
+		super.addSubComponent( new OnlyOneSelected_InstrumentComponentList(COMMUNICATION_INTERFACES_LIST_NAME, 
+																					System.currentTimeMillis(), 
+																					this));
+		
 	}
 
 	@Override
 	public void addInterface(I_InstrumentComponent commInterface) throws Exception {	
-		I_CommunicationsInterface ci = this.hasInterface(((I_CommunicationsInterface)commInterface).getStandard());
-		if (ci!=null) this.removeInterface(ci);
-		this.communicationInterfaces.add(commInterface);
+		if (commInterface instanceof I_CommunicationsInterface) 
+		{
+			//si la interface existe entonces primero la borramos
+			if (this.getInterface(commInterface.getName())!=null) this.removeInterface(commInterface.getName());
+			//añadimos la interface a la estructura de datos
+			((OnlyOneSelected_InstrumentComponentList) this.getSubComponent(COMMUNICATION_INTERFACES_LIST_NAME)).addComponent(commInterface);
+		}
+		else throw new Exception("The component to remove must implement I_CommunicationsInterface ");
 	}
 
 	@Override
-	public void removeInterface(I_CommunicationsInterface commInterface) throws Exception{
-		this.communicationInterfaces.remove(commInterface);
+	public I_InstrumentComponent removeInterface(String componentName) throws Exception{
+		return ((OnlyOneSelected_InstrumentComponentList) this.getSubComponent(COMMUNICATION_INTERFACES_LIST_NAME)).removeComponent(componentName);
 	}
-
+	
 	@Override
-	public I_CommunicationsInterface getInterface(String standard) throws Exception {
-		return this.hasInterface(standard);
+	public I_CommunicationsInterface getInterface(String componentName) throws Exception {
+		return (I_CommunicationsInterface) ((OnlyOneSelected_InstrumentComponentList) this.getSubComponent(COMMUNICATION_INTERFACES_LIST_NAME)).getSubComponent(componentName);
 	}
 
 	@Override
 	public I_CommunicationsInterface getActiveInterface() throws Exception {
-		return (I_CommunicationsInterface) this.communicationInterfaces.getSelectedComponent();
+		return (I_CommunicationsInterface) ((OnlyOneSelected_InstrumentComponentList) this.getSubComponent(COMMUNICATION_INTERFACES_LIST_NAME)).getSelectedComponent();
 	}
 	
-	private I_CommunicationsInterface hasInterface (String standard) throws Exception
-	{
-		Iterator<I_InstrumentComponent> i = this.communicationInterfaces.iterator();
-		I_CommunicationsInterface ci = null;
-		while (i.hasNext())
-		{
-			ci = (I_CommunicationsInterface)i.next();
-			if (ci.getStandard().equals(standard)) return ci;
-		}
-		return null;
-	}
 
 	@Override
 	/**
@@ -186,25 +200,15 @@ public class CommunicationsModuleComponent extends InstrumentComponent implement
 		this.checkActiveInterface();
 		return this.getActiveInterface().ask(query);
 	}
-	
-	
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("CommunicationsModuleComponent [name=").append(name).append(", id=").append(id).append(", enable=").append(enable)
-				.append(", selected=").append(selected).append(",\n descriptiveTags=").append(descriptiveTags)
-				.append(", subcomponents=").append(subcomponents).append(", parent=").append(parent)
-				.append(", communicationInterfaces=").append(communicationInterfaces).append("]");
-		return builder.toString();
-	}
-	
+
 	/**
 	 * Método privado que resuelve si el modulo de comunicaciones dispone de alguna interface.
 	 * @throws Exception en caso de que el módulo no presente ninguna interface de comunicaciones
 	 */
 	private void checkActiveInterface() throws Exception
 	{
-		if (this.communicationInterfaces.isEmpty()) throw new Exception ("No any inteface added in communications module component");
+		OnlyOneSelected_InstrumentComponentList communication_interfaces_list = ((OnlyOneSelected_InstrumentComponentList) this.getSubComponent(COMMUNICATION_INTERFACES_LIST_NAME));
+		if (!communication_interfaces_list.hasSubcomponents()) throw new Exception ("No any inteface added in communications module component");
 	}
 	
 	/**
@@ -214,9 +218,19 @@ public class CommunicationsModuleComponent extends InstrumentComponent implement
 	public static int getClassversion() {
 		return classVersion;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		
+		builder.append("\n\n ************* CommunicationsModuleComponent Instance Description **************** \n");
+		
+		builder.append("[COMMUNICATION_INTERFACES_LIST_NAME = ").append(COMMUNICATION_INTERFACES_LIST_NAME);
+		builder.append(", ").append(super.toString()).append("]\n");
+		
+		return builder.toString();
+	}
 	
-	//version 102: CommunicationsModuleComponent implements I_CommunicationsInterface so it will act as a CommunicationsInterface bypassing
-	//version 102: all the I_CommunicationsInterface calls to the respective active interface (subcomponents)
-	//version 103: prevent the calls on communications module component with any interface added (new private method checkActiveInterface())
+	
 
 }
