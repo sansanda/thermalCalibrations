@@ -9,6 +9,7 @@
 	"databits":8,
 	"stopbits":1,
 	"parity":0,
+	"flowcontrol":0,
 	"terminator":"\n",
 	"writeWaitTime":250,
 	"readWaitTime":0

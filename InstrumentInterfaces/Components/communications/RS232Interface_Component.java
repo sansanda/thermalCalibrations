@@ -75,7 +75,8 @@ public class RS232Interface_Component extends InstrumentComponent implements I_C
 			 int baudRate, 
 			 int nDataBits, 
 			 int nStopBits, 
-			 int parityType, 
+			 int parityType,
+			 int flowControl,
 			 String terminator, 
 			 int writeWaitTime, 
 			 int readWaitTime) throws Exception{
@@ -93,7 +94,9 @@ public class RS232Interface_Component extends InstrumentComponent implements I_C
 		 this.writeWaitTime = writeWaitTime;
 		 this.readWaitTime = readWaitTime;
 		 
-		 this.initialize(address, baudRate, nDataBits, nStopBits, parityType);
+		 this.serialPort = new SerialPort(address);
+				 
+		 this.initialize(baudRate, nDataBits, nStopBits, parityType, flowControl);
 		 
 	 }
 	 
@@ -124,6 +127,7 @@ public class RS232Interface_Component extends InstrumentComponent implements I_C
 				 ((Long)jObj.get("databits")).intValue(), 
 				 ((Long)jObj.get("stopbits")).intValue(), 
 				 ((Long)jObj.get("parity")).intValue(), 
+				 ((Long)jObj.get("flowcontrol")).intValue(), 
 				 (String)jObj.get("terminator"), 
 				 ((Long)jObj.get("writeWaitTime")).intValue(), 
 				 ((Long)jObj.get("readWaitTime")).intValue());
@@ -164,16 +168,20 @@ public class RS232Interface_Component extends InstrumentComponent implements I_C
 	 /**
 	  *
 	  */
-	 private void initialize(String address, int baudRate, int nDataBits, int nStopBits, int parityType)throws Exception{
+	 public void initialize(
+			 int baudRate, 
+			 int nDataBits, 
+			 int nStopBits, 
+			 int parityType,
+			 int flowcontrol) throws Exception{
 
-		this.serialPort = new SerialPort(address); 
 		this.open();
 		this.serialPort.addEventListener(this);/* defined below */
-		
 		this.serialPort.setParams(baudRate,  nDataBits, nStopBits, parityType);
-		
+		this.serialPort.setFlowControlMode(flowcontrol);
 		int mask = SerialPort.MASK_RXCHAR + SerialPort.MASK_CTS + SerialPort.MASK_DSR;
 		this.serialPort.setEventsMask(mask);
+		this.close();
 
 	 }
 	 

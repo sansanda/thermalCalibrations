@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 import common.I_InstrumentComponent;
 import communications.RS232Interface_Component;
 import jssc.SerialPort;
-import testing.CommunicationsModule_Test;
+import testing.Tests;
 
 public class CommunicationInterface_Factory {
 	
@@ -30,7 +30,7 @@ public class CommunicationInterface_Factory {
 	
 	public static ArrayList<String> commInterfaceTypes = new ArrayList<String>(Arrays.asList(GPIB_INTERFACE,RS232_INTERFACE,LAN_INTERFACE));
 
-	final static Logger logger = LogManager.getLogger(CommunicationsModule_Test.class);
+	final static Logger logger = LogManager.getLogger(Tests.class);
 	
 	public static I_InstrumentComponent getCommInterface(String commInterfaceType) throws Exception
 	{
@@ -52,6 +52,7 @@ public class CommunicationInterface_Factory {
 						SerialPort.DATABITS_8,
 						SerialPort.STOPBITS_1, 
 						SerialPort.PARITY_NONE, 
+						SerialPort.FLOWCONTROL_NONE,
 						"\n", 
 						250, 
 						0);

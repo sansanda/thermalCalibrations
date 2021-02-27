@@ -1,10 +1,14 @@
 package information;
 
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.json.simple.parser.JSONParser;
+
 import common.I_InstrumentComponent;
 import common.InstrumentComponent;
+import communications.RS232Interface_Component;
 
 public class GeneralInformation_Component extends InstrumentComponent {
 	
@@ -68,6 +72,44 @@ public class GeneralInformation_Component extends InstrumentComponent {
 		this.otherAttributes = otherAttributes;
 	}
 
+	//**************************************************************************
+	//****************************METODOS ESTATICOS*****************************
+	//**************************************************************************
+	 
+	public static GeneralInformation_Component parseFromJSON(String filename) throws Exception
+	{
+		//JSON parser object to parse read file
+		JSONParser jsonParser = new JSONParser();
+		FileReader reader = new FileReader(filename);
+		
+		//Read JSON file
+		Object obj = jsonParser.parse(reader);
+		jsonParser = null;
+		 
+		org.json.simple.JSONObject jObj = (org.json.simple.JSONObject) obj;
+		 
+		return new GeneralInformation_Component(
+			 (String)jObj.get("name"), 
+			 (Long)jObj.get("id"), 
+			 (InstrumentComponent)jObj.get("parent"), 
+			 (String)jObj.get("serialNumber"),
+			 (String)jObj.get("model"), 
+			 (String)jObj.get("manufacturer"), 
+			 (String)jObj.get("observations"), 
+			 (String)jObj.get("firmwareVersion"));
+		
+	}
+	 
+	//****************************VERSION***************************************
+			
+	public static int getVersion() {
+		return classVersion;
+	}
+		
+	//**************************************************************************
+	//****************************METODOS PUBLICOS******************************
+	//**************************************************************************
+	
 	public String getSerialNumber() throws Exception {
 		return serialNumber;
 	}
@@ -134,11 +176,5 @@ public class GeneralInformation_Component extends InstrumentComponent {
 		
 		return builder.toString();
 	}
-	
-	public static int getClassversion() {
-		return classVersion;
-	}
-	
-	
-	
+
 }

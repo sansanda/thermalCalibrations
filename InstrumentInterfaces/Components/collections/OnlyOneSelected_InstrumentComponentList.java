@@ -15,7 +15,6 @@ import org.apache.logging.log4j.Logger;
 import common.AbstractInstrumentComponentList;
 import common.I_InstrumentComponent;
 import common.InstrumentComponent;
-import testing.Components_Test;
 
 /**
  * Clase que extiende basicamente de AbstractInstrumentComponentList (ArrayList) creada expresamente como contenedor de InstrumentComponents

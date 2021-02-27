@@ -1,0 +1,10 @@
+{
+	"name":"rs232_interface_1",
+	"id":1234567890,
+	"parent":null,
+	"serialNumber":"12345",
+	"model":"2700",
+	"manufacturer":"keithley",
+	"observations":"obssssss",
+	"firmwareVersion":"c21"
+}	 
