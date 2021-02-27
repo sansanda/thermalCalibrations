@@ -8,7 +8,12 @@ import common.InstrumentComponent;
 
 public class GeneralInformation_Component extends InstrumentComponent {
 	
-	private static final int classVersion = 100;
+	//version 101:  Cambio de constructor para utilizar HashMap en subcomponentes
+	//				Actualizacion de toString
+	//				Añadimos getVersion
+	
+	
+	private static final int classVersion = 101;
 	
 	protected String serialNumber = null;
 	protected String model = null;
@@ -39,12 +44,22 @@ public class GeneralInformation_Component extends InstrumentComponent {
 		this.firmwareVersion = firmwareVersion;
 		this.otherAttributes = new HashMap<String, Object>();
 	}
-	
-	public GeneralInformation_Component(String name, long id, ArrayList<String> descriptiveTags,
-			ArrayList<I_InstrumentComponent> components, I_InstrumentComponent parent, String serialNumber,
-			String model, String manufacturer, String observations, String firmwareVersion,
-			HashMap<String, Object> otherAttributes) {
-		super(name, id, descriptiveTags, components, parent);
+
+	public GeneralInformation_Component(
+			String name, 
+			long id, 
+			ArrayList<String> descriptiveTags,
+			HashMap<String,I_InstrumentComponent> subcomponents, 
+			I_InstrumentComponent parent, 
+			String serialNumber,
+			String model, 
+			String manufacturer, 
+			String observations, 
+			String firmwareVersion,
+			HashMap<String, Object> otherAttributes
+			) {
+		
+		super(name, id, descriptiveTags, subcomponents, parent);
 		this.serialNumber = serialNumber;
 		this.model = model;
 		this.manufacturer = manufacturer;
@@ -102,19 +117,28 @@ public class GeneralInformation_Component extends InstrumentComponent {
 		if (this.otherAttributes==null) this.otherAttributes = new HashMap<String, Object>();
 		this.otherAttributes.put(attribute, value);
 	}
-	
-	
 
 	@Override
 	public String toString() {
+		
 		StringBuilder builder = new StringBuilder();
-		builder.append("GeneralInformation_Component [serialNumber=").append(serialNumber).append(", model=")
-				.append(model).append(", manufacturer=").append(manufacturer).append(", observations=")
-				.append(observations).append(", firmwareVersion=").append(firmwareVersion).append(", otherAttributes=")
-				.append(otherAttributes).append(", name=").append(name).append(", id=").append(id).append(", enable=")
-				.append(enable).append(", selected=").append(selected).append(", descriptiveTags=")
-				.append(descriptiveTags).append(", subcomponents=").append(subcomponents).append(", parent=")
-				.append(parent).append("]");
+		
+		builder.append("\n\n ***************** General Information Component Instance Description ****************** \n");
+		builder.append("[serialNumber=").append(serialNumber);
+		builder.append(", model=").append(model);
+		builder.append(", manufacturer=").append(manufacturer);
+		builder.append(", observations=").append(observations);
+		builder.append(", firmwareVersion=").append(firmwareVersion);
+		builder.append(", otherAttributes=").append(otherAttributes);
+		builder.append(super.toString()).append("]");
+		
 		return builder.toString();
-	}	
+	}
+	
+	public static int getClassversion() {
+		return classVersion;
+	}
+	
+	
+	
 }
