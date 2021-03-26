@@ -1,0 +1,10 @@
+{
+	"name":"gpib_interface_general_information",
+	"id":1234567890,
+	"parent":null,
+	"serialNumber":"12345",
+	"model":"",
+	"manufacturer":"NI",
+	"observations":"National Instruments USB-GPIB Interfce HS+",
+	"firmwareVersion":""
+}	 

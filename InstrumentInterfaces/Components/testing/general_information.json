@@ -1,10 +1,10 @@
 {
-	"name":"rs232_interface_1",
+	"name":"KEITHLEY INSTRUMENTS INC.,MODEL 2700,0780589,B01  /A02  ",
 	"id":1234567890,
 	"parent":null,
 	"serialNumber":"12345",
 	"model":"2700",
 	"manufacturer":"keithley",
-	"observations":"obssssss",
+	"observations":"Keithley MUltimeter model 2700",
 	"firmwareVersion":"c21"
 }	 

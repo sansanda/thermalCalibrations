@@ -1,6 +1,7 @@
 package communications;
 
 import java.io.FileReader;
+import java.util.Arrays;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,19 +18,31 @@ import jssc.SerialPortException;
 /**
  * Clase que modela una interface de comunicaciones serie tipo RS232 haciendo uso de la libreria jssc_2.9.2 
  * compatible con maquinas de 32 y 64 bits en windows.
+ * 
+ * <p>
+ * Ciclo de vida:
+ * 
+ * 			<p><b>Declarar instancia.</b> 	Ejemplo:  	rs232Interface = new RS232Interface_Component(bla bla bla ...);
+			<p><b>Inicializar puerto.</b> 	Ejemplo: 	rs232Interface.open();
+			<p><b>Abrir puerto.</b> 		Ejemplo 	rs232Interface.initialize();
+			<p><b>Interacción con el instrumento todo lo necesario via el puerto rs232.</b>
+			<p><b>Cerrar puerto.</b> 		Ejemplo: 	rs232Interface.close();
+			
  * @author DavidS
  *
  */
 public class RS232Interface_Component extends InstrumentComponent implements I_CommunicationsInterface, SerialPortEventListener{
 
-	 //version 102: updated to fllow the new I_CommunicationsInterface Interface
-	 //version 101: Implemented static method parseFromJSON (String filename)
+	//version 103: adapted to the updated I_CommunicationsInterface
+	//version 102: updated to fllow the new I_CommunicationsInterface Interface
+	//version 101: Implemented static method parseFromJSON (String filename)
+	
 	
 	 //**************************************************************************
 	 //****************************CONSTANTES************************************
 	 //**************************************************************************
 
-	private static final int classVersion = 102;
+	private static final int classVersion = 103;
 	
 	
 	final static Logger logger = LogManager.getLogger(RS232Interface_Component.class);
@@ -54,6 +67,13 @@ public class RS232Interface_Component extends InstrumentComponent implements I_C
 	 private String 					terminator = "\n";
 	 private int 						writeWaitTime = 100;
 	 private int 						readWaitTime = 100;
+
+
+	private int flowcontrol;
+	private int nStopBits;
+	private int baudRate;
+	private int parityType;
+	private int nDataBits;
 	 
 	 //**************************************************************************
 	 //****************************CONSTRUCTORES*********************************
@@ -94,9 +114,13 @@ public class RS232Interface_Component extends InstrumentComponent implements I_C
 		 this.writeWaitTime = writeWaitTime;
 		 this.readWaitTime = readWaitTime;
 		 
+		 this.baudRate = baudRate;
+		 this.nDataBits = nDataBits;
+		 this.nStopBits = nStopBits;
+		 this.parityType = parityType;
+		 this.flowcontrol = flowControl;
+		 
 		 this.serialPort = new SerialPort(address);
-				 
-		 this.initialize(baudRate, nDataBits, nStopBits, parityType, flowControl);
 		 
 	 }
 	 
@@ -168,22 +192,24 @@ public class RS232Interface_Component extends InstrumentComponent implements I_C
 	 /**
 	  *
 	  */
-	 public void initialize(
-			 int baudRate, 
-			 int nDataBits, 
-			 int nStopBits, 
-			 int parityType,
-			 int flowcontrol) throws Exception{
-
-		this.open();
+	@Override
+	public void initialize() throws Exception{
+		
+		//Es necesario siempre abrir el puerto rs232 antes de proceder a inicializarlo, de lo contrario addEventListener presenta errores  
+		if (!this.serialPort.isOpened()) this.open();
+		
+		logger.debug("Initializing RS232 Interface");
+		
 		this.serialPort.addEventListener(this);/* defined below */
-		this.serialPort.setParams(baudRate,  nDataBits, nStopBits, parityType);
-		this.serialPort.setFlowControlMode(flowcontrol);
+		this.serialPort.setParams(this.baudRate,  this.nDataBits, this.nStopBits, this.parityType);
+		this.serialPort.setFlowControlMode(this.flowcontrol);
 		int mask = SerialPort.MASK_RXCHAR + SerialPort.MASK_CTS + SerialPort.MASK_DSR;
 		this.serialPort.setEventsMask(mask);
-		this.close();
+		
+		//NO hagas esto porque eliminas el event listener. Entonces no veras llegar las respuestas del instrumento
+		//this.close();
 
-	 }
+	}
 	 
 	
 	 private void waitForIncomingData() throws Exception{
@@ -195,7 +221,6 @@ public class RS232Interface_Component extends InstrumentComponent implements I_C
 	 }
 
 	
-
 	 /**
 	  *
 	  */
@@ -231,6 +256,7 @@ public class RS232Interface_Component extends InstrumentComponent implements I_C
 				
 			
 			case SerialPortEvent.RXCHAR:
+				
 				
 				int nBytesToRead = event.getEventValue();
 				//logger.debug(nBytesToRead);
@@ -330,7 +356,7 @@ public class RS232Interface_Component extends InstrumentComponent implements I_C
 	 public void open() throws Exception {
 		 if (this.serialPort.isOpened())
 		 {
-			 logger.info("Port "+this.serialPort.getPortName() + " already is opened. Nothing to do.");
+			 logger.debug("Port "+this.serialPort.getPortName() + " already is opened. Nothing to do.");
 			 //logger.info("Going to close the port....");
 			 
 			 //JOptionPane.showMessageDialog(null,"Port "+this.serialPort.getPortName() + " currently owned");

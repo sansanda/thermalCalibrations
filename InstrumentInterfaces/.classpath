@@ -23,5 +23,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="/java_development_libraries/comms/serial/javacomm20-win32/commapi/comm.jar"/>
+	<classpathentry kind="lib" path="E:/repos/java_development_libraries/comms/parallel/GPIB/JPIB V1.2/JPIB.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/GPIB_Ports"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

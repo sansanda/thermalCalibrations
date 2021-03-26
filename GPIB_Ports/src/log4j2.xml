@@ -8,14 +8,7 @@
     </Appenders>
     <Loggers>
       
-    	<Logger name="communications" level="off" additivity="false">
-            <AppenderRef ref="LogToConsole"/>
-        </Logger>
-        
-        <Logger name="testing" level="all" additivity="false">
-            <AppenderRef ref="LogToConsole"/>
-        </Logger>
-        <Logger name="common" level="info" additivity="false">
+    	<Logger name="ports" level="info" additivity="false">
             <AppenderRef ref="LogToConsole"/>
         </Logger>
         <Root level="off">

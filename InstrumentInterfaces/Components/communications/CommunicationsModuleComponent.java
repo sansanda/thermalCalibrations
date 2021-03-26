@@ -3,11 +3,13 @@
  */
 package communications;
 
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.simple.parser.JSONParser;
 
 import collections.OnlyOneSelected_InstrumentComponentList;
 import common.I_InstrumentComponent;
@@ -26,15 +28,25 @@ import common.InstrumentComponent;
  */
 public class CommunicationsModuleComponent extends InstrumentComponent implements I_CommunicationsModule, I_CommunicationsInterface{
 
-	//version 102: CommunicationsModuleComponent implements I_CommunicationsInterface so it will act as a CommunicationsInterface bypassing
-	//version 102: all the I_CommunicationsInterface calls to the respective active interface (subcomponents)
-	//version 103: prevent the calls on communications module component with any interface added (new private method checkActiveInterface())
+	//version 105: adapted to the new I_CommunicationsInterface
 	//version 104: remove communication_interfaces_list as attribute of CommunicationsModuleComponent and added as subcomponent
+	//version 103: prevent the calls on communications module component with any interface added (new private method checkActiveInterface())
+	//version 102: all the I_CommunicationsInterface calls to the respective active interface (subcomponents)
+	//version 102: CommunicationsModuleComponent implements I_CommunicationsInterface so it will act as a CommunicationsInterface bypassing
 	
-	private static final int classVersion = 104;
+	
+	//**************************************************************************
+	//****************************CONSTANTES************************************
+	//**************************************************************************
+	
+	private static final int classVersion = 105;
 	final static Logger logger = LogManager.getLogger(CommunicationsModuleComponent.class);
 	
 	private final String COMMUNICATION_INTERFACES_LIST_NAME = "communication_interfaces_list";
+
+	//**************************************************************************
+	//****************************CONSTRUCTORES*********************************
+	//**************************************************************************
 	
 	/**
 	 * @param name
@@ -71,6 +83,45 @@ public class CommunicationsModuleComponent extends InstrumentComponent implement
 		
 	}
 
+	
+	//**************************************************************************
+	//****************************METODOS ESTATICOS*****************************
+	//**************************************************************************
+	
+	
+	 public static CommunicationsModuleComponent parseFromJSON(String filename) throws Exception
+	 {
+		 //JSON parser object to parse read file
+		 JSONParser jsonParser = new JSONParser();
+		 FileReader reader = new FileReader(filename);
+		
+		 //Read JSON file
+		 Object obj = jsonParser.parse(reader);
+		 jsonParser = null;
+		 
+		 org.json.simple.JSONObject jObj = (org.json.simple.JSONObject) obj;
+		 
+		 CommunicationsModuleComponent cmc = new CommunicationsModuleComponent(
+				 (String)jObj.get("name"), 
+				 (Long)jObj.get("id"), 
+				 (InstrumentComponent)jObj.get("parent"));
+		 
+		 return cmc;
+		 
+	 }
+	 
+	//****************************VERSION***************************************
+	/**
+	 * Método de clase que devuelve la version de esta
+	 * @return la version de la clase
+	 */
+	 
+	public static int getVersion() {
+		return classVersion;
+	}
+	
+	
+	
 	@Override
 	public void addInterface(I_InstrumentComponent commInterface) throws Exception {	
 		if (commInterface instanceof I_CommunicationsInterface) 
@@ -138,6 +189,16 @@ public class CommunicationsModuleComponent extends InstrumentComponent implement
 		
 	}
 
+	@Override
+	/**
+	 * Inicializa la interface de comunicaciones activa 
+	 */
+	public void initialize() throws Exception {
+		this.checkActiveInterface();
+		this.getActiveInterface().initialize();
+		
+	}
+	
 	@Override
 	/**
 	 * Abre la interface de comunicaciones activa 
@@ -209,14 +270,6 @@ public class CommunicationsModuleComponent extends InstrumentComponent implement
 	{
 		OnlyOneSelected_InstrumentComponentList communication_interfaces_list = ((OnlyOneSelected_InstrumentComponentList) this.getSubComponent(COMMUNICATION_INTERFACES_LIST_NAME));
 		if (!communication_interfaces_list.hasSubcomponents()) throw new Exception ("No any inteface added in communications module component");
-	}
-	
-	/**
-	 * Método de clase que devuelve la version de esta
-	 * @return la version de la clase
-	 */
-	public static int getClassversion() {
-		return classVersion;
 	}
 
 	@Override

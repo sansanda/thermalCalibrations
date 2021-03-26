@@ -1,0 +1,12 @@
+{
+	"name":"gpib_interface",
+	"id":1234567890,
+	"parent":null,
+	"type":"parallel",
+	"standard":"gpib",
+	"address":"14",
+	"terminator":"\n",
+	"timeout":1.000,
+	"writeWaitTime":250,
+	"readWaitTime":0
+}

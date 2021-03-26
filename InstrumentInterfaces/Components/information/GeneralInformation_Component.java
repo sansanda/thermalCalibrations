@@ -8,7 +8,6 @@ import org.json.simple.parser.JSONParser;
 
 import common.I_InstrumentComponent;
 import common.InstrumentComponent;
-import communications.RS232Interface_Component;
 
 public class GeneralInformation_Component extends InstrumentComponent {
 	
