@@ -4,6 +4,7 @@ import java.io.FileReader;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import common.I_InstrumentComponent;
@@ -28,7 +29,7 @@ import ports.GPIB_Port;
  */
 public class GPIBInterface_Component extends InstrumentComponent implements I_CommunicationsInterface{
 
-	
+	//version 103:  changed constructor for including enable and selected parameters and added  parseFromJSON(JSONObject jObj) method
 	//version 102: Adapted to the updated I_CommunicationsInterface
 	//version 101: First operative version 
 	//version 100: Initial version not still working 
@@ -39,7 +40,7 @@ public class GPIBInterface_Component extends InstrumentComponent implements I_Co
 	//****************************CONSTANTES************************************
 	//**************************************************************************
 
-	private static final int classVersion = 102;
+	private static final int classVersion = 103;
 	
 	
 	final static Logger logger = LogManager.getLogger(GPIBInterface_Component.class);
@@ -72,6 +73,8 @@ public class GPIBInterface_Component extends InstrumentComponent implements I_Co
 			 String name, 
 			 long id, 
 			 I_InstrumentComponent parent,
+			 boolean enable,
+			 boolean selected,
 			 String type,
 			 String standard,
 			 String address,
@@ -80,7 +83,7 @@ public class GPIBInterface_Component extends InstrumentComponent implements I_Co
 			 int writeWaitTime, 
 			 int readWaitTime) throws Exception{
 			 
-		 super(name, id, parent);
+		 super(name, id, parent, enable, selected);
 		 
 		 this.type 		= type;
 		 this.standard 	= standard;
@@ -111,10 +114,18 @@ public class GPIBInterface_Component extends InstrumentComponent implements I_Co
 		 
 		 org.json.simple.JSONObject jObj = (org.json.simple.JSONObject) obj;
 		 
+		 return GPIBInterface_Component.parseFromJSON(jObj);
+		 
+	 }
+	 
+	 public static GPIBInterface_Component parseFromJSON(JSONObject jObj) throws Exception
+	 {		 
 		 return new GPIBInterface_Component(
 				 (String)jObj.get("name"), 
 				 (Long)jObj.get("id"), 
-				 (InstrumentComponent)jObj.get("parent"), 
+				 null, //(InstrumentComponent)jObj.get("parent") not implemented for the moment
+				 (boolean)jObj.get("enable"),
+				 (boolean)jObj.get("selected"),
 				 (String)jObj.get("type"),
 				 (String)jObj.get("standard"), 
 				 (String)jObj.get("address"), 

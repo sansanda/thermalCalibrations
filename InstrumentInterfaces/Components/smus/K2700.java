@@ -13,6 +13,8 @@ import org.json.simple.parser.JSONParser;
 
 import common.I_InstrumentComponent;
 import common.InstrumentComponent;
+import communications.CommunicationsModule_Component;
+import information.GeneralInformation_Component;
 
 /**
  * @author DavidS
@@ -20,6 +22,7 @@ import common.InstrumentComponent;
  */
 public class K2700 extends InstrumentComponent{
 
+	//version 101:  changed constructor for including enable and selected parameters and added  parseFromJSON(JSONObject jObj) method
 	//version 100:  First non operative implementation
 	
 	//**************************************************************************
@@ -41,8 +44,8 @@ public class K2700 extends InstrumentComponent{
 	/**
 	 * 
 	 */
-	public K2700(String name, long id, I_InstrumentComponent parent) {
-		super(name, id, parent);
+	public K2700(String name, long id, I_InstrumentComponent parent, boolean enable, boolean selected) {
+		super(name, id, parent, enable, selected);
 	}
 
 	//**************************************************************************
@@ -63,24 +66,49 @@ public class K2700 extends InstrumentComponent{
 		Object obj = jsonParser.parse(reader);
 		jsonParser = null;
 		
-		JSONObject jObj = (JSONObject) obj;
+		return K2700.parseFromJSON((JSONObject)obj);
+		 
+	}
+	
+	public static K2700 parseFromJSON(JSONObject jObj) throws Exception
+	{
+		logger.info("Parsing K2700 from jObj ... ");
+		
+		Set<String> keySet = jObj.keySet();
 		
 		K2700 k2700 = null;
 		
+		String name = "";
+		Long id = 0l;
+		InstrumentComponent parent = null;
+		boolean enable = true;
+		boolean selected = true;
+		CommunicationsModule_Component communicationsModule = null;
+		GeneralInformation_Component generalInformation = null;
+		
+		if (keySet.contains("name")) name = (String)jObj.get("name");
+		if (keySet.contains("id")) id = (Long)jObj.get("id");
+		//if (keySet.contains("parent")) parent = (InstrumentComponent)jObj.get("parent"); not implemented for the moment
+		if (keySet.contains("enable")) enable = (boolean)jObj.get("enable");
+		if (keySet.contains("selected")) selected = (boolean)jObj.get("selected");
+		
 		k2700 = new K2700(
-			 (String)jObj.get("name"), 
-			 (Long)jObj.get("id"), 
-			 (InstrumentComponent)jObj.get("parent")
-		);
+				 name, 
+				 id, 
+				 parent,
+				 enable,
+				 selected
+			);
 		
+		if (keySet.contains("CommunicationsModule")) {
+			communicationsModule = CommunicationsModule_Component.parseFromJSON((JSONObject)jObj.get("CommunicationsModule"));
+			k2700.addSubComponent(communicationsModule);
+		}
 		
-		Set<String> subComponents_Names = jObj.keySet();
-		JSONObject s = (JSONObject)jObj.get("CommunicationsModule");
-		
-		System.out.println("Hola" + subComponents_Names.toString());
-		System.out.println("Hola" + s.toString());
-		
-		logger.info(subComponents_Names.toString());
+		if (keySet.contains("GeneralInformation")) {
+			generalInformation = GeneralInformation_Component.parseFromJSON((JSONObject)jObj.get("GeneralInformation"));
+			k2700.addSubComponent(generalInformation);
+		}
 		
 		return k2700;
 		 
@@ -111,9 +139,15 @@ public class K2700 extends InstrumentComponent{
 	
 	/**
 	 * @param args
+	 * @throws Exception 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		
+		String k2700_filename	= "./Components/testing/k2700.json";
+		
+		logger.info("TESTNG k2700 creation from JSON file");
+		K2700 k2700 = K2700.parseFromJSON(k2700_filename);
+		logger.info(k2700.toString());
 
 	}
 

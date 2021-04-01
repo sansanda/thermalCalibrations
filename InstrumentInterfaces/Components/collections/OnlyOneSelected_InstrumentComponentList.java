@@ -3,16 +3,12 @@ package collections;
 import java.beans.PropertyChangeEvent;
 
 import java.beans.PropertyChangeListener;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map.Entry;
-import java.util.function.Predicate;
-import java.util.function.UnaryOperator;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import common.AbstractInstrumentComponentList;
 import common.I_InstrumentComponent;
 import common.InstrumentComponent;
 
@@ -34,8 +30,8 @@ public class OnlyOneSelected_InstrumentComponentList extends InstrumentComponent
 	private I_InstrumentComponent selectedComponent = null;
 	
 
-	public OnlyOneSelected_InstrumentComponentList(String name, long id, I_InstrumentComponent parent) {
-		super(name, id, parent);
+	public OnlyOneSelected_InstrumentComponentList(String name, long id, I_InstrumentComponent parent, boolean enable, boolean selected) {
+		super(name, id, parent, enable, selected);
 	}
 
 	/**

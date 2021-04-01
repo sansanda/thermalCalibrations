@@ -15,6 +15,9 @@
         <Logger name="testing" level="all" additivity="false">
             <AppenderRef ref="LogToConsole"/>
         </Logger>
+        <Logger name="smus" level="all" additivity="false">
+            <AppenderRef ref="LogToConsole"/>
+        </Logger>
         <Logger name="common" level="info" additivity="false">
             <AppenderRef ref="LogToConsole"/>
         </Logger>

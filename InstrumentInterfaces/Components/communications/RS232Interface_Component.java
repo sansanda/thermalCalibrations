@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import common.I_InstrumentComponent;
@@ -33,6 +34,7 @@ import jssc.SerialPortException;
  */
 public class RS232Interface_Component extends InstrumentComponent implements I_CommunicationsInterface, SerialPortEventListener{
 
+	//version 104:  changed constructor for including enable and selected parameters and added  parseFromJSON(JSONObject jObj) method
 	//version 103: adapted to the updated I_CommunicationsInterface
 	//version 102: updated to fllow the new I_CommunicationsInterface Interface
 	//version 101: Implemented static method parseFromJSON (String filename)
@@ -42,7 +44,7 @@ public class RS232Interface_Component extends InstrumentComponent implements I_C
 	 //****************************CONSTANTES************************************
 	 //**************************************************************************
 
-	private static final int classVersion = 103;
+	private static final int classVersion = 104;
 	
 	
 	final static Logger logger = LogManager.getLogger(RS232Interface_Component.class);
@@ -89,6 +91,8 @@ public class RS232Interface_Component extends InstrumentComponent implements I_C
 			 String name, 
 			 long id, 
 			 I_InstrumentComponent parent,
+			 boolean enable,
+			 boolean selected,
 			 String type,
 			 String standard,
 			 String address, 
@@ -101,7 +105,7 @@ public class RS232Interface_Component extends InstrumentComponent implements I_C
 			 int writeWaitTime, 
 			 int readWaitTime) throws Exception{
 			 
-		 super(name, id, parent);
+		 super(name, id, parent, enable, selected);
 		 
 		 this.type = type;
 		 this.standard = standard;
@@ -140,10 +144,18 @@ public class RS232Interface_Component extends InstrumentComponent implements I_C
 		 
 		 org.json.simple.JSONObject jObj = (org.json.simple.JSONObject) obj;
 		 
+		 return RS232Interface_Component.parseFromJSON(jObj);
+		 
+	 }
+	 
+	 public static RS232Interface_Component parseFromJSON(JSONObject jObj) throws Exception
+	 {
 		 return new RS232Interface_Component(
 				 (String)jObj.get("name"), 
 				 (Long)jObj.get("id"), 
-				 (InstrumentComponent)jObj.get("parent"), 
+				 null, //(InstrumentComponent)jObj.get("parent") not implemented for the moment
+				 (boolean)jObj.get("enable"),
+				 (boolean)jObj.get("selected"),
 				 (String)jObj.get("type"),
 				 (String)jObj.get("standard"), 
 				 (String)jObj.get("address"), 
@@ -157,7 +169,6 @@ public class RS232Interface_Component extends InstrumentComponent implements I_C
 				 ((Long)jObj.get("readWaitTime")).intValue());
 		 
 	 }
-	 
 	//****************************VERSION***************************************
 			
 	public static int getVersion() {

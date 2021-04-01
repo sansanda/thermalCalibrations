@@ -2,6 +2,8 @@
 	"name":"KEITHLEY INSTRUMENTS INC.,MODEL 2700,0780589,B01  /A02  ",
 	"id":1234567890,
 	"parent":null,
+	"enable":true,
+	"selected":true,
 	"serialNumber":"12345",
 	"model":"2700",
 	"manufacturer":"keithley",

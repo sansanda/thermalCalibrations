@@ -16,10 +16,11 @@ import java.util.Map;
  */
 public abstract class InstrumentComponent implements I_InstrumentComponent, Comparable<I_InstrumentComponent>{
 
+	//version 102:  changed constructor for including enable and selected parameters 
 	//version 101:  change subcomponents container for working with a hashmap intead of an arraylist
 	//				also we have changed related methods and I_InstrumentComponent interface
 	
-	private static final int classVersion = 101;
+	private static final int classVersion = 102;
 	
 	protected String name;
 	protected long id;
@@ -30,30 +31,26 @@ public abstract class InstrumentComponent implements I_InstrumentComponent, Comp
 	protected I_InstrumentComponent parent;
 	private PropertyChangeSupport support;
 
-	public InstrumentComponent(String name, long id, I_InstrumentComponent parent) {
+	public InstrumentComponent(String name, long id, I_InstrumentComponent parent, boolean enable, boolean selected) {
 		
 		super();
 		this.name = name;
 		this.id = id;
-		this.enable = true;
-		this.selected = false;
+		this.parent = parent;
+		this.enable = enable;
+		this.selected = selected;
 		this.descriptiveTags = new ArrayList<String>();
 		this.descriptiveTags.add(name);
 		this.subcomponents = new HashMap<String,I_InstrumentComponent>();
-		this.parent = parent;
 		this.support = new PropertyChangeSupport(this);
 	}
 	
-	public InstrumentComponent(String name, long id, ArrayList<String> descriptiveTags,
-			HashMap<String,I_InstrumentComponent> subcomponents, I_InstrumentComponent parent) {
-		super();
-		this.name = name;
-		this.id = id;
-		this.enable = true;
-		this.selected = false;
+	public InstrumentComponent(String name, long id,I_InstrumentComponent parent, boolean enable, boolean selected, 
+			ArrayList<String> descriptiveTags,
+			HashMap<String,I_InstrumentComponent> subcomponents) {
+		this(name, id, parent, enable, selected);
 		this.descriptiveTags = descriptiveTags;
 		this.subcomponents = subcomponents;
-		this.parent = parent;
 	}
 	
 	//non-static methods

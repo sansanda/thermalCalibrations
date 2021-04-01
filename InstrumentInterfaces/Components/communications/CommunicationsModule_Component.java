@@ -6,14 +6,21 @@ package communications;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import collections.OnlyOneSelected_InstrumentComponentList;
 import common.I_InstrumentComponent;
 import common.InstrumentComponent;
+import factories.CommunicationInterface_Factory;
+import information.GeneralInformation_Component;
+import smus.K2700;
 
 /**
  * @author david
@@ -23,24 +30,25 @@ import common.InstrumentComponent;
  * de tipo RS232, de tipo GPIB, de tipo LAN, etc... 
  * Por lo tanto, la clase debe permitir añadir y eliminar instancias de tipo de CommunicationsInterface que el usuario desee pero solo
  * una de ellas puede ser la interface de comunicaciones activa en un momento dado. 
- * Hemos dicho que CommunicationsModuleComponent implementa la Interface I_CommunicationsInterface pero en realidad lo que hace es
+ * Hemos dicho que CommunicationsModule_Component implementa la Interface I_CommunicationsInterface pero en realidad lo que hace es
  * bypasear todas las llamadas o métodos de dicha Interface a la interface de comunicaciones activa en un momento dado.       
  */
-public class CommunicationsModuleComponent extends InstrumentComponent implements I_CommunicationsModule, I_CommunicationsInterface{
+public class CommunicationsModule_Component extends InstrumentComponent implements I_CommunicationsModule, I_CommunicationsInterface{
 
+	//version 106:  changed constructor for including enable and selected parameters and added  parseFromJSON(JSONObject jObj) method
 	//version 105: adapted to the new I_CommunicationsInterface
-	//version 104: remove communication_interfaces_list as attribute of CommunicationsModuleComponent and added as subcomponent
+	//version 104: remove communication_interfaces_list as attribute of CommunicationsModule_Component and added as subcomponent
 	//version 103: prevent the calls on communications module component with any interface added (new private method checkActiveInterface())
 	//version 102: all the I_CommunicationsInterface calls to the respective active interface (subcomponents)
-	//version 102: CommunicationsModuleComponent implements I_CommunicationsInterface so it will act as a CommunicationsInterface bypassing
+	//version 102: CommunicationsModule_Component implements I_CommunicationsInterface so it will act as a CommunicationsInterface bypassing
 	
 	
 	//**************************************************************************
 	//****************************CONSTANTES************************************
 	//**************************************************************************
 	
-	private static final int classVersion = 105;
-	final static Logger logger = LogManager.getLogger(CommunicationsModuleComponent.class);
+	private static final int classVersion = 106;
+	final static Logger logger = LogManager.getLogger(CommunicationsModule_Component.class);
 	
 	private final String COMMUNICATION_INTERFACES_LIST_NAME = "communication_interfaces_list";
 
@@ -54,13 +62,15 @@ public class CommunicationsModuleComponent extends InstrumentComponent implement
 	 * @param parent
 	 * @throws Exception 
 	 */
-	public CommunicationsModuleComponent(String name, long id, I_InstrumentComponent parent) throws Exception {
+	public CommunicationsModule_Component(String name, long id, I_InstrumentComponent parent, boolean enable, boolean selected) throws Exception {
 		
-		super(name, id, parent);
+		super(name, id, parent, enable, selected);
 		//communication_interfaces_list es un contenedor subcomponente de this que albergará todas las communication interfaces añadidas 
 		super.addSubComponent( new OnlyOneSelected_InstrumentComponentList(COMMUNICATION_INTERFACES_LIST_NAME, 
 																					System.currentTimeMillis(), 
-																					this));
+																					this,
+																					true,
+																					true));
 
 	}
 
@@ -72,14 +82,17 @@ public class CommunicationsModuleComponent extends InstrumentComponent implement
 	 * @param parent
 	 * @throws Exception 
 	 */
-	public CommunicationsModuleComponent(String name, long id, ArrayList<String> descriptiveTags,
-			HashMap<String,I_InstrumentComponent> subComponents, I_InstrumentComponent parent) throws Exception {
+	public CommunicationsModule_Component(String name, long id, I_InstrumentComponent parent, boolean enable, boolean selected,
+			ArrayList<String> descriptiveTags,
+			HashMap<String,I_InstrumentComponent> subComponents) throws Exception {
 		
-		super(name, id, descriptiveTags, subComponents, parent);
+		super(name, id, parent, enable, selected, descriptiveTags, subComponents);
 		//communication_interfaces_list es un contenedor subcomponente de this que albergará todas las communication interfaces añadidas 
 		super.addSubComponent( new OnlyOneSelected_InstrumentComponentList(COMMUNICATION_INTERFACES_LIST_NAME, 
 																					System.currentTimeMillis(), 
-																					this));
+																					this,
+																					true,
+																					true));
 		
 	}
 
@@ -89,8 +102,10 @@ public class CommunicationsModuleComponent extends InstrumentComponent implement
 	//**************************************************************************
 	
 	
-	 public static CommunicationsModuleComponent parseFromJSON(String filename) throws Exception
+	 public static CommunicationsModule_Component parseFromJSON(String filename) throws Exception
 	 {
+		 logger.info("Parsing Communications Module from file ... ");
+		 
 		 //JSON parser object to parse read file
 		 JSONParser jsonParser = new JSONParser();
 		 FileReader reader = new FileReader(filename);
@@ -101,14 +116,81 @@ public class CommunicationsModuleComponent extends InstrumentComponent implement
 		 
 		 org.json.simple.JSONObject jObj = (org.json.simple.JSONObject) obj;
 		 
-		 CommunicationsModuleComponent cmc = new CommunicationsModuleComponent(
-				 (String)jObj.get("name"), 
-				 (Long)jObj.get("id"), 
-				 (InstrumentComponent)jObj.get("parent"));
-		 
-		 return cmc;
+		 return CommunicationsModule_Component.parseFromJSON(jObj);
 		 
 	 }
+	 
+	 public static CommunicationsModule_Component parseFromJSON(JSONObject jObj) throws Exception
+	 {
+		logger.info("Parsing Communications Module from jObj ... ");
+		Set<String> keySet = jObj.keySet();
+		
+		InstrumentComponent parent = null;
+		String name = "";
+		Long id = 0l;
+		boolean enable = false;
+		boolean selected = true;
+		
+		CommunicationsModule_Component communicationsModule = null;
+		GeneralInformation_Component generalInformation = null;
+		JSONArray communicationInterfaces = null;
+		
+		if (keySet.contains("name")) name = (String)jObj.get("name");
+		if (keySet.contains("id")) id = (Long)jObj.get("id");
+		//if (keySet.contains("parent")) parent = (InstrumentComponent)jObj.get("parent"); not implemented for the moment
+		if (keySet.contains("enable")) enable = (boolean)jObj.get("enable");
+		if (keySet.contains("selected")) selected = (boolean)jObj.get("selected");
+		
+		communicationsModule = new CommunicationsModule_Component(
+				 name, 
+				 id, 
+				 parent,
+				 enable,
+				 selected
+		);
+		
+		if (keySet.contains("GeneralInformation")) {
+			generalInformation = GeneralInformation_Component.parseFromJSON((JSONObject)jObj.get("GeneralInformation"));
+			communicationsModule.addSubComponent(generalInformation);
+		}
+		
+
+		communicationInterfaces = (JSONArray) jObj.get("communication_interfaces_list");
+		Iterator<JSONObject> i = communicationInterfaces.iterator();
+
+		while (i.hasNext()) {
+			JSONObject communicationInterface = i.next();
+			
+			
+		    // Here I try to take the title element from my slide but it doesn't work!
+			JSONObject communicationInterface_params = (JSONObject)communicationInterface.get("communication_interface_params");
+			String comm_name =  (String)communicationInterface_params.get("name");
+			
+			switch (comm_name) {
+			
+			case CommunicationInterface_Factory.GPIB_STANDARD:
+				GPIBInterface_Component gpib_interface = GPIBInterface_Component.parseFromJSON(communicationInterface_params);
+				communicationsModule.addInterface(gpib_interface);
+				break;
+			
+			case CommunicationInterface_Factory.RS232_STANDARD:
+				RS232Interface_Component rs232_interface = RS232Interface_Component.parseFromJSON(communicationInterface_params);		
+				communicationsModule.addInterface(rs232_interface);
+				break;
+				
+			case CommunicationInterface_Factory.LAN_STANDARD:
+				throw new Exception("No LAN communication interface implemented!!!!");
+				
+				
+			default:
+				throw new Exception("Unknnown communication interface!!!!");
+			}
+		}
+		
+		return communicationsModule;
+		 
+	 }
+	 
 	 
 	//****************************VERSION***************************************
 	/**
@@ -276,7 +358,7 @@ public class CommunicationsModuleComponent extends InstrumentComponent implement
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		
-		builder.append("\n\n ************* CommunicationsModuleComponent Instance Description **************** \n");
+		builder.append("\n\n ************* CommunicationsModule_Component Instance Description **************** \n");
 		
 		builder.append("[COMMUNICATION_INTERFACES_LIST_NAME = ").append(COMMUNICATION_INTERFACES_LIST_NAME);
 		builder.append(", ").append(super.toString()).append("]\n");

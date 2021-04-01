@@ -16,10 +16,11 @@ import testing.Tests;
 
 public class CommunicationInterface_Factory {
 	
+	//version 105: changed to be adapted to the new constructors
 	//version 104: change to use only rs232_component_interface
 	//version 105: Added gpib interface component
 	
-	private static final int classVersion = 104;
+	private static final int classVersion = 105;
 		
 	//Comm interfaces types
 	public static final String SERIAL_TYPE		= "serial";
@@ -48,6 +49,8 @@ public class CommunicationInterface_Factory {
 						commInterfaceTypeLC,
 						System.currentTimeMillis(),
 						null,
+						true,
+						true,
 						SERIAL_TYPE,
 						RS232_STANDARD,
 						"COM1", 
@@ -68,8 +71,10 @@ public class CommunicationInterface_Factory {
 						commInterfaceTypeLC,
 						System.currentTimeMillis(),
 						null,
-						SERIAL_TYPE,
-						RS232_STANDARD,
+						true,
+						true,
+						PARALLEL_TYPE,
+						GPIB_STANDARD,
 						"14", 
 						"\n", 
 						1.000f,

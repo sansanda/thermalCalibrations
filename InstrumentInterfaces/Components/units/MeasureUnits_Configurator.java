@@ -8,23 +8,25 @@ import common.InstrumentComponent;
 
 public class MeasureUnits_Configurator extends InstrumentComponent implements I_MeasureUnits_Configurator {
 
-	 //version 100: Initial version. Not working
+	//version 101:  changed constructor for including enable and selected parameters and added  parseFromJSON(JSONObject jObj) method. Still not operative
+	//version 100: Initial version. Not working
 	
 	
 	 //**************************************************************************
 	 //****************************CONSTANTES************************************
 	 //**************************************************************************
 
-	private static final int classVersion = 100;
+	private static final int classVersion = 101;
 	
-	public MeasureUnits_Configurator(String name, long id, I_InstrumentComponent parent) {
-		super(name, id, parent);
+	public MeasureUnits_Configurator(String name, long id, I_InstrumentComponent parent, boolean enable, boolean selected) {
+		super(name, id, parent, enable, selected);
 		// TODO Auto-generated constructor stub
 	}
 
-	public MeasureUnits_Configurator(String name, long id, ArrayList<String> descriptiveTags,
-			HashMap<String, I_InstrumentComponent> subcomponents, I_InstrumentComponent parent) {
-		super(name, id, descriptiveTags, subcomponents, parent);
+	public MeasureUnits_Configurator(String name, long id, I_InstrumentComponent parent, boolean enable, boolean selected,
+			ArrayList<String> descriptiveTags,
+			HashMap<String, I_InstrumentComponent> subcomponents) {
+		super(name, id, parent, enable, selected, descriptiveTags, subcomponents);
 		// TODO Auto-generated constructor stub
 	}
 

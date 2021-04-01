@@ -8,7 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import common.I_InstrumentComponent;
-import communications.CommunicationsModuleComponent;
+import communications.CommunicationsModule_Component;
 import communications.GPIBInterface_Component;
 import communications.RS232Interface_Component;
 import information.GeneralInformation_Component;
@@ -30,11 +30,11 @@ public class Tests {
 			String gpib_interface_filename 					= "./Components/testing/gpib_interface.json";
 			String gpib_interface_general_information_filename = "./Components/testing/gpibInterface_general_information.json";
 			String gi_filename 								= "./Components/testing/general_information.json";
-			String k2700_filename	 							= "./Components/testing/k2700.json";
-			
-			logger.info("TESTNG k2700 creation from JSON file");
-			K2700 k2700 = K2700.parseFromJSON(k2700_filename);
-			logger.info(k2700.toString());
+//			String k2700_filename	 							= "./Components/testing/k2700.json";
+//			
+//			logger.info("TESTNG k2700 creation from JSON file");
+//			K2700 k2700 = K2700.parseFromJSON(k2700_filename);
+//			logger.info(k2700.toString());
 			 
 			//El puerto se encuenta en el equipo y adquirimos un objeto
 			//tipo SerialPort para poder manejar dicho puerto
@@ -56,11 +56,13 @@ public class Tests {
 			logger.info(gpib_interface_general_information.toString());
 			
 			
-			CommunicationsModuleComponent cmc = new CommunicationsModuleComponent(
+			CommunicationsModule_Component cmc = new CommunicationsModule_Component(
 					"cmc", 
 					System.currentTimeMillis(), 
+					null,
+					true,
+					true,
 					new ArrayList<String>(Arrays.asList("Communications","RS232","LAN","GPIB")), 
-					null, 
 					null);
 			
 			logger.info(cmc.toString());

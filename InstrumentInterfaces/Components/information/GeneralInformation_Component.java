@@ -4,6 +4,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import common.I_InstrumentComponent;
@@ -11,12 +12,13 @@ import common.InstrumentComponent;
 
 public class GeneralInformation_Component extends InstrumentComponent {
 	
+	//version 102:  changed constructor for including enable and selected parameters and added  parseFromJSON(JSONObject jObj) method
 	//version 101:  Cambio de constructor para utilizar HashMap en subcomponentes
 	//				Actualizacion de toString
 	//				Añadimos getVersion
 	
 	
-	private static final int classVersion = 101;
+	private static final int classVersion = 102;
 	
 	protected String serialNumber = null;
 	protected String model = null;
@@ -37,9 +39,14 @@ public class GeneralInformation_Component extends InstrumentComponent {
 	 * @param firmwareVersion
 	 * @param otherAttributes
 	 */
-	public GeneralInformation_Component(String name, long id, I_InstrumentComponent parent, String serialNumber,
-			String model, String manufacturer, String observations, String firmwareVersion) {
-		super(name, id, parent);
+	public GeneralInformation_Component(String name, long id, I_InstrumentComponent parent, boolean enable, boolean selected, 
+			String serialNumber,
+			String model, 
+			String manufacturer, 
+			String observations, 
+			String firmwareVersion) {
+		
+		super(name, id, parent, enable, selected);
 		this.serialNumber = serialNumber;
 		this.model = model;
 		this.manufacturer = manufacturer;
@@ -50,10 +57,12 @@ public class GeneralInformation_Component extends InstrumentComponent {
 
 	public GeneralInformation_Component(
 			String name, 
-			long id, 
+			long id,
+			I_InstrumentComponent parent,
+			boolean enable,
+			boolean selected,
 			ArrayList<String> descriptiveTags,
 			HashMap<String,I_InstrumentComponent> subcomponents, 
-			I_InstrumentComponent parent, 
 			String serialNumber,
 			String model, 
 			String manufacturer, 
@@ -62,7 +71,7 @@ public class GeneralInformation_Component extends InstrumentComponent {
 			HashMap<String, Object> otherAttributes
 			) {
 		
-		super(name, id, descriptiveTags, subcomponents, parent);
+		super(name, id, parent, enable, selected, descriptiveTags, subcomponents);
 		this.serialNumber = serialNumber;
 		this.model = model;
 		this.manufacturer = manufacturer;
@@ -87,10 +96,18 @@ public class GeneralInformation_Component extends InstrumentComponent {
 		 
 		org.json.simple.JSONObject jObj = (org.json.simple.JSONObject) obj;
 		 
+		return GeneralInformation_Component.parseFromJSON(jObj); 
+		
+	}
+	
+	public static GeneralInformation_Component parseFromJSON(JSONObject jObj) throws Exception
+	{		 
 		return new GeneralInformation_Component(
 			 (String)jObj.get("name"), 
 			 (Long)jObj.get("id"), 
-			 (InstrumentComponent)jObj.get("parent"), 
+			 null, //(InstrumentComponent)jObj.get("parent") not implemented for the moment
+			 (boolean)jObj.get("enable"),
+			 (boolean)jObj.get("selected"),
 			 (String)jObj.get("serialNumber"),
 			 (String)jObj.get("model"), 
 			 (String)jObj.get("manufacturer"), 
@@ -98,7 +115,6 @@ public class GeneralInformation_Component extends InstrumentComponent {
 			 (String)jObj.get("firmwareVersion"));
 		
 	}
-	 
 	//****************************VERSION***************************************
 			
 	public static int getVersion() {

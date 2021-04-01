@@ -2,6 +2,8 @@
 	"name":"rs232_interface",
 	"id":1234567890,
 	"parent":null,
+	"enable":true,
+	"selected":true,
 	"type":"serial",
 	"standard":"rs232",
 	"address":"COM1",

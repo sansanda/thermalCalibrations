@@ -2,6 +2,8 @@
 	"name":"gpib_interface",
 	"id":1234567890,
 	"parent":null,
+	"enable":true,
+	"selected":true,
 	"type":"parallel",
 	"standard":"gpib",
 	"address":"14",
