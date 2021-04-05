@@ -8,7 +8,7 @@
     </Appenders>
     <Loggers>
       
-    	<Logger name="ports" level="info" additivity="false">
+    	<Logger name="ports" level="all" additivity="false">
             <AppenderRef ref="LogToConsole"/>
         </Logger>
         <Root level="off">

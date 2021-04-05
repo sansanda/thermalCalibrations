@@ -6,7 +6,7 @@ package units;
  * temperatura, resistencia, etc... 
  * @author david
  */
-public interface I_MeasureUnits_Configurator {
+public interface I_Units_Subsystem {
 	
 	/**
 	 * Metodo que permite configurar las unidades de medida de una determinada magnitud para un cierto
@@ -17,7 +17,7 @@ public interface I_MeasureUnits_Configurator {
 	 * @param channels con un array de enteros que identifica los canales a configurar. Puede ser null.
 	 * @throws Exception
 	 */
-	public void 	setUnits(String magnitude, String unit, int[] channels) throws Exception;
+	public void setUnits(String magnitude, String unit, int[] channels) throws Exception;
 	
 	/**
 	 * Metodo que permite obtener la configuración de las unidades de medida de una determinada magnitud 
@@ -37,7 +37,7 @@ public interface I_MeasureUnits_Configurator {
 	 * @param reference con el valor de referencia
 	 * @throws Exception
 	 */
-	public void 	setUnitReference(String unit, String reference) throws Exception;
+	public void setUnitReference(String unit, String reference) throws Exception;
 	
 	/**
 	 * Método que permite consulta la referencia de una unidad de medida determinada
@@ -45,7 +45,7 @@ public interface I_MeasureUnits_Configurator {
 	 * @return la referencia de dicha unidad
 	 * @throws Exception
 	 */
-	public String 	getUnitReference(String unit) throws Exception;
+	public String getUnitReference(String unit) throws Exception;
 	
 	
 	

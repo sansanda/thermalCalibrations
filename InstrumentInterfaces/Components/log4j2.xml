@@ -8,7 +8,11 @@
     </Appenders>
     <Loggers>
       
-    	<Logger name="communications" level="off" additivity="false">
+      	<Logger name="ports" level="all" additivity="false">
+            <AppenderRef ref="LogToConsole"/>
+        </Logger>
+        
+    	<Logger name="communications" level="all" additivity="false">
             <AppenderRef ref="LogToConsole"/>
         </Logger>
         
@@ -16,6 +20,9 @@
             <AppenderRef ref="LogToConsole"/>
         </Logger>
         <Logger name="smus" level="all" additivity="false">
+            <AppenderRef ref="LogToConsole"/>
+        </Logger>
+        <Logger name="units" level="all" additivity="false">
             <AppenderRef ref="LogToConsole"/>
         </Logger>
         <Logger name="common" level="info" additivity="false">

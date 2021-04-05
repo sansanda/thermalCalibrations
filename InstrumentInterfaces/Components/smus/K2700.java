@@ -15,6 +15,7 @@ import common.I_InstrumentComponent;
 import common.InstrumentComponent;
 import communications.CommunicationsModule_Component;
 import information.GeneralInformation_Component;
+import units.Units_Subsystem;
 
 /**
  * @author DavidS
@@ -22,6 +23,7 @@ import information.GeneralInformation_Component;
  */
 public class K2700 extends InstrumentComponent{
 
+	//version 102:  added handle of unit_subsystem from json file and added initialize method 
 	//version 101:  changed constructor for including enable and selected parameters and added  parseFromJSON(JSONObject jObj) method
 	//version 100:  First non operative implementation
 	
@@ -29,7 +31,11 @@ public class K2700 extends InstrumentComponent{
 	//****************************CONSTANTES************************************
 	//**************************************************************************
 	
-	private static final int classVersion = 101;
+	private static final String COMMUNICATIONS_SUBSYSTEM = "comunications_module";
+	private static final String UNIT_SUBSYSTEM = "comunications_module";
+	
+	
+	private static final int classVersion = 102;
 	final static Logger logger = LogManager.getLogger(K2700.class);
 	
 	//**************************************************************************
@@ -85,6 +91,7 @@ public class K2700 extends InstrumentComponent{
 		boolean selected = true;
 		CommunicationsModule_Component communicationsModule = null;
 		GeneralInformation_Component generalInformation = null;
+		Units_Subsystem units_subsystem = null;
 		
 		if (keySet.contains("name")) name = (String)jObj.get("name");
 		if (keySet.contains("id")) id = (Long)jObj.get("id");
@@ -110,6 +117,11 @@ public class K2700 extends InstrumentComponent{
 			k2700.addSubComponent(generalInformation);
 		}
 		
+		if (keySet.contains("UnitSubsystem")) {
+			units_subsystem = Units_Subsystem.parseFromJSON((JSONObject)jObj.get("UnitSubsystem"));
+			k2700.addSubComponent(units_subsystem);
+		}
+		
 		return k2700;
 		 
 	}
@@ -123,6 +135,16 @@ public class K2700 extends InstrumentComponent{
 	//**************************************************************************
 	//****************************METODOS***************************************
 	//**************************************************************************
+	
+	public void initialize() throws Exception {
+		logger.info("Initializing Keithley 2700  ... ");
+		
+		
+		((CommunicationsModule_Component)this.getSubComponent("comunications_module")).initialize();
+		((CommunicationsModule_Component)this.getSubComponent("comunications_module")).open();
+		((Units_Subsystem)this.getSubComponent("unit_subsystem")).initialize(
+				(CommunicationsModule_Component)this.getSubComponent("comunications_module"));
+	}
 	
 	@Override
 	public String toString() {
@@ -145,9 +167,10 @@ public class K2700 extends InstrumentComponent{
 		
 		String k2700_filename	= "./Components/testing/k2700.json";
 		
-		logger.info("TESTNG k2700 creation from JSON file");
+		logger.info("TESTING k2700 creation from JSON file");
 		K2700 k2700 = K2700.parseFromJSON(k2700_filename);
-		logger.info(k2700.toString());
+		k2700.initialize();
+		//logger.info(k2700.toString());
 
 	}
 

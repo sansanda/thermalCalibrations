@@ -53,14 +53,15 @@
 			"timeout":1.000,
 			"writeWaitTime":250,
 			"readWaitTime":0
-		}},
+		}
+		},
 		{"communication_interface_params":
 		{
 			"name":"rs232_interface",
 			"id":1234567890,
 			"parent":"comunications_module",
 			"enable":true,
-			"selected":true,
+			"selected":false,
 			"type":"serial",
 			"standard":"rs232",
 			"address":"COM1",
@@ -72,12 +73,13 @@
 			"terminator":"\n",
 			"writeWaitTime":250,
 			"readWaitTime":0
-		}}
+		}
+		}
 		]
 	},
-	"MeasureUnitsConfigurator":
+	"UnitSubsystem":
 	{
-		"name":"measure_units_configurator",
+		"name":"unit_subsystem",
 		"id":1234567890,
 		"parent":"K2700",
 		"enable":true,
@@ -86,7 +88,7 @@
 		{
 			"name":"general_information",
 			"id":1234567890,
-			"parent":"measure_units_configurator",
+			"parent":"unit_subsystem",
 			"enable":true,
 			"selected":true,
 			"serialNumber":"01020304",
@@ -94,6 +96,37 @@
 			"manufacturer":"David",
 			"observations":"Module unit for the configuration of the units of the multimeter",
 			"firmwareVersion":"1"	
+		},
+		"Configuration":
+		{ 
+			"temperatureUnits":"CEL",
+			"dcVoltageUnits":"V",
+			"acVoltageUnits":"V",
+			"dcDBReference":1.0,
+			"acDBReference":1.0,
+			"channelsConfiguration":
+			[
+			{"channelNumber":101, "channelConfiguration":"UNIT:VOLT:DC V"},
+			{"channelNumber":102, "channelConfiguration":"UNIT:VOLT:DC V"},
+			{"channelNumber":103, "channelConfiguration":"UNIT:VOLT:DC V"},
+			{"channelNumber":104, "channelConfiguration":"UNIT:VOLT:DC V"},
+			{"channelNumber":105, "channelConfiguration":"UNIT:VOLT:DC V"},
+			{"channelNumber":106, "channelConfiguration":"UNIT:VOLT:DC V"},
+			{"channelNumber":107, "channelConfiguration":"UNIT:VOLT:DC V"},
+			{"channelNumber":108, "channelConfiguration":"UNIT:VOLT:DC V"},
+			{"channelNumber":109, "channelConfiguration":"UNIT:VOLT:DC V"},
+			{"channelNumber":110, "channelConfiguration":"UNIT:VOLT:DC V"},
+			{"channelNumber":111, "channelConfiguration":"UNIT:VOLT:AC V"},
+			{"channelNumber":112, "channelConfiguration":"UNIT:VOLT:AC V"},
+			{"channelNumber":113, "channelConfiguration":"UNIT:VOLT:AC V"},
+			{"channelNumber":114, "channelConfiguration":"UNIT:VOLT:AC V"},
+			{"channelNumber":115, "channelConfiguration":"UNIT:VOLT:AC V"},
+			{"channelNumber":116, "channelConfiguration":"UNIT:VOLT:AC V"},
+			{"channelNumber":117, "channelConfiguration":"UNIT:VOLT:AC V"},
+			{"channelNumber":118, "channelConfiguration":"UNIT:VOLT:AC V"},
+			{"channelNumber":119, "channelConfiguration":"UNIT:VOLT:AC V"},
+			{"channelNumber":120, "channelConfiguration":"UNIT:VOLT:AC V"}	
+			]
 		}
 	}
 }
