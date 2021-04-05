@@ -4,7 +4,6 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -65,7 +64,7 @@ public class Units_Subsystem extends InstrumentComponent implements I_Units_Subs
 			
 	public Units_Subsystem(String name, long id, I_InstrumentComponent parent, boolean enable, boolean selected) {
 		super(name, id, parent, enable, selected);
-		channelsConfiguration = new HashMap<Integer,String>(30);
+		this.channelsConfiguration = new HashMap<Integer,String>(30);
 
 	}
 
@@ -73,7 +72,7 @@ public class Units_Subsystem extends InstrumentComponent implements I_Units_Subs
 			ArrayList<String> descriptiveTags,
 			HashMap<String, I_InstrumentComponent> subcomponents) {
 		super(name, id, parent, enable, selected, descriptiveTags, subcomponents);
-		channelsConfiguration = new HashMap<Integer,String>(30);
+		this.channelsConfiguration = new HashMap<Integer,String>(30);
 
 	}
 
