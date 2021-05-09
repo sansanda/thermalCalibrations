@@ -20,7 +20,7 @@ import common.I_InstrumentComponent;
 import common.InstrumentComponent;
 import factories.CommunicationInterface_Factory;
 import information.GeneralInformation_Component;
-import smus.K2700;
+import multimeters.K2700;
 
 /**
  * @author david

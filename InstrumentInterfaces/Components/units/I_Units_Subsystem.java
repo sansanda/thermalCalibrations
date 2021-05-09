@@ -8,46 +8,68 @@ package units;
  */
 public interface I_Units_Subsystem {
 	
-	/**
-	 * Metodo que permite configurar las unidades de medida de una determinada magnitud para un cierto
-	 * numero de canales.
-	 * @param magnitude que puede ser TEMP, VOLT:DC, VOLT:AC, etc...
-	 * @param unit que será en función de la magnitude. Por ejemplo, para TEMP solo 
-	 * podrá aceptar valores como C, CEL, K, F o FAR y para VOLT V o DB, etc..
-	 * @param channels con un array de enteros que identifica los canales a configurar. Puede ser null.
-	 * @throws Exception
-	 */
-	public void setUnits(String magnitude, String unit, int[] channels) throws Exception;
 	
 	/**
-	 * Metodo que permite obtener la configuración de las unidades de medida de una determinada magnitud 
-	 * para un cierto numero de canales.
-	 * @param magnitude cuyas unidades queremos consultar
-	 * @param channels con un array de enteros que identifica los canales a consultar.
-	 * Puede ser null. En ese caso el String[] solo contendrá una entrada.
-	 * @return String[] con la consulta (las unidades).
+	 * Metodo que permite configurar las unidades de medida para el caso de magnitud = Temperature
+	 * @param units que será "C", "CEL", "K", "F" o "FAR" u otro en función del instrumento.
 	 * @throws Exception
 	 */
-	public String[] getUnits(String magnitude, int[] channels) throws Exception;
+	public void setTemperatureUnits(String units) throws Exception;
 	
 	/**
-	 * Método que permite configurar la referencia para una unidad determinada, por ejemplo DB.
-	 * Con ciertas unidades el metodo no tiene sentido, por ejemplo Volt
-	 * @param unit con la unidad cuya referencia queremos configurar. 
-	 * @param reference con el valor de referencia
+	 * Metodo que retorna la configuración de las unidades en las medidas de Temperature
+	 * @return "C", "CEL", "K", "F" o "FAR" u otro en función del instrumento.
 	 * @throws Exception
 	 */
-	public void setUnitReference(String unit, String reference) throws Exception;
+	public String getTemperatureUnits() throws Exception;
 	
 	/**
-	 * Método que permite consulta la referencia de una unidad de medida determinada
-	 * @param unit con la unidad a consultar
-	 * @return la referencia de dicha unidad
+	 * Metodo que permite configurar las unidades de medida para el caso de magnitudes tipo  = VOLTAGE:DC o VOLTAGE:AC
+	 * @param units que será "UNIT:VOLT:DC V" o "UNIT:VOLT:AC V"  o "UNIT:VOLT:DC DB" o "UNIT:VOLT:AC DB" u otro en función del instrumento.
+	 * @param channel que puede ser -1 (si se trabaja o no con tarjeta expansora) o puede indicar el canal a configurar. 
 	 * @throws Exception
 	 */
-	public String getUnitReference(String unit) throws Exception;
+	public void setChannelVoltageUnits(int channel, String units) throws Exception;
 	
+	/**
+	 * Metodo que retorna la configuración de las unidades en las medidas de VOLTAGE:DC
+	 * @return "V" o "DB" u otro en función del instrumento.
+	 * @throws Exception
+	 */
+	public String[]	getDCVoltageUnits(int[] channels) throws Exception;
 	
+	/**
+	 * Metodo que retorna la configuración de las unidades en las medidas de VOLTAGE:AC
+	 * @return "V" o "DB" u otro en función del instrumento.
+	 * @throws Exception
+	 */
+	public String[]	getACVoltageUnits(int[] channels) throws Exception;
 	
+	/**
+	 * Metodo que permite configurar la referencia en el caso de unidades de medida tipo VOLTAGE:DC:DB
+	 * @param reference que será un valor del siguiente rango [1e-7, 1000].
+	 * @throws Exception
+	 */
+	public void setDCVoltageDBReference(float reference) throws Exception;
 	
+	/**
+	 * Metodo que retorna la configuración de la referencia para el caso de unidades de medida de VOLTAGE:DC:DB
+	 * @return una valor float del siguiente rango [1e-7, 1000].
+	 * @throws Exception
+	 */
+	public float getDCVoltageDBReference() throws Exception;
+	
+	/**
+	 * Metodo que permite configurar la referencia en el caso de unidades de medida tipo VOLTAGE:AC:DB
+	 * @param reference que será un valor del siguiente rango [1e-7, 1000].
+	 * @throws Exception
+	 */
+	public void setACVoltageDBReference(float reference) throws Exception;
+	
+	/**
+	 * Metodo que retorna la configuración de la referencia para el caso de unidades de medida de VOLTAGE:AC:DB
+	 * @return una valor float del siguiente rango [1e-7, 1000].
+	 * @throws Exception
+	 */
+	public float getACVoltageDBReference() throws Exception;
 }

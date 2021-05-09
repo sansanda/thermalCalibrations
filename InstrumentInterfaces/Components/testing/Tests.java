@@ -12,7 +12,7 @@ import communications.CommunicationsModule_Component;
 import communications.GPIBInterface_Component;
 import communications.RS232Interface_Component;
 import information.GeneralInformation_Component;
-import smus.K2700;
+import multimeters.K2700;
 
 
 
