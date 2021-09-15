@@ -22,6 +22,7 @@ public interface I_CommunicationsInterface {
 	public void 	setAddress(String address) throws Exception;
 	public void 	initialize() throws Exception;
 	public void 	open() throws Exception;
+	public boolean 	isOpened() throws Exception;
 	public void 	close() throws Exception;
 	public byte[] 	read() throws Exception;
 	public void 	write(String data) throws Exception;

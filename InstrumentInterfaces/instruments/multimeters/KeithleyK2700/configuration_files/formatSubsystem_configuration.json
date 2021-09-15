@@ -1,0 +1,26 @@
+{
+    "name":"format_subsystem",
+    "id":1234567890,
+    "parent":"K2700",
+    "enable":true,
+    "selected":true,
+    "GeneralInformation":
+    {
+        "name":"general_information",
+        "id":1234567890,
+        "parent":"format_elements_subsystem",
+        "enable":true,
+        "selected":true,
+        "serialNumber":"01020304",
+        "model":"1",
+        "manufacturer":"David",
+        "observations":"Module format elements for the configuration of the data array returned by the multimeter for every measure",
+        "firmwareVersion":"1"	
+    },
+    "Configuration":
+    { 
+        "format_data_type":"ASCii",
+        "format_border":"NORMAL",
+        "format_elements":"READING, UNITS, TSTAMP, RNUMBER, CHANNEL"
+    }
+}

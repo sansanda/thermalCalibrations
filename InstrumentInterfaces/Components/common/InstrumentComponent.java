@@ -5,10 +5,19 @@ package common;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.json.simple.JSONObject;
+
+
+import information.GeneralInformation_Component;
 
 /**
  * @author david
@@ -21,6 +30,7 @@ public abstract class InstrumentComponent implements I_InstrumentComponent, Comp
 	//				also we have changed related methods and I_InstrumentComponent interface
 	
 	private static final int classVersion = 102;
+	final static Logger logger = LogManager.getLogger(InstrumentComponent.class);
 	
 	protected String name;
 	protected long id;
@@ -31,7 +41,7 @@ public abstract class InstrumentComponent implements I_InstrumentComponent, Comp
 	protected I_InstrumentComponent parent;
 	private PropertyChangeSupport support;
 
-	public InstrumentComponent(String name, long id, I_InstrumentComponent parent, boolean enable, boolean selected) {
+	protected InstrumentComponent(String name, long id, I_InstrumentComponent parent, boolean enable, boolean selected) {
 		
 		super();
 		this.name = name;
@@ -53,7 +63,34 @@ public abstract class InstrumentComponent implements I_InstrumentComponent, Comp
 		this.subcomponents = subcomponents;
 	}
 	
-	//non-static methods
+	public InstrumentComponent(JSONObject jObj) throws Exception {
+		
+		this(
+				(String)jObj.get("name"),
+				(Long)jObj.get("id"),
+				null,							//(InstrumentComponent)jObj.get("parent") not implemented for the moment
+				(boolean)jObj.get("enable"),
+				(boolean)jObj.get("selected")
+			);
+		
+		logger.info("Parsing Communications Module from jObj ... ");
+		
+		GeneralInformation_Component generalInformation = new GeneralInformation_Component((JSONObject)jObj.get("GeneralInformation"));
+		this.addSubComponent(generalInformation);
+		
+	}
+	
+	//**************************************************************************
+	//****************************METODOS ESTATICOS*****************************
+	//**************************************************************************
+	 
+	public static int getClassversion() {
+		return classVersion;
+	}
+		
+	//**************************************************************************
+	//****************************METODOS PUBLICOS******************************
+	//**************************************************************************
 	
 	@Override
 	public void setName(String name) {
@@ -228,12 +265,4 @@ public abstract class InstrumentComponent implements I_InstrumentComponent, Comp
 		
 		return builder.toString();
 	}
-
-	public static int getClassversion() {
-		return classVersion;
-	}
-
-	
-	
-	
 }

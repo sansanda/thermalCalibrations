@@ -12,7 +12,7 @@ import communications.CommunicationsModule_Component;
 import communications.GPIBInterface_Component;
 import communications.RS232Interface_Component;
 import information.GeneralInformation_Component;
-import multimeters.K2700;
+import multimeters.KeithleyK2700.K2700;
 
 
 
@@ -40,17 +40,17 @@ public class Tests {
 			//tipo SerialPort para poder manejar dicho puerto
 			logger.info("TESTNG COMMUNICATION PORT COMPONENTS");
 			 
-			//I_InstrumentComponent jssc_interface = CommunicationInterface_Factory.getInterfaceDriver(CommunicationInterface_Factory.JSSC_RS232);
-			RS232Interface_Component 		rs232_interface 						= RS232Interface_Component.parseFromJSON(rs232_interface_filename);
-			GPIBInterface_Component 		gpib_interface 							= GPIBInterface_Component.parseFromJSON(gpib_interface_filename);
-			GeneralInformation_Component 	gpib_interface_general_information 		= GeneralInformation_Component.parseFromJSON(gpib_interface_general_information_filename);
+			//I_InstrumentComponent jssc_interface = SenseFunctions_Factory.getInterfaceDriver(SenseFunctions_Factory.JSSC_RS232);
+			RS232Interface_Component 		rs232_interface 						= new RS232Interface_Component(rs232_interface_filename);
+			GPIBInterface_Component 		gpib_interface 							= new GPIBInterface_Component(gpib_interface_filename);
+			GeneralInformation_Component 	gpib_interface_general_information 		= new GeneralInformation_Component(gpib_interface_general_information_filename);
 			gpib_interface.addSubComponent(gpib_interface_general_information);
 			logger.info(gpib_interface.getSubComponent("gpib_interface_general_information").toString());
 			
 			//Si estas en una maquina no de 32bits no podrás utilizar esta interface  
-			//I_InstrumentComponent javacomm_interface = CommunicationInterface_Factory.getInterfaceDriver(CommunicationInterface_Factory.JAVACOMM_RS232);
+			//I_InstrumentComponent javacomm_interface = SenseFunctions_Factory.getInterfaceDriver(SenseFunctions_Factory.JAVACOMM_RS232);
 			//System.out.println("Working Directory = " + System.getProperty("user.dir"));
-			//I_InstrumentComponent rs232_interface2 = CommunicationInterface_Factory.parseFromJSON(filename);
+			//I_InstrumentComponent rs232_interface2 = SenseFunctions_Factory.parseFromJSON(filename);
 			
 			//logger.info(rs232_interface.toString());
 			logger.info(gpib_interface_general_information.toString());

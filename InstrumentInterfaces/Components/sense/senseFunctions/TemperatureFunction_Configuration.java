@@ -7,8 +7,9 @@ import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
 
 import dataValidators.DataValidators;
+import sense.Sense_Subsystem;
 
-public abstract class TemperatureFunction_Configuration extends SenseFunction_Configuration
+public class TemperatureFunction_Configuration extends SenseFunction_Configuration
 		implements I_TemperatureFunction_Configuration {
 
 	//version 100:  First non operative implementation
@@ -20,6 +21,7 @@ public abstract class TemperatureFunction_Configuration extends SenseFunction_Co
 	private static final int classVersion = 100;
 	final static Logger logger = LogManager.getLogger(TemperatureFunction_Configuration.class);
 	
+
 	//**************************************************************************
 	//****************************VARIABLES*************************************
 	//**************************************************************************
@@ -31,8 +33,16 @@ public abstract class TemperatureFunction_Configuration extends SenseFunction_Co
 	//****************************CONSTRUCTORES*********************************
 	//**************************************************************************
 	
-	public TemperatureFunction_Configuration() {
-		// TODO Auto-generated constructor stub
+	public TemperatureFunction_Configuration() throws Exception 
+	{
+		this(Sense_Subsystem.TCOUPLE_TEMPERATURE_TRANSDUCER,Sense_Subsystem.TCOUPLE_K_TYPE_TRANSDUCER);
+	}
+	
+	public TemperatureFunction_Configuration(String transducer, String transducerType) throws Exception 
+	{
+		super(Sense_Subsystem.FUNCTION_TEMPERATURE);
+		this.setTransducer(transducer);
+		this.setType(transducerType);
 	}
 
 	//**************************************************************************
@@ -49,24 +59,15 @@ public abstract class TemperatureFunction_Configuration extends SenseFunction_Co
 	//****************************METODOS **************************************
 	//**************************************************************************
 	
-	public void initializeFromJSON(JSONObject validFunctionParameters, JSONObject attributes) throws Exception
+	public void initializeFromJSON(JSONObject attributes) throws Exception
 	{
-		super.initializeFromJSON(validFunctionParameters, attributes);
-		this.initializeValidFunctionParametersFromJSON(validFunctionParameters);
+		super.initializeFromJSON(attributes);
 		this.initializeAttributesFromJSON(attributes);
-	}
-	
-	private void initializeValidFunctionParametersFromJSON(JSONObject jObj) throws Exception
-	{
-		logger.info("Initializing Valid Function Parameters from jObj ... ");
-		
-		//Nothing to do here
-		
 	}
 	
 	private void initializeAttributesFromJSON(JSONObject jObj) throws Exception
 	{
-		logger.info("Initializing Sense_Function Configuration from jObj ... ");
+		logger.info("Initializing Temperature Sense_Function Configuration from jObj ... ");
 		
 		Set<String> keySet = jObj.keySet();
 		
@@ -87,7 +88,7 @@ public abstract class TemperatureFunction_Configuration extends SenseFunction_Co
 	
 	@Override
 	public void setTransducer(String t) throws Exception {
-		this.transducer = DataValidators.discreteSet_Validator(t, SenseFunction_Configuration.AVAILABLE_TEMPERATURE_TRANSDUCERS, SenseFunction_Configuration.FRTD_TEMPERATURE_TRANSDUCER);
+		this.transducer = t;
 	}
 
 	@Override

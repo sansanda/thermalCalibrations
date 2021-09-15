@@ -2,7 +2,6 @@ package route;
 
 import java.io.FileReader;
 import java.util.Arrays;
-import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,7 +13,6 @@ import common.InstrumentComponent;
 import communications.I_CommunicationsInterface;
 import expansion_cards.MeasureChannels_DifferentialMultiplexer;
 import expansion_slots.Expansion_Slots;
-import information.GeneralInformation_Component;
 
 public class Route_Subsystem extends InstrumentComponent implements I_Route_Subsystem {
 
@@ -33,6 +31,7 @@ public class Route_Subsystem extends InstrumentComponent implements I_Route_Subs
 	//****************************VARIABLES*************************************
 	//**************************************************************************
 	
+	private String terminals_route = "FRONt"; //terminals
 	
 	//Variable para el acceso al modulo de comunicaciones del multimetro.
 	//Será necesario para permitir a Route tomar el control de dicho modulo
@@ -53,64 +52,29 @@ public class Route_Subsystem extends InstrumentComponent implements I_Route_Subs
 		super(name, id, parent, enable, selected);
 	}
 	
+	public Route_Subsystem(String jSONObject_filename) throws Exception {
+		this((org.json.simple.JSONObject)new JSONParser().parse(new FileReader(jSONObject_filename)));
+	}
+	
+	public Route_Subsystem(JSONObject jObj) throws Exception {
+		this(
+				(String)jObj.get("name"),
+				(Long)jObj.get("id"),
+				null,							//(InstrumentComponent)jObj.get("parent") not implemented for the moment
+				(boolean)jObj.get("enable"),
+				(boolean)jObj.get("selected")
+			);
+		
+		logger.info("Parsing Route Subsystem from jObj ... ");
+		
+		JSONObject configuration = (JSONObject)jObj.get("Configuration");
+		
+		this.terminals_route = (String)configuration.get("terminals_route");
+		
+	}
 	//**************************************************************************
 	//****************************METODOS ESTATICOS*****************************
 	//**************************************************************************
-	 
-	public static Route_Subsystem parseFromJSON(String filename) throws Exception
-	{
-		//JSON parser object to parse read file
-		JSONParser jsonParser = new JSONParser();
-		FileReader reader = new FileReader(filename);
-	
-		//Read JSON file
-		Object obj = jsonParser.parse(reader);
-		jsonParser = null;
-		 
-		org.json.simple.JSONObject jObj = (org.json.simple.JSONObject) obj;
-		 
-		return Route_Subsystem.parseFromJSON(jObj);
-		 
-	 }
-	 
-	public static Route_Subsystem parseFromJSON(JSONObject jObj) throws Exception
-	{
-		logger.info("Parsing Route_Subsystem from jObj ... ");
-			
-		Set<String> keySet = jObj.keySet();
-		
-		Route_Subsystem route_subsystem = null;
-		
-		String name = "";
-		Long id = 0l;
-		InstrumentComponent parent = null;
-		boolean enable = true;
-		boolean selected = true;
-		GeneralInformation_Component generalInformation = null;
-		
-		if (keySet.contains("name")) name = (String)jObj.get("name");
-		if (keySet.contains("id")) id = (Long)jObj.get("id");
-		//if (keySet.contains("parent")) parent = (InstrumentComponent)jObj.get("parent"); not implemented for the moment
-		if (keySet.contains("enable")) enable = (boolean)jObj.get("enable");
-		if (keySet.contains("selected")) selected = (boolean)jObj.get("selected");
-		
-		route_subsystem = new Route_Subsystem(
-				 name, 
-				 id, 
-				 parent,
-				 enable,
-				 selected
-			);
-		
-		if (keySet.contains("GeneralInformation")) {
-			generalInformation = GeneralInformation_Component.parseFromJSON((JSONObject)jObj.get("GeneralInformation"));
-			route_subsystem.addSubComponent(generalInformation);
-		}
-		
-		return route_subsystem;
-			
-		
-	 }
 	
 	public static int getClassversion() {
 		return classVersion;
@@ -121,6 +85,16 @@ public class Route_Subsystem extends InstrumentComponent implements I_Route_Subs
 	//****************************METODOS PUBLICOS******************************
 	//**************************************************************************
 	
+	/**
+	 * Fase de inicialización del componente Route_Subsystem donde principalmente se pasa la referencia del modulo de comunicaciones y 
+	 * la referencia del objeto que gestiona los expansion slots que pueda tener el instrumento y que será de absoluta necesidad para este componente
+	 * si se quieren ejecutar todo tipo de comandos relacionados con los canales de medida de las tarjetas multiplexoras que pueden tener conectados 
+	 * instrumentos como un K2700.
+	 * @param i_CommunicationsInterface con la referencia al modulo de comunicaciones 
+	 * @param expansion_slots con la referencia al objeto que gestiona los expansion slots. Ojo porque algunos instrumentos pueden no disponer de 
+	 * expansion slots, en ese caso la referencia apuntará a null.
+	 * @throws Exception
+	 */
 	public void initialize(I_CommunicationsInterface i_CommunicationsInterface, Expansion_Slots expansion_slots) throws Exception {
 		
 		logger.info("Initializing Route SubSystem ... ");
@@ -137,6 +111,14 @@ public class Route_Subsystem extends InstrumentComponent implements I_Route_Subs
 		
 		if (this.communicationsInterface == null) throw new Exception("Communications Interface not initialized!!!!");
 		
+		if (this.expansion_slots == null) 
+		{
+			this.selectInput_OutputTerminalsRoute(this.terminals_route);
+		}
+		else
+		{
+			//Nothing todo here 
+		}
 		
 	}
 	
@@ -148,8 +130,8 @@ public class Route_Subsystem extends InstrumentComponent implements I_Route_Subs
 	}
 
 	@Override
-	public void openAllChannels() throws Exception {
-		// TODO Auto-generated method stub
+	public void sendOpenAllChannelsCommand() throws Exception {
+		if (this.expansion_slots == null) return;
 		if (this.expansion_slots.getNumberOfOccupiedSlots()<=0) throw new Exception("No occupied slots in the instruments!!!!. So we cannot open all channels!!!!");
 		this.communicationsInterface.write("ROUTE:OPEN:ALL");
 	}
@@ -158,8 +140,9 @@ public class Route_Subsystem extends InstrumentComponent implements I_Route_Subs
 	/**
 	 * 
 	 */
-	public void closeChannel(int _channelNumber) throws Exception
+	public void sendCloseChannelCommand(int _channelNumber) throws Exception
 	{
+		if (this.expansion_slots == null) return;
 		logger.info("Closing channel number: " + _channelNumber);
 		if (!isChannelAvailable(_channelNumber)) throw new Exception("We cannot close the channel number " + _channelNumber + ". The channel is not available");
 		this.communicationsInterface.write("ROUTE:CLOSE " + MeasureChannels_DifferentialMultiplexer.createChannelsList(_channelNumber, _channelNumber));	
@@ -174,6 +157,7 @@ public class Route_Subsystem extends InstrumentComponent implements I_Route_Subs
 	 */
 	@Override
 	public boolean isChannelAvailable(int _channelNumber) throws Exception {
+		if (this.expansion_slots == null) return false;
 		logger.info("Asking to expansion slots for the availabily of the channel: " + _channelNumber + " ...");
 		((MeasureChannels_DifferentialMultiplexer)this.expansion_slots.getExpansionCardOfChannel(_channelNumber)).validateChannel(_channelNumber);
 		return true;
@@ -186,6 +170,7 @@ public class Route_Subsystem extends InstrumentComponent implements I_Route_Subs
 	 */
 	@Override
 	public boolean areChannelsAvailable(int[] _channelsList) throws Exception {
+		if (this.expansion_slots == null) return false;
 		logger.info("Asking to expansion slots for the availabily of the channels list: " + Arrays.toString(_channelsList) + " ....");
 		for (int i=0;i<_channelsList.length;i++) this.isChannelAvailable(_channelsList[i]);
 		return true;
@@ -198,7 +183,8 @@ public class Route_Subsystem extends InstrumentComponent implements I_Route_Subs
 	 * @return int[] con la lista de los canales cerrados
 	 * @throws Exception si alguno de los canales a consultar no está disponible en los slots de expnasion
 	 */
-	public int[] getClosedChannels() throws Exception {
+	public int[] queryClosedChannels() throws Exception {
+		if (this.expansion_slots == null) throw new Exception("No slots detected in this instruments. Are you sure that you are working with a multimeter/multiplexer instrument?");
 		logger.info("Asking to multimeter for the closed channels list...");
 		return MeasureChannels_DifferentialMultiplexer.convertChannelList(new String(this.communicationsInterface.ask("ROUTE:CLOSE?")));
 	}
@@ -212,7 +198,8 @@ public class Route_Subsystem extends InstrumentComponent implements I_Route_Subs
 	 * @throws Exception si alguno de los canales a consultar no está disponible en los slots de expanasion
 	 */
 	@Override
-	public int[] getClosureCountOfChannels(int[] _channelsList) throws Exception {
+	public int[] queryClosureCountOfChannels(int[] _channelsList) throws Exception {
+		if (this.expansion_slots == null) throw new Exception("No slots detected in this instruments. Are you sure that you are working with a multimeter/multiplexer instrument?");
 		logger.info("Asking to multimeter for the closed channels list...");
 		if (!this.areChannelsAvailable(_channelsList)) throw new Exception("One or more of the channels " + Arrays.toString(_channelsList)+ " you get as parameter are not available.");
 		System.out.println(this.communicationsInterface.ask("ROUT:CLOS:COUN? " + MeasureChannels_DifferentialMultiplexer.createChannelsList(_channelsList)));
@@ -226,7 +213,8 @@ public class Route_Subsystem extends InstrumentComponent implements I_Route_Subs
 	 * @throws Exception si algo va mal o alguno de los canales no está disponible
 	 */
 	@Override
-	public void setScanChannelsList(int[] _channelsList) throws Exception {
+	public void configureScanChannelsList(int[] _channelsList) throws Exception {
+		if (this.expansion_slots == null) return;
 		logger.info("Setting the scan channels list...");
 		if (!this.areChannelsAvailable(_channelsList)) throw new Exception("One or more of the channels " + Arrays.toString(_channelsList)+ " you get as parameter are not available.");
 		this.communicationsInterface.write("ROUTe:SCAN:INTernal " + MeasureChannels_DifferentialMultiplexer.createChannelsList(_channelsList));
@@ -236,7 +224,8 @@ public class Route_Subsystem extends InstrumentComponent implements I_Route_Subs
 	 * 
 	 */
 	@Override
-	public int[] getScanChannelsList() throws Exception {
+	public int[] queryScanChannelsList() throws Exception {
+		if (this.expansion_slots == null) throw new Exception("No slots detected in this instruments. Are you sure that you are working with a multimeter/multiplexer instrument?");
 		logger.info("Asking to multimeter for the scan configuration (channels list)...");
 		return MeasureChannels_DifferentialMultiplexer.convertChannelList(new String(this.communicationsInterface.ask("ROUTe:SCAN:INTernal?")));
 	}
@@ -245,7 +234,9 @@ public class Route_Subsystem extends InstrumentComponent implements I_Route_Subs
 	 * 
 	 */
 	@Override
-	public void enableScan(boolean enable) throws Exception {
+	public void configureEnableScan(boolean enable) throws Exception {
+		
+		if (this.expansion_slots == null) return;
 		
 		String message = (enable ? "Enabling scan..." : "Disabling scan");
 		String command = (enable ? "ROUTe:SCAN:LSELect INTernal" : "ROUTe:SCAN:LSELect NONE");
@@ -255,7 +246,9 @@ public class Route_Subsystem extends InstrumentComponent implements I_Route_Subs
 	}
 
 	@Override
-	public boolean isScanEnable() throws Exception {
+	public boolean queryScanEnable() throws Exception {
+		
+		if (this.expansion_slots == null) throw new Exception("No slots detected in this instruments. Are you sure that you are working with a multimeter/multiplexer instrument?");
 		logger.info("Asking to multimeter for the state of the scan ...");
 		boolean enable = false;
 		String result = new String(this.communicationsInterface.ask("ROUTe:SCAN:LSELect?"));
@@ -264,15 +257,34 @@ public class Route_Subsystem extends InstrumentComponent implements I_Route_Subs
 	}
 
 	@Override
-	public void setTriggerSourceAsImmediate() throws Exception {
+	public void configureTriggerSourceAsImmediate() throws Exception {
+		if (this.expansion_slots == null) return;
 		logger.info("Setting scan trigger source as immediate...");
 		this.communicationsInterface.write("ROUT:SCAN:TSOurce IMM");
 	}
 
 	@Override
-	public String getTriggerSourceThatStartsScan() throws Exception {
+	public String queryTriggerSourceThatStartsScan() throws Exception {
+		if (this.expansion_slots == null) throw new Exception("No slots detected in this instruments. Are you sure that you are working with a multimeter/multiplexer instrument?");
 		logger.info("Asking to multimeter for scan trigger source ...");
 		String result = new String(this.communicationsInterface.ask("ROUT:SCAN:TSOurce?"));
+		return result;
+	}
+	/**
+	 * This command is used to select which set of input/output terminals to enable (front panel or rear panel).
+	 * @param route that can be 'FRONt' for the Front panel in/out jacks or 'REAR' for the Rear panel in/out jacks
+	 */
+	public void selectInput_OutputTerminalsRoute(String route) throws Exception
+	{
+		logger.info("Selecting the input_output terminals route as" + route);
+		this.terminals_route = route;
+		this.communicationsInterface.write(":ROUTe:TERMinals " + route);
+	}
+	
+	public String queryInput_OutputTerminalsRoute() throws Exception
+	{
+		logger.info("Asking to instrument for the input_output terminals route ...");
+		String result = new String(this.communicationsInterface.ask(":ROUTe:TERMinals?"));
 		return result;
 	}
 		

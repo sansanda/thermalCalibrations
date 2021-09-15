@@ -43,6 +43,7 @@ public class GPIB_Port {
 	/** Indicates whether or not the native driver has been loaded, yet. */
 	private static boolean libraryLoaded = false;
 	
+	private boolean opened = false;
 	
 	 //**************************************************************************
 	 //****************************METODOS ESTATICOS*****************************
@@ -86,6 +87,7 @@ public class GPIB_Port {
 					
 					break;
 	
+					
 				default: throw new IllegalStateException("No supported driver for OS "+ OSUtils.getOS());
 			}
 			
@@ -119,8 +121,36 @@ public class GPIB_Port {
 	 * @throws Exception, IOException 
 	 */
 	public void open(float _timeout) throws Exception, IOException {
+		
 		if (this.instrumentHandler == null) throw new Exception("You are trying to open the instrument but instrument handler is null!!! Did you forget the GPIB Port initialization step????" );
-		this.instrumentHandler.open(_timeout);
+		if (this.opened) return;
+		
+		try {
+			this.instrumentHandler.open(_timeout);
+			this.opened = true;
+		} 
+		catch (IOException e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			this.opened = false;
+		} 
+		catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			this.opened = false;
+		}
+		
+	}
+	
+	/**
+	 * Ask the device if it is opened.
+	 * @param _timeout Timeout for the GPIB driver in seconds
+	 * @throws Exception, IOException 
+	 */
+	public boolean isOpened() throws Exception, IOException {
+		return this.opened;
 	}
 	
 	/**
@@ -129,6 +159,7 @@ public class GPIB_Port {
 	 */
 	public void close() throws IOException {
 		this.instrumentHandler = null;
+		this.opened = false;
 	}
 	
 	/**
@@ -139,6 +170,12 @@ public class GPIB_Port {
 	 */
 	public byte[] ask(String command) throws IOException
 	{
+		try {
+			this.open(1);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		return this.instrumentHandler.sendCommandBin(command);
 	}
 	
@@ -149,11 +186,18 @@ public class GPIB_Port {
 	 */
 	public void write(String command) throws IOException
 	{
+		try {
+			this.open(1);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		this.instrumentHandler.writeCommand(command);
 	}
 	
 	
 	/**
+	 * CAUTION!!!!! FOR THE MOMENT OUT OF SERVICE. ALWAYS WILL RETURN NULL!!!!
+	 * 
 	 * Sends the Fetch? command to the instrument and returns a response. Similiar function to read, hence is read.
 	 * This command requests the latest post-processed reading. After sending this command and addressing the Model 2700 to talk, the reading is sent
 	 to the computer. This command does not affect the instrument setup.
@@ -173,7 +217,8 @@ public class GPIB_Port {
 	 */
 	public byte[] read() throws IOException
 	{
-		return this.ask("FETCH?");
+		//return this.ask("FETCH?");
+		return null;
 	}
 	
 	
@@ -267,20 +312,22 @@ public class GPIB_Port {
 			gpib_port.initialize();
 			gpib_port.open(1.00f);
 			logger.info(new String(gpib_port.ask("*IDN?")));
-			gpib_port.close();
+			//gpib_port.close();
 
 			
 			
-//			for (int i=1;i<32;i++)
-//			{
-//				try {
-//					gpib_port = new GPIB_Port(String.valueOf(i));
-//				} catch (Exception e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//				
-//			}
+			for (int i=1;i<400;i++)
+			{
+				try {
+					logger.info("--------------------------------------------------------->"+i);
+					logger.info(new String(gpib_port.ask("MEAS:VOLT? 10, 0.01, (@102)")));
+					//Thread.sleep(200);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			}
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

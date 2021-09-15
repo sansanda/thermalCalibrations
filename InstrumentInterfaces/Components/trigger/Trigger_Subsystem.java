@@ -29,16 +29,29 @@ public class Trigger_Subsystem extends InstrumentComponent implements I_Trigger_
 	
 	final static Logger logger = LogManager.getLogger(Trigger_Subsystem.class);
 	
-	public static int 		TRIGGER_COUNT_MIN; 	//= 1;
-	public static int 		TRIGGER_COUNT_MAX; 	//= 55000;
-	public static double 	TRIGGER_DELAY_MIN; //= 0;
-	public static double 	TRIGGER_DELAY_MAX;	//= 999999.999;
-	public static double 	TRIGGER_TIMER_MIN;	//= 0.001;
-	public static double 	TRIGGER_TIMER_MAX;	//= 999999.999;
-	public static int 		SAMPLE_COUNT_MIN;	//= 1;
-	public static int 		SAMPLE_COUNT_MAX;	//= 55000;
+	public static int 		TRIGGER_COUNT_MIN = 1;
+	public static int 		TRIGGER_COUNT_MAX = 55000;
+	public static double 	TRIGGER_DELAY_MIN = 0;
+	public static double 	TRIGGER_DELAY_MAX = 999999.999;
+	public static double 	TRIGGER_TIMER_MIN = 0.001;
+	public static double 	TRIGGER_TIMER_MAX = 999999.999;
+	public static int 		SAMPLE_COUNT_MIN = 1;
+	public static int 		SAMPLE_COUNT_MAX = 55000;
 	
-	private static String[] CONTROL_SOURCE_VALID_VALUES; //IMMediate, TIMer, MANual, BUS, or EXTernal.
+	public static String 	TRIGGER_SOURCE_CONTROL_IMM = "IMMediate";
+	public static String 	TRIGGER_SOURCE_CONTROL_TIM = "TIMer";
+	public static String 	TRIGGER_SOURCE_CONTROL_MAN = "MANual";
+	public static String 	TRIGGER_SOURCE_CONTROL_BUS = "BUS";
+	public static String 	TRIGGER_SOURCE_CONTROL_EXT = "EXTernal";
+	
+	
+	private static String[] CONTROL_SOURCE_VALID_VALUES = new String[]{"IMMediate", "TIMer", "MANual", "BUS", "EXTernal","IMM", "TIM", "MAN", "BUS", "EXT" }; //IMMediate, TIMer, MANual, BUS, or EXTernal.
+	
+	
+	//**************************************************************************
+	//****************************STATIC CODE***********************************
+	//**************************************************************************
+	
 	
 	//**************************************************************************
 	//****************************VARIABLES*************************************
@@ -64,81 +77,27 @@ public class Trigger_Subsystem extends InstrumentComponent implements I_Trigger_
 		super(name, id, parent, enable, selected, descriptiveTags, subcomponents);
 	}
 
+	public Trigger_Subsystem(String jSONObject_filename) throws Exception {
+		this((org.json.simple.JSONObject)new JSONParser().parse(new FileReader(jSONObject_filename)));
+	}
+	
+	public Trigger_Subsystem(JSONObject jObj) throws Exception
+	{
+		this(
+				(String)jObj.get("name"),
+				(Long)jObj.get("id"),
+				null,							//(InstrumentComponent)jObj.get("parent") not implemented for the moment
+				(boolean)jObj.get("enable"),
+				(boolean)jObj.get("selected")
+			);
+		
+		logger.info("Parsing Trigger_Subsystem from jObj ... ");
+	}
+	
 	//**************************************************************************
 	//****************************METODOS ESTATICOS*****************************
 	//**************************************************************************
 	 
-	public static Trigger_Subsystem parseFromJSON(String filename) throws Exception
-	{
-		//JSON parser object to parse read file
-		JSONParser jsonParser = new JSONParser();
-		FileReader reader = new FileReader(filename);
-	
-		//Read JSON file
-		Object obj = jsonParser.parse(reader);
-		jsonParser = null;
-		 
-		org.json.simple.JSONObject jObj = (org.json.simple.JSONObject) obj;
-		 
-		return Trigger_Subsystem.parseFromJSON(jObj);
-		 
-	 }
-	 
-	public static Trigger_Subsystem parseFromJSON(JSONObject jObj) throws Exception
-	{
-		logger.info("Parsing Trigger_Subsystem from jObj ... ");
-		
-		
-		///////////////////////////////////////temporal
-		
-		TRIGGER_COUNT_MIN = 1;
-		TRIGGER_COUNT_MAX = 55000;
-		TRIGGER_DELAY_MIN = 0d;
-		TRIGGER_DELAY_MAX = 999999.999d;
-		TRIGGER_TIMER_MIN = 0.001d;
-		TRIGGER_TIMER_MAX = 999999.999d;
-		SAMPLE_COUNT_MIN = 1;
-		SAMPLE_COUNT_MAX = 55000;
-		
-		CONTROL_SOURCE_VALID_VALUES = new String[]{"IMMediate", "TIMer", "MANual", "BUS", "EXTernal","IMM", "TIM", "MAN", "BUS", "EXT" };
-		
-		///////////////////////////////////////////////
-		
-		
-		Set keySet = jObj.keySet();
-		
-		Trigger_Subsystem trigger_subsystem = null;
-		
-		String name = "";
-		Long id = 0l;
-		InstrumentComponent parent = null;
-		boolean enable = true;
-		boolean selected = true;
-		GeneralInformation_Component generalInformation = null;
-		
-		if (keySet.contains("name")) name = (String)jObj.get("name");
-		if (keySet.contains("id")) id = (Long)jObj.get("id");
-		//if (keySet.contains("parent")) parent = (InstrumentComponent)jObj.get("parent"); not implemented for the moment
-		if (keySet.contains("enable")) enable = (boolean)jObj.get("enable");
-		if (keySet.contains("selected")) selected = (boolean)jObj.get("selected");
-		
-		trigger_subsystem = new Trigger_Subsystem(
-				 name, 
-				 id, 
-				 parent,
-				 enable,
-				 selected
-			);
-		
-		if (keySet.contains("GeneralInformation")) {
-			generalInformation = GeneralInformation_Component.parseFromJSON((JSONObject)jObj.get("GeneralInformation"));
-			trigger_subsystem.addSubComponent(generalInformation);
-		}
-		
-		return trigger_subsystem;
-			
-		
-	 }
 	
 	public static int getClassversion() {
 		return classVersion;
@@ -172,13 +131,13 @@ public class Trigger_Subsystem extends InstrumentComponent implements I_Trigger_
 		
 	}
 	
-	public void abortTriggerCycle() throws Exception
+	public void abort() throws Exception
 	{
 		logger.info("Aborting Trigger ... ");
 		this.communicationsInterface.write("ABORt");
 	}
 	
-	public void initOneTriggerCycle() throws Exception
+	public void init() throws Exception
 	{
 		logger.info("Initiating one trigger cycle... ");
 		this.communicationsInterface.write("INITiate:IMMediate");
@@ -328,6 +287,13 @@ public class Trigger_Subsystem extends InstrumentComponent implements I_Trigger_
 		logger.info("Sending the trigger signal to the instrument...");
 		this.communicationsInterface.write("TRIGger:SIGNal");
 	}
+	
+	public void configureTriggerAsIdle() throws Exception
+	{
+		this.abort();
+		this.configureInitContinousInitiation(false);
+	}
+
 	
 	/**
 	 * Configura el número de veces (sample count) que se va a ejecutar una medida dentro del mismo ciclo de trigger.

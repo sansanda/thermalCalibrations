@@ -1,9 +1,9 @@
 package trigger;
 
 public interface I_Trigger_Subsystem {
-	public void abortTriggerCycle() throws Exception;
+	public void abort() throws Exception;
 	
-	public void initOneTriggerCycle() throws Exception;
+	public void init() throws Exception;
 	public void configureInitContinousInitiation(boolean enable) throws Exception;
 	public boolean isInitContinousInitiationEnable() throws Exception;
 	

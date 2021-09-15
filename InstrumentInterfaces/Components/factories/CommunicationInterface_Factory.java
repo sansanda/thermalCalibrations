@@ -1,7 +1,5 @@
 package factories;
 
-import java.io.FileNotFoundException;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -28,7 +26,7 @@ public class CommunicationInterface_Factory {
 		
 	//Comm interfaces
 	public static final String GPIB_STANDARD	= "gpib_interface";
-	public static final String LAN_STANDARD	= "lan_interface";
+	public static final String LAN_STANDARD		= "lan_interface";
 	public static final String RS232_STANDARD	= "rs232_interface";
 	
 	

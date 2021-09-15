@@ -11,13 +11,13 @@
       	<Logger name="ports" level="all" additivity="false">
             <AppenderRef ref="LogToConsole"/>
         </Logger>
-        <Logger name="trigger" level="all" additivity="false">
+        <Logger name="trigger" level="off" additivity="false">
             <AppenderRef ref="LogToConsole"/>
         </Logger>
-        <Logger name="status" level="all" additivity="false">
+        <Logger name="status" level="off" additivity="false">
             <AppenderRef ref="LogToConsole"/>
         </Logger>
-        <Logger name="route" level="all" additivity="false">
+        <Logger name="route" level="off" additivity="false">
             <AppenderRef ref="LogToConsole"/>
         </Logger>
         <Logger name="sense" level="all" additivity="false">
@@ -29,16 +29,16 @@
     	<Logger name="communications" level="all" additivity="false">
             <AppenderRef ref="LogToConsole"/>
         </Logger>
-        <Logger name="expansion_slots" level="all" additivity="false">
+        <Logger name="expansion_slots" level="off" additivity="false">
             <AppenderRef ref="LogToConsole"/>
         </Logger>
-        <Logger name="expansion_cards" level="all" additivity="false">
+        <Logger name="expansion_cards" level="off" additivity="false">
             <AppenderRef ref="LogToConsole"/>
         </Logger>
         <Logger name="testing" level="all" additivity="false">
             <AppenderRef ref="LogToConsole"/>
         </Logger>
-        <Logger name="smus" level="all" additivity="false">
+        <Logger name="multimeters" level="all" additivity="false">
             <AppenderRef ref="LogToConsole"/>
         </Logger>
         <Logger name="format" level="all" additivity="false">
@@ -48,6 +48,15 @@
             <AppenderRef ref="LogToConsole"/>
         </Logger>
         <Logger name="common" level="info" additivity="false">
+            <AppenderRef ref="LogToConsole"/>
+        </Logger>
+        <Logger name="trace" level="info" additivity="false">
+            <AppenderRef ref="LogToConsole"/>
+        </Logger>
+        <Logger name="output" level="info" additivity="false">
+            <AppenderRef ref="LogToConsole"/>
+        </Logger>
+        <Logger name="source_meters.KeithleyK2430" level="info" additivity="false">
             <AppenderRef ref="LogToConsole"/>
         </Logger>
         <Root level="off">

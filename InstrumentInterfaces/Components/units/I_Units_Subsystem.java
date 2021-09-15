@@ -36,14 +36,8 @@ public interface I_Units_Subsystem {
 	 * @return "V" o "DB" u otro en función del instrumento.
 	 * @throws Exception
 	 */
-	public String[]	getDCVoltageUnits(int[] channels) throws Exception;
+	public String	getChannelVoltageUnits(int channel) throws Exception;
 	
-	/**
-	 * Metodo que retorna la configuración de las unidades en las medidas de VOLTAGE:AC
-	 * @return "V" o "DB" u otro en función del instrumento.
-	 * @throws Exception
-	 */
-	public String[]	getACVoltageUnits(int[] channels) throws Exception;
 	
 	/**
 	 * Metodo que permite configurar la referencia en el caso de unidades de medida tipo VOLTAGE:DC:DB

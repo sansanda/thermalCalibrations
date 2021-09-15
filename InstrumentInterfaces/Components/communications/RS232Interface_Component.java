@@ -128,47 +128,39 @@ public class RS232Interface_Component extends InstrumentComponent implements I_C
 		 
 	 }
 	 
+	 public RS232Interface_Component(String jSONObject_filename) throws Exception 
+	 {
+		 this((org.json.simple.JSONObject)new JSONParser().parse(new FileReader(jSONObject_filename)));
+	 }
+	 
+	 public RS232Interface_Component(JSONObject jObj) throws Exception
+	 {
+		 this(
+					(String)jObj.get("name"),
+					(Long)jObj.get("id"),
+					null,							//(InstrumentComponent)jObj.get("parent") not implemented for the moment
+					(boolean)jObj.get("enable"),
+					(boolean)jObj.get("selected"),
+					(String)jObj.get("type"),
+					(String)jObj.get("standard"),
+					(String)jObj.get("address"),
+					((Long)jObj.get("baudrate")).intValue(),
+					((Long)jObj.get("databits")).intValue(),
+					((Long)jObj.get("stopbits")).intValue(),
+					((Long)jObj.get("parity")).intValue(),
+					((Long)jObj.get("flowcontrol")).intValue(),
+					(String)jObj.get("terminator"),
+					((Long)jObj.get("writeWaitTime")).intValue(),
+					((Long)jObj.get("readWaitTime")).intValue()
+				);
+		 
+		 logger.info("Parsing RS232Interface_Component from jObj ... ");
+		 
+	 }
 	 //**************************************************************************
 	 //****************************METODOS ESTATICOS*****************************
 	 //**************************************************************************
 	 
-	 public static RS232Interface_Component parseFromJSON(String filename) throws Exception
-	 {
-		 //JSON parser object to parse read file
-		 JSONParser jsonParser = new JSONParser();
-		 FileReader reader = new FileReader(filename);
-		
-		 //Read JSON file
-		 Object obj = jsonParser.parse(reader);
-		 jsonParser = null;
-		 
-		 org.json.simple.JSONObject jObj = (org.json.simple.JSONObject) obj;
-		 
-		 return RS232Interface_Component.parseFromJSON(jObj);
-		 
-	 }
-	 
-	 public static RS232Interface_Component parseFromJSON(JSONObject jObj) throws Exception
-	 {
-		 return new RS232Interface_Component(
-				 (String)jObj.get("name"), 
-				 (Long)jObj.get("id"), 
-				 null, //(InstrumentComponent)jObj.get("parent") not implemented for the moment
-				 (boolean)jObj.get("enable"),
-				 (boolean)jObj.get("selected"),
-				 (String)jObj.get("type"),
-				 (String)jObj.get("standard"), 
-				 (String)jObj.get("address"), 
-				 ((Long)jObj.get("baudrate")).intValue(), 
-				 ((Long)jObj.get("databits")).intValue(), 
-				 ((Long)jObj.get("stopbits")).intValue(), 
-				 ((Long)jObj.get("parity")).intValue(), 
-				 ((Long)jObj.get("flowcontrol")).intValue(), 
-				 (String)jObj.get("terminator"), 
-				 ((Long)jObj.get("writeWaitTime")).intValue(), 
-				 ((Long)jObj.get("readWaitTime")).intValue());
-		 
-	 }
 	//****************************VERSION***************************************
 			
 	public static int getVersion() {
@@ -200,7 +192,47 @@ public class RS232Interface_Component extends InstrumentComponent implements I_C
 		return this.standard;
 	}
 	
-	 /**
+	 private void setType(String type) {
+		this.type = type;
+	}
+
+	private void setStandard(String standard) {
+		this.standard = standard;
+	}
+
+	private void setTerminator(String terminator) {
+		this.terminator = terminator;
+	}
+
+	private void setWriteWaitTime(int writeWaitTime) {
+		this.writeWaitTime = writeWaitTime;
+	}
+
+	private void setReadWaitTime(int readWaitTime) {
+		this.readWaitTime = readWaitTime;
+	}
+
+	private void setFlowcontrol(int flowcontrol) {
+		this.flowcontrol = flowcontrol;
+	}
+
+	private void setnStopBits(int nStopBits) {
+		this.nStopBits = nStopBits;
+	}
+
+	private void setBaudRate(int baudRate) {
+		this.baudRate = baudRate;
+	}
+
+	private void setParityType(int parityType) {
+		this.parityType = parityType;
+	}
+
+	private void setnDataBits(int nDataBits) {
+		this.nDataBits = nDataBits;
+	}
+
+	/**
 	  *
 	  */
 	@Override
@@ -365,19 +397,21 @@ public class RS232Interface_Component extends InstrumentComponent implements I_C
 	  */
 	 @Override
 	 public void open() throws Exception {
-		 if (this.serialPort.isOpened())
-		 {
-			 logger.debug("Port "+this.serialPort.getPortName() + " already is opened. Nothing to do.");
-			 //logger.info("Going to close the port....");
-			 
-			 //JOptionPane.showMessageDialog(null,"Port "+this.serialPort.getPortName() + " currently owned");
-			 //this.serialPort.closePort();
-		 } 
+		 if (this.serialPort.isOpened()) return;
 		 else 
 		 {
 			 logger.info("Openning the port....");
 			 this.serialPort.openPort();			
 		 }
+	 }
+	 
+	 /**
+	  * Ask the adapter if it is opened
+	  * @throws Exception 
+	  */
+	 @Override
+	 public boolean isOpened() throws Exception {
+		 return this.serialPort.isOpened();
 	 }
 	 
 	 /**
@@ -389,8 +423,7 @@ public class RS232Interface_Component extends InstrumentComponent implements I_C
 		 if (!this.serialPort.isOpened()) 
 		 {
 			 logger.info("Port "+this.serialPort.getPortName() + " is already closed. Nothing to do.");
-			 
-		 return;
+			 return;
 		 }
 		 else
 		 {

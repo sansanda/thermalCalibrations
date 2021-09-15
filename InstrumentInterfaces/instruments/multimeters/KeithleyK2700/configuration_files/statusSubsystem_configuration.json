@@ -1,0 +1,24 @@
+{
+    "name":"status_subsystem",
+    "id":1234567890,
+    "parent":"K2700",
+    "enable":true,
+    "selected":true,
+    "GeneralInformation":
+    {
+        "name":"general_information",
+        "id":1234567890,
+        "parent":"status_subsystem",
+        "enable":true,
+        "selected":true,
+        "serialNumber":"01020304",
+        "model":"1",
+        "manufacturer":"David",
+        "observations":"Module Status for the K2700 instrument",
+        "firmwareVersion":"1"	
+    },
+    "Configuration":
+    { 
+    
+    }
+}

@@ -38,6 +38,12 @@ public class System_Subsystem extends InstrumentComponent implements I_System_Su
 	
 	private I_CommunicationsInterface 	communicationsInterface = null;
 	
+	
+	private Boolean isBeeperEnable = null;
+	private String 	tStampType = "REL";
+	private Boolean resetRelativeTStamp = null;
+	private Boolean resetReadingNumber = null;
+	
 	//**************************************************************************
 	//****************************CONSTRUCTORES*********************************
 	//**************************************************************************
@@ -52,70 +58,50 @@ public class System_Subsystem extends InstrumentComponent implements I_System_Su
 		super(name, id, parent, enable, selected, descriptiveTags, subcomponents);
 	}
 
+	public System_Subsystem(String jSONObject_filename) throws Exception {
+		this((org.json.simple.JSONObject)new JSONParser().parse(new FileReader(jSONObject_filename)));
+	}
+	
+	public System_Subsystem(JSONObject jObj) throws Exception {
+		this(
+				(String)jObj.get("name"),
+				(Long)jObj.get("id"),
+				null,							//(InstrumentComponent)jObj.get("parent") not implemented for the moment
+				(boolean)jObj.get("enable"),
+				(boolean)jObj.get("selected")
+			);
+		
+		logger.info("Parsing System_Subsystem from jObj ... ");
+		
+		JSONObject configuration = (JSONObject) jObj.get("Configuration");
+		if (configuration!=null)
+		{
+			this.enableBeeper(configuration.get("beeper").equals("ON"));
+		}
+		
+		JSONObject tStampConfiguration = (JSONObject) configuration.get("tStamp");
+		if (tStampConfiguration!=null)
+		{
+			this.settStampType((String)tStampConfiguration.get("type"));
+			this.enableResetRelativeTStamp(tStampConfiguration.get("reset_relative_tstamp").equals("ON"));
+		}
+		
+		JSONObject readingNumberConfiguration = (JSONObject) configuration.get("readingNumber");
+		if (readingNumberConfiguration!=null)
+		{
+			this.enableResetReadingNumber(readingNumberConfiguration.get("reset").equals("ON"));
+		}
+	}
+	
 	//**************************************************************************
 	//****************************METODOS ESTATICOS*****************************
 	//**************************************************************************
 	 
-	public static System_Subsystem parseFromJSON(String filename) throws Exception
-	{
-		//JSON parser object to parse read file
-		JSONParser jsonParser = new JSONParser();
-		FileReader reader = new FileReader(filename);
-	
-		//Read JSON file
-		Object obj = jsonParser.parse(reader);
-		jsonParser = null;
-		 
-		org.json.simple.JSONObject jObj = (org.json.simple.JSONObject) obj;
-		 
-		return System_Subsystem.parseFromJSON(jObj);
-		 
-	 }
-	 
-	public static System_Subsystem parseFromJSON(JSONObject jObj) throws Exception
-	{
-		logger.info("Parsing System_Subsystem from jObj ... ");
-			
-		Set<String> keySet = jObj.keySet();
-		
-		System_Subsystem system_subsystem = null;
-		
-		String name = "";
-		Long id = 0l;
-		InstrumentComponent parent = null;
-		boolean enable = true;
-		boolean selected = true;
-		GeneralInformation_Component generalInformation = null;
-		
-		if (keySet.contains("name")) name = (String)jObj.get("name");
-		if (keySet.contains("id")) id = (Long)jObj.get("id");
-		//if (keySet.contains("parent")) parent = (InstrumentComponent)jObj.get("parent"); not implemented for the moment
-		if (keySet.contains("enable")) enable = (boolean)jObj.get("enable");
-		if (keySet.contains("selected")) selected = (boolean)jObj.get("selected");
-		
-		system_subsystem = new System_Subsystem(
-				 name, 
-				 id, 
-				 parent,
-				 enable,
-				 selected
-			);
-		
-		if (keySet.contains("GeneralInformation")) {
-			generalInformation = GeneralInformation_Component.parseFromJSON((JSONObject)jObj.get("GeneralInformation"));
-			system_subsystem.addSubComponent(generalInformation);
-		}
-		
-		return system_subsystem;
-			
-		
-	 }
 	
 	public static int getClassversion() {
 		return classVersion;
 	}
 	
-
 	//**************************************************************************
 	//****************************METODOS PUBLICOS******************************
 	//**************************************************************************
@@ -134,7 +120,12 @@ public class System_Subsystem extends InstrumentComponent implements I_System_Su
 		
 		if (this.communicationsInterface == null) throw new Exception("Communications Interface not initialized!!!!");
 		
+		logger.info("Uploading Beeper configuration ... ");
 		
+		this.communicationsInterface.write("SYSTem:BEEPer:STATe " + ((this.isBeeperEnable())? "ON":"OFF"));
+		this.communicationsInterface.write("SYSTem:TSTamp:TYPE " + this.gettStampType());
+		if (this.isResetRelativeTStampEnable()) this.communicationsInterface.write("SYSTem:TSTamp:RELative:RESet");
+		if (this.isResetReadingNumberEnable()) this.communicationsInterface.write("SYSTem:RNUMber:RESet");
 	}
 	
 	public void downloadConfiguration() throws Exception {
@@ -144,4 +135,41 @@ public class System_Subsystem extends InstrumentComponent implements I_System_Su
 		if (this.communicationsInterface == null) throw new Exception("Communications Interface not initialized!!!!");
 		
 	}
+
+	public boolean isBeeperEnable() {
+		return isBeeperEnable;
+	}
+
+	public void enableBeeper(boolean enable) throws Exception {
+		this.isBeeperEnable = enable;
+		//this.communicationsInterface.write("SYSTem:BEEPer:STATe " + ((this.isBeeperEnable())? "ON":"OFF"));
+	}
+
+	private String gettStampType() {
+		return tStampType;
+	}
+
+	private void settStampType(String tStampType) throws Exception {
+		this.tStampType = tStampType;
+		//this.communicationsInterface.write("SYSTem:TSTamp:TYPE " + this.gettStampType());
+	}
+
+	private boolean isResetRelativeTStampEnable() {
+		return resetRelativeTStamp;
+	}
+
+	private void enableResetRelativeTStamp(boolean enable) throws Exception {
+		this.resetRelativeTStamp = enable;
+		//if (this.isResetRelativeTStampEnable()) this.communicationsInterface.write("SYSTem:TSTamp:RELative:RESet");
+	}
+
+	private boolean isResetReadingNumberEnable() {
+		return resetReadingNumber;
+	}
+
+	private void enableResetReadingNumber(boolean enable) throws Exception {
+		this.resetReadingNumber = enable;
+		//if (this.isResetReadingNumberEnable()) this.communicationsInterface.write("SYSTem:RNUMber:RESet");
+	}
+
 }

@@ -1,0 +1,57 @@
+{
+	"name":"sense_subsystem",
+	"id":1234567890,
+	"parent":"",
+	"enable":true,
+	"selected":true,
+	"GeneralInformation":
+	{
+		"name":"general_information",
+		"id":1234567890,
+		"parent":"sense_subsystem",
+		"enable":true,
+		"selected":true,
+		"serialNumber":"01020304",
+		"model":"1",
+		"manufacturer":"David",
+		"observations":"Module Sense for the K2700 instrument",
+		"firmwareVersion":"1"	
+	},
+	"Configuration":
+	{
+		"availableFunctions":["VOLTage:DC","VOLTage:AC", "CURRent:DC","CURRent:AC", "RESistance","FRESistance", "TEMPerature","FREQuency", "PERiod", "CONTinuity"],
+		"availableAverageTControlTypes":["MOVing","REPeat"],
+		"availableTemperatureTransducers":["TCouple","FRTD","THERmistor"],
+		"availableTCoupleTypes":["J", "K", "T", "E", "R", "S", "B", "N"],
+		"availableFRTDTypes":["PT100", "D100", "F100", "PT3916", "PT385", "USER"],
+		"comment_l1":"La siguiente array 'channels' de jsons contiene la configuración de todos los canales que queremos inicializar cuando creamos una instancia del obejto de la clase sense_subsystem",
+		"comment_l2":"Cuando channelNumber='' esto corresponde a la configuración del system channel del multimetro, es decir: normalmente el channel que hay fuera de las trajetas expansoras accesible por las entradas del front o del back ",
+		"channels":
+		[
+			{
+				"channelNumber":"",
+				"function":"VOLTage:DC",
+				"nplc":0.1,
+				"range":100,
+				"digits":7,
+				"reference":0,
+				"average":
+				{
+					"tcontrol":"REPeat",
+					"window":0.0,
+					"count":8,
+					"state":"ON"
+				},
+				"idivider":"OFF",
+				"comment":"Las siguientes opciones solo seran validas para instrumentos del tipo Source-Meter, como por ejemplo puede ser un 2430.",
+				"protection":
+				{
+					"level":50,
+					"range_synchronization":"ON"
+                }  
+			}
+        ],
+        "comment":"Las siguientes opciones solo seran validas para instrumentos del tipo Source-Meter, como por ejemplo puede ser un 2430.",
+        "concurrent_measures":"OFF"
+	}
+}

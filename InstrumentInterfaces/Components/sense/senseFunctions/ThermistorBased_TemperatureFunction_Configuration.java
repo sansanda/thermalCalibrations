@@ -3,13 +3,20 @@
  */
 package sense.senseFunctions;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
+import configuration_files.FILES_PATHS;
 import dataValidators.DataValidators;
+import sense.Sense_Subsystem;
 
 /**
  * @author DavidS
@@ -27,15 +34,106 @@ public class ThermistorBased_TemperatureFunction_Configuration extends Temperatu
 	private static final int classVersion = 100;
 	final static Logger logger = LogManager.getLogger(ThermistorBased_TemperatureFunction_Configuration.class);
 	
+	public static	int 	min_resistor_value;
+	public static   int 	max_resistor_value;
+	public static   int 	default_resistor_value;
+	
+	//**************************************************************************
+	//****************************STATIC CODE***********************************
+	//**************************************************************************
+	static {
+		
+		logger.info("Initializing Thermistor Based Temperature Function Valid Parameters from file " + FILES_PATHS.VALID_SENSE_FUNCTIONS_PARAMETERS_FILENAME);
+		
+		try {
+			
+			//JSON parser object to parse read file
+			JSONParser jsonParser = new JSONParser();
+			FileReader reader = new FileReader(FILES_PATHS.VALID_SENSE_FUNCTIONS_PARAMETERS_FILENAME);
+
+			//Read JSON file
+			Object obj = jsonParser.parse(reader);
+			jsonParser = null;
+			 
+			org.json.simple.JSONObject jObj = (org.json.simple.JSONObject) obj;
+			
+			Set<String> keySet = jObj.keySet();
+			
+			JSONObject temperature = (JSONObject)jObj.get("TEMPerature");
+			
+			JSONObject nplc = (JSONObject) temperature.get("nplc");
+			max_nplc_cycles = ((Double)nplc.get("max")).floatValue();
+			min_nplc_cycles = ((Double)nplc.get("min")).floatValue();
+			default_nplc_cycles = ((Double)nplc.get("default")).floatValue();
+			
+			JSONObject digits = (JSONObject) temperature.get("digits");
+			max_digits = ((Long)digits.get("max")).byteValue();
+			min_digits = ((Long)digits.get("min")).byteValue();
+			default_digits = ((Long)digits.get("default")).byteValue();
+
+			
+			JSONObject reference = (JSONObject) temperature.get("reference");
+			max_reference = ((Long)reference.get("max")).intValue();
+			min_reference = ((Long)reference.get("min")).intValue();
+			default_reference = ((Long)reference.get("default")).intValue();
+			
+			JSONObject average = (JSONObject) temperature.get("average");
+			
+			JSONObject window = (JSONObject) average.get("window");
+			JSONObject count = (JSONObject) average.get("count");
+			
+			max_average_window = ((Double)window.get("max")).floatValue();
+			min_average_window = ((Double)window.get("min")).floatValue();
+			default_average_window = ((Double)window.get("default")).floatValue();
+			
+			max_average_count = ((Long)count.get("max")).intValue();
+			min_average_count = ((Long)count.get("min")).intValue();
+			default_average_count = ((Long)count.get("default")).intValue();
+			
+			JSONObject thermistor = (JSONObject)temperature.get("thermistor");			
+
+			JSONObject resistorValue = (JSONObject) thermistor.get("resistorValue");	
+			max_resistor_value = ((Long)resistorValue.get("max")).intValue();
+			min_resistor_value = ((Long)resistorValue.get("min")).intValue();
+			default_resistor_value = ((Long)resistorValue.get("default")).intValue();
+						
+		} 
+		catch (NullPointerException|IOException|ParseException e)
+		{
+			e.printStackTrace();
+			
+			max_nplc_cycles = 50f;
+			min_nplc_cycles = 0.01f;
+			default_nplc_cycles = 5f;
+			
+			max_digits = 7;
+			min_digits = 4;
+			default_digits = 6;
+			
+			max_reference = 3310;
+			min_reference = -328;
+			default_reference = 0;
+			
+			min_average_window = 0f;
+			max_average_window = 10f;
+			default_average_window = 0.1f;
+			
+			max_average_count = 100;
+			min_average_count = 1;
+			default_average_count = 10;
+			
+			max_resistor_value = 10050;
+			min_resistor_value = 1950;
+			default_resistor_value = 5000;
+		
+		}
+	}
+		
 	//**************************************************************************
 	//****************************VARIABLES*************************************
 	//**************************************************************************
 	
 	private int 	resistorValue;
-	
-	private int 	min_resistor_value;
-	private int 	max_resistor_value;
-	private int 	default_resistor_value;
 
 	//**************************************************************************
 	//****************************CONSTRUCTORES*********************************
@@ -45,7 +143,16 @@ public class ThermistorBased_TemperatureFunction_Configuration extends Temperatu
 	 * @throws Exception 
 	 * 
 	 */
-	public ThermistorBased_TemperatureFunction_Configuration() throws Exception {
+	public ThermistorBased_TemperatureFunction_Configuration() throws Exception 
+	{
+		super(Sense_Subsystem.THERMISTOR_TEMPERATURE_TRANSDUCER,Sense_Subsystem.THERMISTOR_RESISTIVE_TYPE_TRANSDUCER);
+		this.setNPLC(default_nplc_cycles);
+		this.setResolutionDigits(default_digits);
+		this.setReference(default_reference);
+		this.setAverageWindow(default_average_window);
+		this.setAverageCount(default_average_count);
+		this.enableAverage(true);
+		this.setResistorValue(default_resistor_value);
 	}
 
 	//**************************************************************************
@@ -62,31 +169,10 @@ public class ThermistorBased_TemperatureFunction_Configuration extends Temperatu
 	//****************************METODOS **************************************
 	//**************************************************************************
 	
-	public void initializeFromJSON(JSONObject validFunctionParameters, JSONObject attributes) throws Exception
+	public void initializeFromJSON(JSONObject attributes) throws Exception
 	{
-		super.initializeFromJSON(validFunctionParameters, attributes);
-		this.initializeValidFunctionParametersFromJSON(validFunctionParameters);
+		super.initializeFromJSON(attributes);
 		this.initializeAttributesFromJSON(attributes);
-	}
-	
-	private void initializeValidFunctionParametersFromJSON(JSONObject jObj) throws Exception
-	{
-		logger.info("Initializing Thermistor Base Temperature Valid Function Parameters from jObj ... ");
-		
-		Set<String> keySet = jObj.keySet();
-		
-		if (keySet.contains("thermistor"))
-		{
-			JSONObject thermistor = (JSONObject)jObj.get("thermistor");
-			
-			if (thermistor.containsKey("resistorValue"))
-			{
-				JSONObject resistorValue = (JSONObject)thermistor.get("resistorValue");
-				this.max_resistor_value = ((Long)resistorValue.get("max")).intValue();
-				this.min_resistor_value = ((Long)resistorValue.get("min")).intValue();
-				this.default_resistor_value = ((Long)resistorValue.get("default")).intValue();
-			}		
-		}
 	}
 		
 	/**
@@ -100,19 +186,21 @@ public class ThermistorBased_TemperatureFunction_Configuration extends Temperatu
 	{
 		logger.info("Initializing Thermistor Based Temperature Function Configuration from jObj ... ");
 					
-		if (jObj.containsKey("transducerConfiguration"))
-		{	
+		try {
 			JSONObject transducerConfiguration = (JSONObject)jObj.get("transducerConfiguration");
-			if (transducerConfiguration.containsKey("resistorValue"))
-			{
-				this.setResistorValue(((Long)transducerConfiguration.get("resistorValue")).intValue());
-			}
+			this.setResistorValue(((Long)transducerConfiguration.get("resistorValue")).intValue());
+		} 
+		catch (NullPointerException|IOException|ParseException e) 
+		{
+			e.printStackTrace();
+			this.setResistorValue(default_resistor_value);
 		}
+				
 	}
 
 	@Override
 	public void setResistorValue(int value) throws Exception {
-		this.resistorValue = DataValidators.range_Validator(value, this.min_resistor_value, this.max_resistor_value, this.default_resistor_value);
+		this.resistorValue = DataValidators.range_Validator(value, min_resistor_value, max_resistor_value, default_resistor_value);
 	}
 
 	@Override
@@ -124,11 +212,11 @@ public class ThermistorBased_TemperatureFunction_Configuration extends Temperatu
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("ThermistorBased_TemperatureFunction_Configuration [resistorValue=").append(resistorValue)
-				.append(", min_resistor_value=").append(min_resistor_value).append(", max_resistor_value=")
-				.append(max_resistor_value).append(", default_resistor_value=").append(default_resistor_value)
 				.append(", toString()=").append(super.toString()).append("]");
 		return builder.toString();
 	}
+
+	
 	
 	
 }

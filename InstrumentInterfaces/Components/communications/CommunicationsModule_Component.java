@@ -7,7 +7,6 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,11 +15,9 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import collections.OnlyOneSelected_InstrumentComponentList;
-import common.I_InstrumentComponent;
+import common.I_InstrumentComponent;	
 import common.InstrumentComponent;
 import factories.CommunicationInterface_Factory;
-import information.GeneralInformation_Component;
-import multimeters.K2700;
 
 /**
  * @author david
@@ -96,66 +93,23 @@ public class CommunicationsModule_Component extends InstrumentComponent implemen
 		
 	}
 
+	public CommunicationsModule_Component(String jSONObject_filename) throws Exception {
+		this((org.json.simple.JSONObject)new JSONParser().parse(new FileReader(jSONObject_filename)));
+	}
 	
-	//**************************************************************************
-	//****************************METODOS ESTATICOS*****************************
-	//**************************************************************************
-	
-	
-	 public static CommunicationsModule_Component parseFromJSON(String filename) throws Exception
-	 {
-		 logger.info("Parsing Communications Module from file ... ");
-		 
-		 //JSON parser object to parse read file
-		 JSONParser jsonParser = new JSONParser();
-		 FileReader reader = new FileReader(filename);
+	public CommunicationsModule_Component(JSONObject jObj) throws Exception {
 		
-		 //Read JSON file
-		 Object obj = jsonParser.parse(reader);
-		 jsonParser = null;
-		 
-		 org.json.simple.JSONObject jObj = (org.json.simple.JSONObject) obj;
-		 
-		 return CommunicationsModule_Component.parseFromJSON(jObj);
-		 
-	 }
-	 
-	 public static CommunicationsModule_Component parseFromJSON(JSONObject jObj) throws Exception
-	 {
-		logger.info("Parsing Communications Module from jObj ... ");
-		Set<String> keySet = jObj.keySet();
-		
-		InstrumentComponent parent = null;
-		String name = "";
-		Long id = 0l;
-		boolean enable = false;
-		boolean selected = true;
-		
-		CommunicationsModule_Component communicationsModule = null;
-		GeneralInformation_Component generalInformation = null;
-		JSONArray communicationInterfaces = null;
-		
-		if (keySet.contains("name")) name = (String)jObj.get("name");
-		if (keySet.contains("id")) id = (Long)jObj.get("id");
-		//if (keySet.contains("parent")) parent = (InstrumentComponent)jObj.get("parent"); not implemented for the moment
-		if (keySet.contains("enable")) enable = (boolean)jObj.get("enable");
-		if (keySet.contains("selected")) selected = (boolean)jObj.get("selected");
-		
-		communicationsModule = new CommunicationsModule_Component(
-				 name, 
-				 id, 
-				 parent,
-				 enable,
-				 selected
-		);
-		
-		if (keySet.contains("GeneralInformation")) {
-			generalInformation = GeneralInformation_Component.parseFromJSON((JSONObject)jObj.get("GeneralInformation"));
-			communicationsModule.addSubComponent(generalInformation);
-		}
-		
+		this(
+				(String)jObj.get("name"),
+				(Long)jObj.get("id"),
+				null,							//(InstrumentComponent)jObj.get("parent") not implemented for the moment
+				(boolean)jObj.get("enable"),
+				(boolean)jObj.get("selected")
+			);
 
-		communicationInterfaces = (JSONArray) jObj.get("communication_interfaces_list");
+		logger.info("Parsing Communications Module from jObj ... ");
+
+		JSONArray communicationInterfaces = (JSONArray) jObj.get("communication_interfaces_list");
 		Iterator<JSONObject> i = communicationInterfaces.iterator();
 
 		while (i.hasNext()) {
@@ -169,13 +123,13 @@ public class CommunicationsModule_Component extends InstrumentComponent implemen
 			switch (comm_name) {
 			
 			case CommunicationInterface_Factory.GPIB_STANDARD:
-				GPIBInterface_Component gpib_interface = GPIBInterface_Component.parseFromJSON(communicationInterface_params);
-				communicationsModule.addInterface(gpib_interface);
+				GPIBInterface_Component gpib_interface = new GPIBInterface_Component(communicationInterface_params);
+				this.addInterface(gpib_interface);
 				break;
 			
 			case CommunicationInterface_Factory.RS232_STANDARD:
-				RS232Interface_Component rs232_interface = RS232Interface_Component.parseFromJSON(communicationInterface_params);		
-				communicationsModule.addInterface(rs232_interface);
+				RS232Interface_Component rs232_interface = new RS232Interface_Component(communicationInterface_params);		
+				this.addInterface(rs232_interface);
 				break;
 				
 			case CommunicationInterface_Factory.LAN_STANDARD:
@@ -185,11 +139,12 @@ public class CommunicationsModule_Component extends InstrumentComponent implemen
 			default:
 				throw new Exception("Unknnown communication interface!!!!");
 			}
-		}
-		
-		return communicationsModule;
-		 
-	 }
+		}	
+	}
+	
+	//**************************************************************************
+	//****************************METODOS ESTATICOS*****************************
+	//**************************************************************************
 	 
 	 
 	//****************************VERSION***************************************
@@ -232,76 +187,92 @@ public class CommunicationsModule_Component extends InstrumentComponent implemen
 	}
 	
 
-	@Override
+	
 	/**
 	 * Devuelve el standard de la interface de comunicaciones activa en el momento de hacer la llamada
 	 */
+	@Override
 	public String getStandard() throws Exception {
 		this.checkActiveInterface();
 		return this.getActiveInterface().getStandard();
 	}
 
-	@Override
+	
 	/**
 	 * Devuelve el tipo de la interface de comunicaciones activa.
 	 * Por ejemplo, pueden ser serial, parallel, etc...
 	 */
+	@Override
 	public String getType() throws Exception {
 		this.checkActiveInterface();
 		return this.getActiveInterface().getType();
 	}
 	
-	@Override
+	
 	/**
 	 * Devuelve la dirección de la interface de comunicaciones activa en el momento de hacer la llamada
 	 */
+	@Override
 	public String getAddress() throws Exception {
 		this.checkActiveInterface();
 		return this.getActiveInterface().getAddress();
 	}
 
-	@Override
+	
 	/**
 	 * Actualiza la dirección de la interface de comunicaciones activa en el momento de hacer la llamada
 	 * @param address String con la nueva direccion
 	 */
+	@Override
 	public void setAddress(String address) throws Exception {
 		this.checkActiveInterface();
 		this.getActiveInterface().setAddress(address);
 		
 	}
 
-	@Override
+	
 	/**
 	 * Inicializa la interface de comunicaciones activa 
 	 */
+	@Override
 	public void initialize() throws Exception {
 		this.checkActiveInterface();
 		this.getActiveInterface().initialize();
 		
 	}
 	
-	@Override
+	
 	/**
 	 * Abre la interface de comunicaciones activa 
 	 */
+	@Override
 	public void open() throws Exception {
 		this.checkActiveInterface();
-		this.getActiveInterface().open();
-		
+		this.getActiveInterface().open();	
 	}
-
+	
+	/**
+	 * Pregunta a la interface de comunicaciones activa si está abierta.
+	 */
 	@Override
+	public boolean isOpened() throws Exception {
+		this.checkActiveInterface();
+		return this.getActiveInterface().isOpened();
+	}
+	
+	
+	
 	/**
 	 * Cierra la interface de comunicaciones activa
 	 */
+	@Override
 	public void close() throws Exception {
 		this.checkActiveInterface();
 		this.getActiveInterface().close();
 		
 	}
 
-	@Override
+	
 	/**
 	 * Lee los datos actualizados (los más nuevos llegados por la interface de comunicaciones activa)
 	 * Get last income data (the newest arrived data)
@@ -310,12 +281,13 @@ public class CommunicationsModule_Component extends InstrumentComponent implemen
 	 * @author David Sanchez Sanchez
 	 * @mail dsanchezsanc@uoc.edu
 	 */
+	@Override
 	public byte[] read() throws Exception {
 		this.checkActiveInterface();
 		return this.getActiveInterface().read();
 	}
 
-	@Override
+	
 	/**
 	 * Envia los datos a la interface de comunicaciones activa
 	 * @author 	David Sanchez Sanchez
@@ -323,13 +295,13 @@ public class CommunicationsModule_Component extends InstrumentComponent implemen
 	 * @param 	data is the String to send to the output
 	 * @trhows 	Exception if something goes wrong
 	 */
+	@Override
 	public void write(String data) throws Exception {
 		this.checkActiveInterface();
-		this.getActiveInterface().write(data);
-		
+		this.getActiveInterface().write(data);	
 	}
 
-	@Override
+	
 	/**
 	 * Envía una consulta (un comando) por la interface de comunicaciones activa y espera a la respuesta por el mismo canal de comunicaciones
 	 * En la practica se traduce en un write seguido de un read (este suele ser sincrono pero depende de la interface cosa que puede llegar a complicar el código).
@@ -339,6 +311,7 @@ public class CommunicationsModule_Component extends InstrumentComponent implemen
 	 * @return 	the response readed as byte array.
 	 * @trhows 	Exception if something goes wrong
 	 */
+	@Override
 	public byte[] ask(String query) throws Exception {
 		this.checkActiveInterface();
 		return this.getActiveInterface().ask(query);
@@ -366,6 +339,4 @@ public class CommunicationsModule_Component extends InstrumentComponent implemen
 		return builder.toString();
 	}
 	
-	
-
 }

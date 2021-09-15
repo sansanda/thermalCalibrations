@@ -1,6 +1,8 @@
 package expansion_slots;
 
 import java.io.FileReader;
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
@@ -69,73 +71,26 @@ public class Expansion_Slots extends InstrumentComponent implements I_Expansion_
 		this.emptySlots = totalSlots;
 	}
 	
+	public Expansion_Slots(String jSONObject_filename) throws Exception 
+	{
+		this((org.json.simple.JSONObject)new JSONParser().parse(new FileReader(jSONObject_filename)));
+	}
+	 
+	public Expansion_Slots(JSONObject jObj) throws Exception {
+		
+		this(
+				(String)jObj.get("name"),
+				(Long)jObj.get("id"),
+				null,							//(InstrumentComponent)jObj.get("parent") not implemented for the moment
+				(boolean)jObj.get("enable"),
+				(boolean)jObj.get("selected"),
+				((Long)((JSONObject)jObj.get("Configuration")).get("totalSlots")).intValue()
+			);
+	}
+	
 	//**************************************************************************
 	//****************************METODOS ESTATICOS*****************************
 	//**************************************************************************
-	 
-	public static Expansion_Slots parseFromJSON(String filename) throws Exception
-	{
-		//JSON parser object to parse read file
-		JSONParser jsonParser = new JSONParser();
-		FileReader reader = new FileReader(filename);
-	
-		//Read JSON file
-		Object obj = jsonParser.parse(reader);
-		jsonParser = null;
-		 
-		org.json.simple.JSONObject jObj = (org.json.simple.JSONObject) obj;
-		 
-		return Expansion_Slots.parseFromJSON(jObj);
-		 
-	 }
-	 
-	public static Expansion_Slots parseFromJSON(JSONObject jObj) throws Exception
-	{
-		logger.info("Parsing Expansion_Slots from jObj ... ");
-			
-		Set<String> keySet = jObj.keySet();
-		
-		Expansion_Slots expansion_slots = null;
-		
-		String name = "";
-		Long id = 0l;
-		InstrumentComponent parent = null;
-		boolean enable = true;
-		boolean selected = true;
-		int totalSlots = 2;
-		
-		GeneralInformation_Component generalInformation = null;
-		
-		if (keySet.contains("name")) name = (String)jObj.get("name");
-		if (keySet.contains("id")) id = (Long)jObj.get("id");
-		//if (keySet.contains("parent")) parent = (InstrumentComponent)jObj.get("parent"); not implemented for the moment
-		if (keySet.contains("enable")) enable = (boolean)jObj.get("enable");
-		if (keySet.contains("selected")) selected = (boolean)jObj.get("selected");
-		
-		
-		if (keySet.contains("Configuration")) {
-			JSONObject configuration = (JSONObject)jObj.get("Configuration");
-			totalSlots = ((Long)configuration.get("totalSlots")).intValue();
-		}
-		
-		expansion_slots = new Expansion_Slots(
-				 name, 
-				 id, 
-				 parent,
-				 enable,
-				 selected,
-				 totalSlots
-			);
-		
-		if (keySet.contains("GeneralInformation")) {
-			generalInformation = GeneralInformation_Component.parseFromJSON((JSONObject)jObj.get("GeneralInformation"));
-			expansion_slots.addSubComponent(generalInformation);
-		}
-		
-		return expansion_slots;
-			
-		
-	 }
 	
 	public static int getClassversion() {
 		return classVersion;

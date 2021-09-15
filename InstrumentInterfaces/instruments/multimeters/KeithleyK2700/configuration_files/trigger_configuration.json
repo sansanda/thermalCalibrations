@@ -1,0 +1,24 @@
+{
+    "name":"trigger_subsystem",
+    "id":1234567890,
+    "parent":"K2700",
+    "enable":true,
+    "selected":true,
+    "GeneralInformation":
+    {
+        "name":"general_information",
+        "id":1234567890,
+        "parent":"trigger_subsystem",
+        "enable":true,
+        "selected":true,
+        "serialNumber":"01020304",
+        "model":"1",
+        "manufacturer":"David",
+        "observations":"Module Trigger for the K2700 instrument",
+        "firmwareVersion":"1"	
+    },
+    "Configuration":
+    { 
+    
+    }
+}

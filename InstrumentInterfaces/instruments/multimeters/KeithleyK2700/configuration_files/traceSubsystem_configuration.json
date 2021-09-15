@@ -1,0 +1,50 @@
+{
+	"name":"trace_subsystem",
+	"id":1234567890,
+	"parent":null,
+	"enable":true,
+	"selected":true,
+	"GeneralInformation":
+	{
+		"name":"general_information",
+		"id":1234567890,
+		"parent":"K2700",
+		"enable":true,
+		"selected":true,
+		"serialNumber":"0780589",
+		"model":"",
+		"manufacturer":"",
+		"observations":"configuration for the trace subsystem component for the k2700 multimeter of Keithley",
+		"firmwareVersion":""	
+    },
+    "Configuration":
+    {
+        "possible_values":
+        {
+            "autoclear":"ON, OFF",
+            "size":[2, 55000],
+            "notify":"Less than size",
+            "tstamp_format":"DELTA, ABSolute",
+            "readings_source":"SENSe[1], CALCulate[1], NONE",
+            "buffer_control_mode":"NEVer, NEXT, ALWays"
+        },
+        "trace":
+        {
+            "autoclear":"ON",
+            "size":1000,
+            "notify":50,
+            "tstamp_format":"ABSolute",
+            "readings_source":"SENSe",
+            "buffer_control_mode":"NEVer"
+        },
+        "data":
+        {
+            "autoclear":"ON",
+            "size":1000,
+            "notify":50,
+            "tstamp_format":"ABSolute",
+            "readings_source":"SENSe",
+            "buffer_control_mode":"NEVer"
+        }
+    }
+}

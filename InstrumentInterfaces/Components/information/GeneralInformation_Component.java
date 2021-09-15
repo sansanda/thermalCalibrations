@@ -79,42 +79,63 @@ public class GeneralInformation_Component extends InstrumentComponent {
 		this.firmwareVersion = firmwareVersion;
 		this.otherAttributes = otherAttributes;
 	}
+	
+	public GeneralInformation_Component(String jSONObject_filename) throws Exception 
+	{
+		this((org.json.simple.JSONObject)new JSONParser().parse(new FileReader(jSONObject_filename)));
+	}
+	
+	public GeneralInformation_Component(JSONObject jObj) throws Exception
+	{
+		this(
+				(String)jObj.get("name"),
+				(Long)jObj.get("id"),
+				null,							//(InstrumentComponent)jObj.get("parent") not implemented for the moment
+				(boolean)jObj.get("enable"),
+				(boolean)jObj.get("selected"),
+				(String)jObj.get("serialNumber"),
+				(String)jObj.get("model"),
+				(String)jObj.get("manufacturer"),
+				(String)jObj.get("observations"),
+				(String)jObj.get("firmwareVersion")
+			);
+	}
 
 	//**************************************************************************
 	//****************************METODOS ESTATICOS*****************************
 	//**************************************************************************
 	 
-	public static GeneralInformation_Component parseFromJSON(String filename) throws Exception
-	{
-		//JSON parser object to parse read file
-		JSONParser jsonParser = new JSONParser();
-		FileReader reader = new FileReader(filename);
-		
-		//Read JSON file
-		Object obj = jsonParser.parse(reader);
-		jsonParser = null;
-		 
-		org.json.simple.JSONObject jObj = (org.json.simple.JSONObject) obj;
-		 
-		return GeneralInformation_Component.parseFromJSON(jObj); 
-		
-	}
-	
-	public static GeneralInformation_Component parseFromJSON(JSONObject jObj) throws Exception
-	{		 
-		return new GeneralInformation_Component(
-			 (String)jObj.get("name"), 
-			 (Long)jObj.get("id"), 
-			 null, //(InstrumentComponent)jObj.get("parent") not implemented for the moment
-			 (boolean)jObj.get("enable"),
-			 (boolean)jObj.get("selected"),
-			 (String)jObj.get("serialNumber"),
-			 (String)jObj.get("model"), 
-			 (String)jObj.get("manufacturer"), 
-			 (String)jObj.get("observations"), 
-			 (String)jObj.get("firmwareVersion"));
-		
-	}
+//	public static GeneralInformation_Component parseFromJSON(String filename) throws Exception
+//	{
+//		//JSON parser object to parse read file
+//		JSONParser jsonParser = new JSONParser();
+//		FileReader reader = new FileReader(filename);
+//		
+//		//Read JSON file
+//		Object obj = jsonParser.parse(reader);
+//		jsonParser = null;
+//		 
+//		org.json.simple.JSONObject jObj = (org.json.simple.JSONObject) obj;
+//		 
+//		return GeneralInformation_Component.parseFromJSON(jObj); 
+//		
+//	}
+//	
+//	public static GeneralInformation_Component parseFromJSON(JSONObject jObj) throws Exception
+//	{		 
+//		return new GeneralInformation_Component(
+//			 (String)jObj.get("name"), 
+//			 (Long)jObj.get("id"), 
+//			 null, //(InstrumentComponent)jObj.get("parent") not implemented for the moment
+//			 (boolean)jObj.get("enable"),
+//			 (boolean)jObj.get("selected"),
+//			 (String)jObj.get("serialNumber"),
+//			 (String)jObj.get("model"), 
+//			 (String)jObj.get("manufacturer"), 
+//			 (String)jObj.get("observations"), 
+//			 (String)jObj.get("firmwareVersion"));
+//		
+//	}
 	//****************************VERSION***************************************
 			
 	public static int getVersion() {

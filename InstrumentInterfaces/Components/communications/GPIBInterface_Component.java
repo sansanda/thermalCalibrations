@@ -98,43 +98,35 @@ public class GPIBInterface_Component extends InstrumentComponent implements I_Co
 		 
 	 }
 	 
+	 public GPIBInterface_Component(String jSONObject_filename) throws Exception {
+		this((org.json.simple.JSONObject)new JSONParser().parse(new FileReader(jSONObject_filename)));
+	 }
+	 
+	 public GPIBInterface_Component(JSONObject jObj) throws Exception{
+		 
+		 this(
+					(String)jObj.get("name"),
+					(Long)jObj.get("id"),
+					null,							//(InstrumentComponent)jObj.get("parent") not implemented for the moment
+					(boolean)jObj.get("enable"),
+					(boolean)jObj.get("selected"),
+					(String)jObj.get("type"),
+					(String)jObj.get("standard"),
+					(String)jObj.get("address"),
+					(String)jObj.get("terminator"),
+					((Double)jObj.get("timeout")).floatValue(),
+					((Long)jObj.get("writeWaitTime")).intValue(),
+					((Long)jObj.get("readWaitTime")).intValue()
+				);
+		 
+		 logger.info("Parsing GPIBInterface_Component from jObj ... ");
+ 
+	 }
+	 
 	 //**************************************************************************
 	 //****************************METODOS ESTATICOS*****************************
 	 //**************************************************************************
 	 
-	 public static GPIBInterface_Component parseFromJSON(String filename) throws Exception
-	 {
-		 //JSON parser object to parse read file
-		 JSONParser jsonParser = new JSONParser();
-		 FileReader reader = new FileReader(filename);
-		
-		 //Read JSON file
-		 Object obj = jsonParser.parse(reader);
-		 jsonParser = null;
-		 
-		 org.json.simple.JSONObject jObj = (org.json.simple.JSONObject) obj;
-		 
-		 return GPIBInterface_Component.parseFromJSON(jObj);
-		 
-	 }
-	 
-	 public static GPIBInterface_Component parseFromJSON(JSONObject jObj) throws Exception
-	 {		 
-		 return new GPIBInterface_Component(
-				 (String)jObj.get("name"), 
-				 (Long)jObj.get("id"), 
-				 null, //(InstrumentComponent)jObj.get("parent") not implemented for the moment
-				 (boolean)jObj.get("enable"),
-				 (boolean)jObj.get("selected"),
-				 (String)jObj.get("type"),
-				 (String)jObj.get("standard"), 
-				 (String)jObj.get("address"), 
-				 (String)jObj.get("terminator"),
-				 ((Double)jObj.get("timeout")).floatValue(),
-				 ((Long)jObj.get("writeWaitTime")).intValue(), 
-				 ((Long)jObj.get("readWaitTime")).intValue());
-		 
-	 }
 	 
 	//****************************VERSION***************************************
 			
@@ -167,7 +159,31 @@ public class GPIBInterface_Component extends InstrumentComponent implements I_Co
 		return this.standard;
 	}
 	
-	 /**
+	private void setType(String type) {
+		this.type = type;
+	}
+
+	private void setStandard(String standard) {
+		this.standard = standard;
+	}
+
+	private void setTerminator(String terminator) {
+		this.terminator = terminator;
+	}
+
+	private void setTimeout(float timeout) {
+		this.timeout = timeout;
+	}
+
+	private void setWriteWaitTime(int writeWaitTime) {
+		this.writeWaitTime = writeWaitTime;
+	}
+
+	private void setReadWaitTime(int readWaitTime) {
+		this.readWaitTime = readWaitTime;
+	}
+
+	/**
 	  *
 	  */
 	@Override
@@ -184,6 +200,16 @@ public class GPIBInterface_Component extends InstrumentComponent implements I_Co
 	 public void open() throws Exception {
 		 this.gpibPort.open(this.timeout);
 	 }
+	 
+	 /**
+	  * Ask the adapter if it is opened
+	  * @throws Exception 
+	  */
+	 @Override
+	 public boolean isOpened() throws Exception {
+		 return this.gpibPort.isOpened();
+	 }
+	 
 	 
 	 /**
 	  * Close the adapter
@@ -205,8 +231,7 @@ public class GPIBInterface_Component extends InstrumentComponent implements I_Co
 	 * @mail dsanchezsanc@uoc.edu
 	 */
 	@Override
-	public byte[] read() throws Exception{
-		this.open();
+	public byte[] read() throws Exception{	
 		byte[] returnBuffer = this.gpibPort.read();	
 		logger.trace(returnBuffer);
 		return returnBuffer;
@@ -221,9 +246,10 @@ public class GPIBInterface_Component extends InstrumentComponent implements I_Co
 	 */
 	@Override
 	public void write(String data) throws Exception{
-		this.open();
+		
 		logger.trace(data);
 		this.gpibPort.write(data);
+		Thread.sleep(this.writeWaitTime);
 	}
 	
 	/**
@@ -237,6 +263,7 @@ public class GPIBInterface_Component extends InstrumentComponent implements I_Co
 	 */
 	@Override
 	public byte[] ask(String query) throws Exception {
+		
 		logger.trace(query);
 		return this.gpibPort.ask(query);
 	}
