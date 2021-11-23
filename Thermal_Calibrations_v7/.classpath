@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" output="target/classes" path="domain_layer">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" path="view_layer"/>
+	<classpathentry kind="src" path="data_layer"/>
+	<classpathentry kind="src" path="main"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/KeithleyInstruments"/>
+	<classpathentry kind="lib" path="/java_development_libraries/chart_tools/jfreechart-1.0.12/jfreechart-1.0.12.jar"/>
+	<classpathentry kind="lib" path="/java_development_libraries/Extructuras de Datos/TADs.jar"/>
+	<classpathentry kind="lib" path="/java_development_libraries/frameworks/quantity_v_0_9.jar"/>
+	<classpathentry kind="lib" path="/java_development_libraries/XML/libs/jdom.jar"/>
+	<classpathentry kind="lib" path="/java_development_libraries/chart_tools/jcommon-1.0.17.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Hobersal"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Comm_Adapters"/>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/java">
+		<attributes>
+			<attribute name="test" value="true"/>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/Instruments"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>
